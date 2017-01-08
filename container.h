@@ -40,6 +40,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::Button^  button3;
 
 	protected:
 
@@ -63,6 +64,7 @@ namespace PictureSorting {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->button3 = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->SuspendLayout();
@@ -83,6 +85,7 @@ namespace PictureSorting {
 			this->pictureBox2->Size = System::Drawing::Size(460, 373);
 			this->pictureBox2->TabIndex = 1;
 			this->pictureBox2->TabStop = false;
+			this->pictureBox2->Click += gcnew System::EventHandler(this, &container::pictureBox2_Click);
 			// 
 			// button1
 			// 
@@ -120,11 +123,21 @@ namespace PictureSorting {
 			this->label2->TabIndex = 5;
 			this->label2->Text = L"Current Score: ";
 			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(1119, 445);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(80, 32);
+			this->button3->TabIndex = 6;
+			this->button3->Text = L"Refresh";
+			this->button3->UseVisualStyleBackColor = true;
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1269, 541);
+			this->Controls->Add(this->button3);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->button2);
@@ -148,6 +161,8 @@ namespace PictureSorting {
 	private: System::Void listView1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 	}
 private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void pictureBox2_Click(System::Object^  sender, System::EventArgs^  e) {
 }
 };
 }

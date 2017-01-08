@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 using namespace System;
@@ -14,24 +15,56 @@ struct image{
 	unsigned int score = 0;
 };
 
-vector<image> merge(vector<image> listOne, vector<image> listTwo);
+void tempSort(vector<image>* list);
+vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
+vector<image> sortPics(vector<image> list);
+
+void main()
+{
+	Application::EnableVisualStyles();
+	Application::SetCompatibleTextRenderingDefault(false);
+	PictureSorting::container container;
+	Application::Run(%container);
+}
+
+void tempSort(vector<image>* list)
+{
+	bool flag;
+	do
+	{
+		flag = false;
+		for (int i = 1; i < (*list).size(); i++)
+		{
+			if ((*list)[i].score > (*list)[i - 1].score)
+			{
+				image a = (*list)[i];
+				image b = (*list)[i - 1];
+				(*list)[i] = b;
+				(*list)[i - 1] = a;
+				flag = true;
+			}
+		}
+
+	} while(flag);
+}
+
 
 vector<image> sortPics(vector<image> list)
 {
 	if (list.size() <= 1)
 		return list;
-	vector<image> left, right, sorted;
-	for (int i = 0; i < list.size() / 2; i++)
-		left.push_back(list[i]);
-	for (int z = list.size() / 2; z < list.size(); z++)
-		right.push_back(list[z]);
+	vector<image>sorted;
+	int midpoint = 0.5*list.size();
+	vector<image> left(list.begin(), list.begin() + midpoint);
+	vector<image> right(list.begin() + midpoint, list.end());
 	left = sortPics(left);
 	right = sortPics(right);
-	sorted = merge(left, right);
-	
+	sorted = mergeImages(left, right);
+
 }
 
-vector<image> merge(vector<image> listOne, vector<image> listTwo)
+
+vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 {
 	vector<image> result;
 	while (listOne.size()>0 || listTwo.size() > 0)
@@ -61,27 +94,4 @@ vector<image> merge(vector<image> listOne, vector<image> listTwo)
 
 
 	return result;
-}
-
-void main()
-{
-	//Application::EnableVisualStyles();
-	//Application::SetCompatibleTextRenderingDefault(false);
-	//PictureSorting::container container;
-	//Application::Run(%container);
-
-
-	vector<image> tester;
-	for (int i = 0; i < 100; i++)
-	{
-		image test;
-		test.score = rand();
-		cout << test.score << endl;
-		tester.push_back(test);
-	}
-	tester = sortPics(tester);
-	for (int i = 0; i < tester.size(); i++)
-		cout << tester[i].score << endl;
-
-	cout << tester.size();
 }
