@@ -3,12 +3,12 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <Windows.h>
 
 using namespace std;
 using namespace System;
 using namespace System::Windows::Forms;
-
-
 
 struct image{
 	string path;
@@ -89,9 +89,26 @@ vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 				result.push_back(listTwo[i]);
 			break;
 		}
+	}
+	return result;
+}
 
+
+void getFiles()
+{
+	WIN32_FIND_DATA search_data;
+
+	memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
+
+	HANDLE handle = FindFirstFile("c:\\*", &search_data);
+
+	while (handle != INVALID_HANDLE_VALUE)
+	{
+		cout << "\n" << search_data.cFileName;
+
+		if (FindNextFile(handle, &search_data) == FALSE)
+			break;
 	}
 
-
-	return result;
+	FindClose(handle);
 }
