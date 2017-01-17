@@ -1,6 +1,6 @@
 #include "Work.cpp"
 
-vector<image> picList;
+static vector<image> picList;
 
 #pragma once
 namespace PictureSorting {
