@@ -1,10 +1,11 @@
 #include "Work.cpp"
+#include <vcclr.h>
 
 static vector<image> picList;
 
 #pragma once
 namespace PictureSorting {
-
+	
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -62,6 +63,8 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::ListBox^  listBox1;
 	private: System::Windows::Forms::Button^  deleteItem;
+	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
+
 
 	protected:
 
@@ -105,6 +108,7 @@ namespace PictureSorting {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->deleteItem = (gcnew System::Windows::Forms::Button());
+			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -132,6 +136,7 @@ namespace PictureSorting {
 			// 
 			// button1
 			// 
+			this->button1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->button1->Location = System::Drawing::Point(8, 436);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(197, 41);
@@ -141,6 +146,7 @@ namespace PictureSorting {
 			// 
 			// selectRight
 			// 
+			this->selectRight->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->selectRight->Location = System::Drawing::Point(474, 436);
 			this->selectRight->Name = L"selectRight";
 			this->selectRight->Size = System::Drawing::Size(197, 41);
@@ -151,6 +157,7 @@ namespace PictureSorting {
 			// 
 			// label1
 			// 
+			this->label1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->label1->AutoSize = true;
 			this->label1->Location = System::Drawing::Point(471, 391);
 			this->label1->Name = L"label1";
@@ -160,6 +167,7 @@ namespace PictureSorting {
 			// 
 			// label2
 			// 
+			this->label2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->label2->AutoSize = true;
 			this->label2->Location = System::Drawing::Point(5, 391);
 			this->label2->Name = L"label2";
@@ -169,6 +177,7 @@ namespace PictureSorting {
 			// 
 			// refresh
 			// 
+			this->refresh->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->refresh->Location = System::Drawing::Point(950, 68);
 			this->refresh->Name = L"refresh";
 			this->refresh->Size = System::Drawing::Size(80, 32);
@@ -216,6 +225,7 @@ namespace PictureSorting {
 			this->newDirectoryToolStripMenuItem->Name = L"newDirectoryToolStripMenuItem";
 			this->newDirectoryToolStripMenuItem->Size = System::Drawing::Size(165, 22);
 			this->newDirectoryToolStripMenuItem->Text = L"New Directory";
+			this->newDirectoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::newDirectoryToolStripMenuItem_Click);
 			// 
 			// existingDirectoryToolStripMenuItem
 			// 
@@ -272,6 +282,7 @@ namespace PictureSorting {
 			// 
 			// listBox1
 			// 
+			this->listBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox1->FormattingEnabled = true;
 			this->listBox1->Location = System::Drawing::Point(1045, 28);
 			this->listBox1->Name = L"listBox1";
@@ -281,6 +292,7 @@ namespace PictureSorting {
 			// 
 			// listBox2
 			// 
+			this->listBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox2->FormattingEnabled = true;
 			this->listBox2->Location = System::Drawing::Point(1045, 221);
 			this->listBox2->Name = L"listBox2";
@@ -289,6 +301,7 @@ namespace PictureSorting {
 			// 
 			// button4
 			// 
+			this->button4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->button4->Location = System::Drawing::Point(474, 483);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(197, 35);
@@ -298,6 +311,7 @@ namespace PictureSorting {
 			// 
 			// button6
 			// 
+			this->button6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->button6->Location = System::Drawing::Point(8, 483);
 			this->button6->Name = L"button6";
 			this->button6->Size = System::Drawing::Size(197, 35);
@@ -307,6 +321,8 @@ namespace PictureSorting {
 			// 
 			// label3
 			// 
+			this->label3->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->label3->AutoSize = true;
 			this->label3->Location = System::Drawing::Point(1045, 194);
 			this->label3->Name = L"label3";
@@ -316,6 +332,8 @@ namespace PictureSorting {
 			// 
 			// label4
 			// 
+			this->label4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->label4->AutoSize = true;
 			this->label4->Location = System::Drawing::Point(1192, 205);
 			this->label4->Name = L"label4";
@@ -325,6 +343,7 @@ namespace PictureSorting {
 			// 
 			// deleteItem
 			// 
+			this->deleteItem->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->deleteItem->Location = System::Drawing::Point(1128, 387);
 			this->deleteItem->Name = L"deleteItem";
 			this->deleteItem->Size = System::Drawing::Size(71, 32);
@@ -413,6 +432,42 @@ void updateRankings()
 
 private: System::Void deleteItem_Click(System::Object^  sender, System::EventArgs^  e) {
 }
+private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
+	System::String^ folderName;
+	if (result == System::Windows::Forms::DialogResult::OK)
+	{
+		folderName = openNewDirectory->SelectedPath;
+		pin_ptr<const wchar_t>  str1 = PtrToStringChars(folderName);
+		picList = getFiles(str1);
+	}
+}
+private: System::Void openNewDirectory_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+
+}
+		 static vector<image> getFiles(const wchar_t* directory)
+		 {
+			 vector<image> list;
+			 wstring holder2, wsDirectory = directory;
+			 string sDirectory(wsDirectory.begin(), wsDirectory.end());
+			 WIN32_FIND_DATA search_data;
+			 memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
+			 HANDLE handle = FindFirstFile((LPCWSTR)directory, &search_data);
+
+			 while (handle != INVALID_HANDLE_VALUE)
+			 {
+				 holder2 = search_data.cFileName;
+				 string holder(holder2.begin(), holder2.end());
+				 image temp;
+				 temp.path = sDirectory + "\\" + holder;
+				 list.push_back(temp);
+				 if (FindNextFile(handle, &search_data) == FALSE)
+					 break;
+			 }
+			 FindClose(handle);
+			 return list;
+		 }
+
 };
 
 }

@@ -10,7 +10,7 @@ using namespace std;
 
 static struct image{
 	string path;
-	int score;
+	int score = 0;
 };
 
 
@@ -84,20 +84,4 @@ static vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 	return result;
 }
 
-//
-//void getFiles(char* directory)
-//{
-//	WIN32_FIND_DATA search_data;
-//
-//	memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
-//
-//	HANDLE handle = FindFirstFile((LPCWSTR)directory, &search_data);
-//
-//	while (handle != INVALID_HANDLE_VALUE)
-//	{
-//		cout << "\n" << search_data.cFileName;
-//		if (FindNextFile(handle, &search_data) == FALSE)
-//			break;
-//	}
-//	FindClose(handle);
-//}
+
