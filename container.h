@@ -3,6 +3,7 @@
 
 static vector<image> picList;
 
+
 #pragma once
 namespace PictureSorting {
 	
@@ -12,6 +13,7 @@ namespace PictureSorting {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO;
 
 	public ref class container : public System::Windows::Forms::Form
 	{
@@ -33,6 +35,7 @@ namespace PictureSorting {
 				delete components;
 			}
 		}
+	private:bool openedFlag = false;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::PictureBox^  pictureBox2;
 	private: System::Windows::Forms::Button^  button1;
@@ -40,7 +43,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Button^  refresh;
-
+	private: System::String^ fileName;
 
 
 	private: System::Windows::Forms::MenuStrip^  menuStrip1;
@@ -58,12 +61,13 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  newDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  existingDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::Button^  button4;
-	private: System::Windows::Forms::Button^  button6;
+	private: System::Windows::Forms::Button^  saveAndQuit;
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::ListBox^  listBox1;
 	private: System::Windows::Forms::Button^  deleteItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
+	private: System::Windows::Forms::SaveFileDialog^  saveFile;
 
 
 	protected:
@@ -104,11 +108,12 @@ namespace PictureSorting {
 			this->listBox1 = (gcnew System::Windows::Forms::ListBox());
 			this->listBox2 = (gcnew System::Windows::Forms::ListBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
-			this->button6 = (gcnew System::Windows::Forms::Button());
+			this->saveAndQuit = (gcnew System::Windows::Forms::Button());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->deleteItem = (gcnew System::Windows::Forms::Button());
 			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -309,15 +314,16 @@ namespace PictureSorting {
 			this->button4->Text = L"Previous Comparison";
 			this->button4->UseVisualStyleBackColor = true;
 			// 
-			// button6
+			// saveAndQuit
 			// 
-			this->button6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			this->button6->Location = System::Drawing::Point(8, 483);
-			this->button6->Name = L"button6";
-			this->button6->Size = System::Drawing::Size(197, 35);
-			this->button6->TabIndex = 14;
-			this->button6->Text = L"Save and Exit";
-			this->button6->UseVisualStyleBackColor = true;
+			this->saveAndQuit->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->saveAndQuit->Location = System::Drawing::Point(8, 483);
+			this->saveAndQuit->Name = L"saveAndQuit";
+			this->saveAndQuit->Size = System::Drawing::Size(197, 35);
+			this->saveAndQuit->TabIndex = 14;
+			this->saveAndQuit->Text = L"Save and Exit";
+			this->saveAndQuit->UseVisualStyleBackColor = true;
+			this->saveAndQuit->Click += gcnew System::EventHandler(this, &container::saveAndQuit_Click);
 			// 
 			// label3
 			// 
@@ -352,6 +358,10 @@ namespace PictureSorting {
 			this->deleteItem->UseVisualStyleBackColor = true;
 			this->deleteItem->Click += gcnew System::EventHandler(this, &container::deleteItem_Click);
 			// 
+			// saveFile
+			// 
+			this->saveFile->CreatePrompt = true;
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -360,7 +370,7 @@ namespace PictureSorting {
 			this->Controls->Add(this->deleteItem);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
-			this->Controls->Add(this->button6);
+			this->Controls->Add(this->saveAndQuit);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->listBox2);
 			this->Controls->Add(this->listBox1);
@@ -414,6 +424,7 @@ private: System::Void selectRight_Click(System::Object^  sender, System::EventAr
 void updateRankings()
 {
 	this->listBox1->Items->Clear();
+	this->listBox2->Items->Clear();
 	for (int i = 0; i < picList.size(); i++)
 	{
 		std::string holder = picList[i].path + " ";
@@ -421,7 +432,7 @@ void updateRankings()
 		gcnew String(holder.c_str());
 		listBox1->Items->Add(gcnew String(holder.c_str()));
 	}
-	for (int i = picList.size(); i >0; i--)
+	for (int i = picList.size()-1; i >= 0; i--)
 	{
 		std::string holder = picList[i].path + " ";
 		holder += picList[i].score;
@@ -440,27 +451,39 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = openNewDirectory->SelectedPath;
 		pin_ptr<const wchar_t>  str1 = PtrToStringChars(folderName);
 		picList = getFiles(str1);
+		updateRankings();
 	}
 }
 private: System::Void openNewDirectory_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 
 }
-		 static vector<image> getFiles(const wchar_t* directory)
+		 bool checkIfImage(string holder)
+		 {
+			 bool flag = true;
+
+
+			 return flag;
+		 }
+
+		 vector<image> getFiles(const wchar_t* directory)
 		 {
 			 vector<image> list;
 			 wstring holder2, wsDirectory = directory;
 			 string sDirectory(wsDirectory.begin(), wsDirectory.end());
 			 WIN32_FIND_DATA search_data;
 			 memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
-			 HANDLE handle = FindFirstFile((LPCWSTR)directory, &search_data);
+			 HANDLE handle = FindFirstFile((LPCWSTR)wcsncat, &search_data);
 
 			 while (handle != INVALID_HANDLE_VALUE)
 			 {
 				 holder2 = search_data.cFileName;
 				 string holder(holder2.begin(), holder2.end());
-				 image temp;
-				 temp.path = sDirectory + "\\" + holder;
-				 list.push_back(temp);
+				 if (checkIfImage(holder))
+				 {
+					 image temp;
+					 temp.path = sDirectory + "\\" + holder;
+					 list.push_back(temp);
+				 }
 				 if (FindNextFile(handle, &search_data) == FALSE)
 					 break;
 			 }
@@ -468,6 +491,31 @@ private: System::Void openNewDirectory_FileOk(System::Object^  sender, System::C
 			 return list;
 		 }
 
+
+		 
+private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (openedFlag)
+	{
+		StreamWriter^ writer = gcnew StreamWriter(fileName);
+		for (int i = 0; i < picList.size(); i++)
+		{
+			writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+		}
+	}
+	else
+	{
+		saveFile->ShowDialog();
+		if (saveFile->FileName != "")
+		{
+			StreamWriter^ writer = gcnew StreamWriter(saveFile->FileName);
+			for (int i = 0; i < picList.size(); i++)
+			{
+				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+			}
+		}
+	}
+	exit(EXIT_SUCCESS);
+}
 };
 
 }
