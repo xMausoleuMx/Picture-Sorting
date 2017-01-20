@@ -222,7 +222,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -237,23 +237,25 @@ namespace PictureSorting {
 			this->existingDirectoryToolStripMenuItem->Name = L"existingDirectoryToolStripMenuItem";
 			this->existingDirectoryToolStripMenuItem->Size = System::Drawing::Size(165, 22);
 			this->existingDirectoryToolStripMenuItem->Text = L"Existing Directory";
+			this->existingDirectoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::existingDirectoryToolStripMenuItem_Click);
 			// 
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
+			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -276,13 +278,13 @@ namespace PictureSorting {
 			// websiteToolStripMenuItem
 			// 
 			this->websiteToolStripMenuItem->Name = L"websiteToolStripMenuItem";
-			this->websiteToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->websiteToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->websiteToolStripMenuItem->Text = L"Website";
 			// 
 			// fAQToolStripMenuItem
 			// 
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
-			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->fAQToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			// 
 			// listBox1
@@ -386,7 +388,6 @@ namespace PictureSorting {
 			this->Name = L"container";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Picture Sorting";
-			this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
 			this->Load += gcnew System::EventHandler(this, &container::container_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
@@ -449,51 +450,50 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	if (result == System::Windows::Forms::DialogResult::OK)
 	{
 		folderName = openNewDirectory->SelectedPath;
+		folderName = (*folderName).Concat(folderName,"\\");
 		pin_ptr<const wchar_t>  str1 = PtrToStringChars(folderName);
 		picList = getFiles(str1);
 		updateRankings();
 	}
 }
-private: System::Void openNewDirectory_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 
+bool checkIfImage(string holder)
+{
+	bool flag = true;
+
+
+	return flag;
 }
-		 bool checkIfImage(string holder)
-		 {
-			 bool flag = true;
+
+vector<image> getFiles(const wchar_t* directory)
+{
+	vector<image> list;
+	wstring holder2, wsDirectory = directory;
+	string sDirectory(wsDirectory.begin(), wsDirectory.end());
+	WIN32_FIND_DATA search_data;
+	memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
+	HANDLE handle = FindFirstFile((LPCWSTR)wcsncat, &search_data);
+
+	while (handle != INVALID_HANDLE_VALUE)
+	{
+		holder2 = search_data.cFileName;
+		string holder(holder2.begin(), holder2.end());
+		if (checkIfImage(holder))
+		{
+			image temp;
+			temp.path = sDirectory + "\\" + holder;
+			list.push_back(temp);
+		}
+		if (FindNextFile(handle, &search_data) == FALSE)
+			break;
+	}
+	FindClose(handle);
+	return list;
+}
 
 
-			 return flag;
-		 }
-
-		 vector<image> getFiles(const wchar_t* directory)
-		 {
-			 vector<image> list;
-			 wstring holder2, wsDirectory = directory;
-			 string sDirectory(wsDirectory.begin(), wsDirectory.end());
-			 WIN32_FIND_DATA search_data;
-			 memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
-			 HANDLE handle = FindFirstFile((LPCWSTR)wcsncat, &search_data);
-
-			 while (handle != INVALID_HANDLE_VALUE)
-			 {
-				 holder2 = search_data.cFileName;
-				 string holder(holder2.begin(), holder2.end());
-				 if (checkIfImage(holder))
-				 {
-					 image temp;
-					 temp.path = sDirectory + "\\" + holder;
-					 list.push_back(temp);
-				 }
-				 if (FindNextFile(handle, &search_data) == FALSE)
-					 break;
-			 }
-			 FindClose(handle);
-			 return list;
-		 }
-
-
-		 
-private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventArgs^  e) {
+void saveUserFile()
+{
 	if (openedFlag)
 	{
 		StreamWriter^ writer = gcnew StreamWriter(fileName);
@@ -507,14 +507,25 @@ private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventAr
 		saveFile->ShowDialog();
 		if (saveFile->FileName != "")
 		{
-			StreamWriter^ writer = gcnew StreamWriter(saveFile->FileName);
+			fileName = saveFile->FileName;
+			StreamWriter^ writer = gcnew StreamWriter(fileName);
 			for (int i = 0; i < picList.size(); i++)
 			{
 				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
 			}
 		}
 	}
+}
+private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventArgs^  e) {
+	saveUserFile();
 	exit(EXIT_SUCCESS);
+}
+private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	saveUserFile();
+}
+
+private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+
 }
 };
 
