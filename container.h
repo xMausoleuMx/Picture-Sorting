@@ -36,16 +36,17 @@ namespace PictureSorting {
 			}
 		}
 	private:bool openedFlag = false;
+	private: System::String^ fileName;
+	private: int leftIndex, rightIndex;
+
+
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::PictureBox^  pictureBox2;
-	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::Button^  selectLeft;
 	private: System::Windows::Forms::Button^  selectRight;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Button^  refresh;
-	private: System::String^ fileName;
-
-
 	private: System::Windows::Forms::MenuStrip^  menuStrip1;
 	private: System::Windows::Forms::ToolStripMenuItem^  fieToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
@@ -88,7 +89,7 @@ namespace PictureSorting {
 		{
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
-			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->selectLeft = (gcnew System::Windows::Forms::Button());
 			this->selectRight = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -127,7 +128,6 @@ namespace PictureSorting {
 			this->pictureBox1->Size = System::Drawing::Size(460, 354);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
-			this->pictureBox1->Click += gcnew System::EventHandler(this, &container::pictureBox1_Click);
 			// 
 			// pictureBox2
 			// 
@@ -137,17 +137,17 @@ namespace PictureSorting {
 			this->pictureBox2->Size = System::Drawing::Size(460, 354);
 			this->pictureBox2->TabIndex = 1;
 			this->pictureBox2->TabStop = false;
-			this->pictureBox2->Click += gcnew System::EventHandler(this, &container::pictureBox2_Click);
 			// 
-			// button1
+			// selectLeft
 			// 
-			this->button1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			this->button1->Location = System::Drawing::Point(8, 436);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(197, 41);
-			this->button1->TabIndex = 2;
-			this->button1->Text = L"Choose Left";
-			this->button1->UseVisualStyleBackColor = true;
+			this->selectLeft->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->selectLeft->Location = System::Drawing::Point(8, 436);
+			this->selectLeft->Name = L"selectLeft";
+			this->selectLeft->Size = System::Drawing::Size(197, 41);
+			this->selectLeft->TabIndex = 2;
+			this->selectLeft->Text = L"Choose Left";
+			this->selectLeft->UseVisualStyleBackColor = true;
+			this->selectLeft->Click += gcnew System::EventHandler(this, &container::selectLeft_Click);
 			// 
 			// selectRight
 			// 
@@ -213,7 +213,6 @@ namespace PictureSorting {
 			this->fieToolStripMenuItem->Name = L"fieToolStripMenuItem";
 			this->fieToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->fieToolStripMenuItem->Text = L"File";
-			this->fieToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::fieToolStripMenuItem_Click);
 			// 
 			// openToolStripMenuItem
 			// 
@@ -222,7 +221,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -242,20 +241,20 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -278,13 +277,13 @@ namespace PictureSorting {
 			// websiteToolStripMenuItem
 			// 
 			this->websiteToolStripMenuItem->Name = L"websiteToolStripMenuItem";
-			this->websiteToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->websiteToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->websiteToolStripMenuItem->Text = L"Website";
 			// 
 			// fAQToolStripMenuItem
 			// 
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
-			this->fAQToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			// 
 			// listBox1
@@ -295,7 +294,7 @@ namespace PictureSorting {
 			this->listBox1->Name = L"listBox1";
 			this->listBox1->Size = System::Drawing::Size(223, 160);
 			this->listBox1->TabIndex = 11;
-			this->listBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &container::listBox1_SelectedIndexChanged);
+
 			// 
 			// listBox2
 			// 
@@ -362,7 +361,9 @@ namespace PictureSorting {
 			// 
 			// saveFile
 			// 
-			this->saveFile->CreatePrompt = true;
+			this->saveFile->DefaultExt = L"csv";
+			this->saveFile->InitialDirectory = L"/save";
+			this->saveFile->RestoreDirectory = true;
 			// 
 			// container
 			// 
@@ -380,7 +381,7 @@ namespace PictureSorting {
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->selectRight);
-			this->Controls->Add(this->button1);
+			this->Controls->Add(this->selectLeft);
 			this->Controls->Add(this->pictureBox2);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->menuStrip1);
@@ -388,7 +389,6 @@ namespace PictureSorting {
 			this->Name = L"container";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Picture Sorting";
-			this->Load += gcnew System::EventHandler(this, &container::container_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			this->menuStrip1->ResumeLayout(false);
@@ -398,20 +398,7 @@ namespace PictureSorting {
 
 		}
 #pragma endregion
-	private: System::Void container_Load(System::Object^  sender, System::EventArgs^  e) {
-	}
-	private: System::Void listView1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-	}
-private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
-}
-private: System::Void pictureBox2_Click(System::Object^  sender, System::EventArgs^  e) {
-}
-private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
-}
-private: System::Void fieToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-}
-private: System::Void listBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-}
+
 private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	exit(EXIT_SUCCESS);
 }
@@ -419,8 +406,7 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 	tempSort(&picList);
 	updateRankings();
 }
-private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
-}
+
 
 void updateRankings()
 {
@@ -526,6 +512,19 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 
+}
+private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (picList[leftIndex].score > picList[rightIndex].score)
+		picList[leftIndex].score++;
+	else
+		picList[leftIndex].score = picList[rightIndex].score++;
+}
+private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (picList[leftIndex].score < picList[rightIndex].score)
+		picList[rightIndex].score++;
+	else
+		picList[rightIndex].score = picList[leftIndex].score++;
+}
 }
 };
 
