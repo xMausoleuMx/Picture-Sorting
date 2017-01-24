@@ -281,14 +281,14 @@ namespace PictureSorting {
 			// websiteToolStripMenuItem
 			// 
 			this->websiteToolStripMenuItem->Name = L"websiteToolStripMenuItem";
-			this->websiteToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->websiteToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->websiteToolStripMenuItem->Text = L"Website";
 			this->websiteToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::websiteToolStripMenuItem_Click);
 			// 
 			// fAQToolStripMenuItem
 			// 
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
-			this->fAQToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			// 
 			// listBox1
@@ -367,7 +367,7 @@ namespace PictureSorting {
 			// saveFile
 			// 
 			this->saveFile->DefaultExt = L"csv";
-			this->saveFile->InitialDirectory = L"/save";
+			this->saveFile->InitialDirectory = L"./save";
 			this->saveFile->RestoreDirectory = true;
 			// 
 			// container
@@ -458,26 +458,23 @@ bool checkIfImage(string holder)
 vector<image> getFiles(const wchar_t* directory)
 {
 	vector<image> list;
-	wstring holder2, wsDirectory = directory;
-	string sDirectory(wsDirectory.begin(), wsDirectory.end());
-	WIN32_FIND_DATA search_data;
-	memset(&search_data, 0, sizeof(WIN32_FIND_DATA));
-	HANDLE handle = FindFirstFile((LPCWSTR)wcsncat, &search_data);
-
-	while (handle != INVALID_HANDLE_VALUE)
-	{
-		holder2 = search_data.cFileName;
-		string holder(holder2.begin(), holder2.end());
-		if (checkIfImage(holder))
-		{
-			image temp;
-			temp.path = sDirectory + "\\" + holder;
-			list.push_back(temp);
+	char dir[999];
+	std::wcstombs(dir, directory, 999);
+	std::string sDirectory = dir;
+	DIR *dpdf;
+	struct dirent *epdf;
+	dpdf = opendir(dir);
+	if (dpdf != NULL){
+		while ((epdf = readdir(dpdf)) != NULL){
+			if (showHiddenDirs ? (epdf->d_type == DT_DIR && string(epdf->d_name) != ".." && string(epdf->d_name) != ".") : (epdf->d_type == DT_DIR && strstr(epdf->d_name, "..") == NULL && strstr(epdf->d_name, ".") == NULL)){
+				GetReqDirs(sDirectory + epdf->d_name + "/", files, showHiddenDirs);
+			}
+			if (epdf->d_type == DT_REG){
+				list.push_back({ sDirectory + epdf->d_name, 0 });
+			}
 		}
-		if (FindNextFile(handle, &search_data) == FALSE)
-			break;
 	}
-	FindClose(handle);
+	closedir(dpdf);
 	return list;
 }
 

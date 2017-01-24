@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>
+#include "dirent.h"
 
 using namespace std;
 
