@@ -1,5 +1,7 @@
 #include "Work.cpp"
 #include <vcclr.h>
+#include <msclr\marshal_cppstd.h>
+
 
 static vector<image> picList;
 static vector<int[2]> index;
@@ -14,6 +16,7 @@ namespace PictureSorting {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::IO;
+
 
 	public ref class container : public System::Windows::Forms::Form
 	{
@@ -73,6 +76,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Button^  deleteItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
 	private: System::Windows::Forms::SaveFileDialog^  saveFile;
+	private: System::Windows::Forms::OpenFileDialog^  openExistingSave;
 
 
 	protected:
@@ -119,6 +123,7 @@ namespace PictureSorting {
 			this->deleteItem = (gcnew System::Windows::Forms::Button());
 			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -225,7 +230,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -245,20 +250,20 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -370,6 +375,11 @@ namespace PictureSorting {
 			this->saveFile->InitialDirectory = L"./save";
 			this->saveFile->RestoreDirectory = true;
 			// 
+			// openExistingSave
+			// 
+			this->openExistingSave->DefaultExt = L"csv";
+			this->openExistingSave->FileName = L"openExistingSave";
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -420,14 +430,13 @@ void updateRankings()
 	{
 		std::string holder = picList[i].path + " ";
 		holder += picList[i].score;
-		gcnew String(holder.c_str());
 		listBox1->Items->Add(gcnew String(holder.c_str()));
 	}
 	for (int i = picList.size()-1; i >= 0; i--)
 	{
 		std::string holder = picList[i].path + " ";
 		holder += picList[i].score;
-		gcnew String(holder.c_str());
+		//gcnew String(holder.c_str()); needed?
 		listBox2->Items->Add(gcnew String(holder.c_str()));
 	}
 }
@@ -447,36 +456,10 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	}
 }
 
-bool checkIfImage(string holder)
-{
-	bool flag = true;
 
 
-	return flag;
-}
+//get files from a given directory, including subdirs
 
-vector<image> getFiles(const wchar_t* directory)
-{
-	vector<image> list;
-	char dir[999];
-	std::wcstombs(dir, directory, 999);
-	std::string sDirectory = dir;
-	DIR *dpdf;
-	struct dirent *epdf;
-	dpdf = opendir(dir);
-	if (dpdf != NULL){
-		while ((epdf = readdir(dpdf)) != NULL){
-			if (showHiddenDirs ? (epdf->d_type == DT_DIR && string(epdf->d_name) != ".." && string(epdf->d_name) != ".") : (epdf->d_type == DT_DIR && strstr(epdf->d_name, "..") == NULL && strstr(epdf->d_name, ".") == NULL)){
-				GetReqDirs(sDirectory + epdf->d_name + "/", files, showHiddenDirs);
-			}
-			if (epdf->d_type == DT_REG){
-				list.push_back({ sDirectory + epdf->d_name, 0 });
-			}
-		}
-	}
-	closedir(dpdf);
-	return list;
-}
 
 
 void saveUserFile()
@@ -511,8 +494,33 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 	saveUserFile();
 }
 
-private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 
+//open previously saved directory comparison
+private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+	{
+		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
+		msclr::interop::marshal_context context;
+		std::string holder,score = "";
+		bool flag = false;
+		while(reader->Peek()>=0)
+		{
+			holder = context.marshal_as<std::string>(reader->ReadLine());
+			image temp;
+			for (int i = 0; i < holder.size(); i++)
+			{
+				if(holder[i] == ',')
+					flag = true;
+				if(flag)
+					score += holder[i];
+				if (!flag && holder[i] != ',')
+					temp.path += holder[i];
+			}
+			temp.score = atoi(score.c_str());
+			score = "";
+			picList.push_back(temp);
+		}
+	}
 }
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -539,11 +547,9 @@ void changeComparison(int increment){
 		{
 			index[i][0] = rand() % picList.size();
 			index[i][1] = rand() % picList.size();
-		}
-	String^ str1 = gcnew String(picList[index[crntCpr][0]].path.c_str());
-	String^ str2 = gcnew String(picList[index[crntCpr][1]].path.c_str());
-	leftImage->Load(str1);
-	rightImage->Load(str2);
+		} 
+	leftImage->Load(gcnew String(picList[index[crntCpr][0]].path.c_str()));
+	rightImage->Load(gcnew String(picList[index[crntCpr][1]].path.c_str()));
 	rightCurrentScore->Text = "Score: " + picList[index[crntCpr][1]].score;
 	leftCurrentScore->Text ="Score: " + (picList[index[crntCpr][0]].score);
 

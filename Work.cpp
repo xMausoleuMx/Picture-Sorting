@@ -5,9 +5,12 @@
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>
-#include "dirent.h"
+#include <boost/filesystem.hpp>
 
 using namespace std;
+namespace fs = ::boost::filesystem;
+
+
 
 static struct image{
 	string path;
@@ -84,5 +87,36 @@ static vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 	}
 	return result;
 }
+
+bool checkIfImage(boost::filesystem::path)
+{
+	bool flag = true;
+	//check extension and verify it is a image file
+	return flag;
+}
+
+vector<image> getFiles(const wchar_t* directory)
+{
+	vector<image> list;
+	if (!fs::exists(directory) || !fs::is_directory(directory)) 
+		return list;
+
+	fs::recursive_directory_iterator it(directory);
+	fs::recursive_directory_iterator endit;
+
+	while (it != endit)
+	{
+		if (fs::is_regular_file(*it) && checkIfImage((it->path().extension())))
+		{
+			image temp;
+			temp.path = (it->path()).string();
+			temp.score = 0;
+			list.push_back(temp);
+		}
+		++it;
+	}
+	return list;
+}
+
 
 
