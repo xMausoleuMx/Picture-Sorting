@@ -5,10 +5,8 @@
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>
-#include <boost/filesystem.hpp>
 
 using namespace std;
-namespace fs = ::boost::filesystem;
 
 
 
@@ -88,32 +86,48 @@ static vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 	return result;
 }
 
-bool checkIfImage(boost::filesystem::path)
+static bool checkIfImage(string path)
 {
 	bool flag = true;
 	//check extension and verify it is a image file
 	return flag;
 }
 
-vector<image> getFiles(const wchar_t* directory)
+static void getFilesList(string filePath, vector<string> & returnFileName)
+{
+	WIN32_FIND_DATA fileInfo;
+	HANDLE hFind;
+	string  fullPath = filePath;
+	hFind = FindFirstFile((LPCWSTR)(fullPath.c_str()), &fileInfo);
+	if (hFind != INVALID_HANDLE_VALUE){
+		char ch[260];
+		char DefChar = ' ';
+		WideCharToMultiByte(CP_ACP, 0, fileInfo.cFileName, -1, ch, 260, &DefChar, NULL);
+		returnFileName.push_back(filePath + ch);
+		while (FindNextFile(hFind, &fileInfo) != 0){
+			char DefChar = ' ';
+			WideCharToMultiByte(CP_ACP, 0, fileInfo.cFileName, -1, ch, 260, &DefChar, NULL);
+			returnFileName.push_back(filePath + ch);
+		}
+	}
+}
+
+static vector<image> getFiles(const wchar_t* directory)
 {
 	vector<image> list;
-	if (!fs::exists(directory) || !fs::is_directory(directory)) 
-		return list;
-
-	fs::recursive_directory_iterator it(directory);
-	fs::recursive_directory_iterator endit;
-
-	while (it != endit)
+	string optfileName = "";
+	wstring ws(directory);
+	string inputFolderPath(ws.begin(),ws.end());
+	vector<string> filesPaths;
+	getFilesList(inputFolderPath, filesPaths);
+	int it = 0;
+	while (it < filesPaths.size())
 	{
-		if (fs::is_regular_file(*it) && checkIfImage((it->path().extension())))
-		{
-			image temp;
-			temp.path = (it->path()).string();
-			temp.score = 0;
+		image temp;
+		temp.path = filesPaths[it];
+		if (checkIfImage(temp.path))
 			list.push_back(temp);
-		}
-		++it;
+		it++;
 	}
 	return list;
 }

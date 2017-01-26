@@ -436,7 +436,6 @@ void updateRankings()
 	{
 		std::string holder = picList[i].path + " ";
 		holder += picList[i].score;
-		//gcnew String(holder.c_str()); needed?
 		listBox2->Items->Add(gcnew String(holder.c_str()));
 	}
 }
@@ -449,18 +448,12 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	if (result == System::Windows::Forms::DialogResult::OK)
 	{
 		folderName = openNewDirectory->SelectedPath;
-		folderName = (*folderName).Concat(folderName,"\\");
+		//folderName = (*folderName).Concat(folderName,"\\");
 		pin_ptr<const wchar_t>  str1 = PtrToStringChars(folderName);
 		picList = getFiles(str1);
 		updateRankings();
 	}
 }
-
-
-
-//get files from a given directory, including subdirs
-
-
 
 void saveUserFile()
 {
