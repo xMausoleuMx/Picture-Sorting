@@ -1,6 +1,6 @@
 #include "Work.cpp"
 #include <vcclr.h>
-#include <msclr\marshal_cppstd.h>
+
 
 
 static vector<image> picList;
@@ -77,6 +77,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
 	private: System::Windows::Forms::SaveFileDialog^  saveFile;
 	private: System::Windows::Forms::OpenFileDialog^  openExistingSave;
+	private: System::Windows::Forms::Button^  trimCollection;
 
 
 	protected:
@@ -124,6 +125,7 @@ namespace PictureSorting {
 			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->trimCollection = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -230,7 +232,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -250,20 +252,20 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -380,11 +382,21 @@ namespace PictureSorting {
 			this->openExistingSave->DefaultExt = L"csv";
 			this->openExistingSave->FileName = L"openExistingSave";
 			// 
+			// trimCollection
+			// 
+			this->trimCollection->Location = System::Drawing::Point(1086, 436);
+			this->trimCollection->Name = L"trimCollection";
+			this->trimCollection->Size = System::Drawing::Size(154, 41);
+			this->trimCollection->TabIndex = 18;
+			this->trimCollection->Text = L"Trim Collection";
+			this->trimCollection->UseVisualStyleBackColor = true;
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1269, 541);
+			this->Controls->Add(this->trimCollection);
 			this->Controls->Add(this->deleteItem);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
@@ -442,15 +454,15 @@ void updateRankings()
 
 private: System::Void deleteItem_Click(System::Object^  sender, System::EventArgs^  e) {
 }
+
 private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
 	System::String^ folderName;
 	if (result == System::Windows::Forms::DialogResult::OK)
 	{
 		folderName = openNewDirectory->SelectedPath;
-		//folderName = (*folderName).Concat(folderName,"\\");
-		pin_ptr<const wchar_t>  str1 = PtrToStringChars(folderName);
-		picList = getFiles(str1);
+		folderName = (*folderName).Concat(folderName,"\\");
+		picList = getFiles(folderName);
 		updateRankings();
 	}
 }

@@ -5,10 +5,12 @@
 #include <algorithm>
 #include <fstream>
 #include <Windows.h>
+#include <msclr\marshal_cppstd.h>
 
 using namespace std;
-
-
+using namespace System;
+using namespace System::IO;
+using namespace System::Collections;
 
 static struct image{
 	string path;
@@ -93,41 +95,28 @@ static bool checkIfImage(string path)
 	return flag;
 }
 
-static void getFilesList(string filePath, vector<string> & returnFileName)
-{
-	WIN32_FIND_DATA fileInfo;
-	HANDLE hFind;
-	string  fullPath = filePath;
-	hFind = FindFirstFile((LPCWSTR)(fullPath.c_str()), &fileInfo);
-	if (hFind != INVALID_HANDLE_VALUE){
-		char ch[260];
-		char DefChar = ' ';
-		WideCharToMultiByte(CP_ACP, 0, fileInfo.cFileName, -1, ch, 260, &DefChar, NULL);
-		returnFileName.push_back(filePath + ch);
-		while (FindNextFile(hFind, &fileInfo) != 0){
-			char DefChar = ' ';
-			WideCharToMultiByte(CP_ACP, 0, fileInfo.cFileName, -1, ch, 260, &DefChar, NULL);
-			returnFileName.push_back(filePath + ch);
-		}
-	}
-}
-
-static vector<image> getFiles(const wchar_t* directory)
+static vector<image> getFiles(System::String^ directory)
 {
 	vector<image> list;
-	string optfileName = "";
-	wstring ws(directory);
-	string inputFolderPath(ws.begin(),ws.end());
-	vector<string> filesPaths;
-	getFilesList(inputFolderPath, filesPaths);
-	int it = 0;
-	while (it < filesPaths.size())
+	msclr::interop::marshal_context context;
+	string inputFolderPath = context.marshal_as<std::string>(directory);
+	System::String^ path = gcnew System::String(directory);
+	array<System::String^>^fileEntries = Directory::GetFiles(path);
+	IEnumerator^ dirs = fileEntries->GetEnumerator();
+	while (dirs->MoveNext())
 	{
+		String^ fileName = safe_cast<String^>(dirs->Current);
 		image temp;
-		temp.path = filesPaths[it];
-		if (checkIfImage(temp.path))
-			list.push_back(temp);
-		it++;
+		temp.path = context.marshal_as<std::string>(fileName);
+		list.push_back(temp);
+	}
+	
+	array<System::String^>^folderEntries = Directory::GetDirectories(path); 
+	IEnumerator^ files = folderEntries->GetEnumerator();
+	while (files->MoveNext())
+	{
+		String^ subDir = safe_cast<String^>(files->Current);
+		getFiles(subDir);
 	}
 	return list;
 }
