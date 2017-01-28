@@ -4,7 +4,7 @@
 
 
 static vector<image> picList;
-static vector<int[2]> index;
+static vector<std::pair<int,int>> index;
 
 #pragma once
 namespace PictureSorting {
@@ -70,8 +70,8 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  existingDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::Button^  button4;
 	private: System::Windows::Forms::Button^  saveAndQuit;
-	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label4;
+
+
 	private: System::Windows::Forms::ListBox^  listBox1;
 	private: System::Windows::Forms::Button^  deleteItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
@@ -119,8 +119,6 @@ namespace PictureSorting {
 			this->listBox2 = (gcnew System::Windows::Forms::ListBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->saveAndQuit = (gcnew System::Windows::Forms::Button());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->deleteItem = (gcnew System::Windows::Forms::Button());
 			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
@@ -137,15 +135,17 @@ namespace PictureSorting {
 			this->leftImage->Location = System::Drawing::Point(8, 27);
 			this->leftImage->Name = L"leftImage";
 			this->leftImage->Size = System::Drawing::Size(460, 354);
+			this->leftImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->leftImage->TabIndex = 0;
 			this->leftImage->TabStop = false;
 			// 
 			// rightImage
 			// 
 			this->rightImage->BackColor = System::Drawing::SystemColors::ControlDark;
-			this->rightImage->Location = System::Drawing::Point(474, 27);
+			this->rightImage->Location = System::Drawing::Point(804, 27);
 			this->rightImage->Name = L"rightImage";
 			this->rightImage->Size = System::Drawing::Size(460, 354);
+			this->rightImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->rightImage->TabIndex = 1;
 			this->rightImage->TabStop = false;
 			// 
@@ -163,7 +163,7 @@ namespace PictureSorting {
 			// selectRight
 			// 
 			this->selectRight->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			this->selectRight->Location = System::Drawing::Point(474, 436);
+			this->selectRight->Location = System::Drawing::Point(1067, 436);
 			this->selectRight->Name = L"selectRight";
 			this->selectRight->Size = System::Drawing::Size(197, 41);
 			this->selectRight->TabIndex = 3;
@@ -175,7 +175,7 @@ namespace PictureSorting {
 			// 
 			this->rightCurrentScore->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->rightCurrentScore->AutoSize = true;
-			this->rightCurrentScore->Location = System::Drawing::Point(471, 391);
+			this->rightCurrentScore->Location = System::Drawing::Point(801, 391);
 			this->rightCurrentScore->Name = L"rightCurrentScore";
 			this->rightCurrentScore->Size = System::Drawing::Size(78, 13);
 			this->rightCurrentScore->TabIndex = 4;
@@ -194,7 +194,7 @@ namespace PictureSorting {
 			// refresh
 			// 
 			this->refresh->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->refresh->Location = System::Drawing::Point(950, 68);
+			this->refresh->Location = System::Drawing::Point(594, 387);
 			this->refresh->Name = L"refresh";
 			this->refresh->Size = System::Drawing::Size(80, 32);
 			this->refresh->TabIndex = 6;
@@ -302,7 +302,7 @@ namespace PictureSorting {
 			// 
 			this->listBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox1->FormattingEnabled = true;
-			this->listBox1->Location = System::Drawing::Point(1045, 28);
+			this->listBox1->Location = System::Drawing::Point(527, 27);
 			this->listBox1->Name = L"listBox1";
 			this->listBox1->Size = System::Drawing::Size(223, 160);
 			this->listBox1->TabIndex = 11;
@@ -311,7 +311,7 @@ namespace PictureSorting {
 			// 
 			this->listBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox2->FormattingEnabled = true;
-			this->listBox2->Location = System::Drawing::Point(1045, 221);
+			this->listBox2->Location = System::Drawing::Point(527, 221);
 			this->listBox2->Name = L"listBox2";
 			this->listBox2->Size = System::Drawing::Size(223, 160);
 			this->listBox2->TabIndex = 12;
@@ -319,7 +319,7 @@ namespace PictureSorting {
 			// button4
 			// 
 			this->button4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			this->button4->Location = System::Drawing::Point(474, 483);
+			this->button4->Location = System::Drawing::Point(1067, 483);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(197, 35);
 			this->button4->TabIndex = 13;
@@ -338,34 +338,12 @@ namespace PictureSorting {
 			this->saveAndQuit->UseVisualStyleBackColor = true;
 			this->saveAndQuit->Click += gcnew System::EventHandler(this, &container::saveAndQuit_Click);
 			// 
-			// label3
-			// 
-			this->label3->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(1045, 194);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(76, 13);
-			this->label3->TabIndex = 15;
-			this->label3->Text = L"Top Pictures ^";
-			// 
-			// label4
-			// 
-			this->label4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(1192, 205);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(72, 13);
-			this->label4->TabIndex = 16;
-			this->label4->Text = L"Bottom Pics v";
-			// 
 			// deleteItem
 			// 
 			this->deleteItem->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->deleteItem->Location = System::Drawing::Point(1128, 387);
+			this->deleteItem->Location = System::Drawing::Point(554, 436);
 			this->deleteItem->Name = L"deleteItem";
-			this->deleteItem->Size = System::Drawing::Size(71, 32);
+			this->deleteItem->Size = System::Drawing::Size(154, 41);
 			this->deleteItem->TabIndex = 17;
 			this->deleteItem->Text = L"Delete";
 			this->deleteItem->UseVisualStyleBackColor = true;
@@ -384,9 +362,9 @@ namespace PictureSorting {
 			// 
 			// trimCollection
 			// 
-			this->trimCollection->Location = System::Drawing::Point(1086, 436);
+			this->trimCollection->Location = System::Drawing::Point(554, 483);
 			this->trimCollection->Name = L"trimCollection";
-			this->trimCollection->Size = System::Drawing::Size(154, 41);
+			this->trimCollection->Size = System::Drawing::Size(154, 35);
 			this->trimCollection->TabIndex = 18;
 			this->trimCollection->Text = L"Trim Collection";
 			this->trimCollection->UseVisualStyleBackColor = true;
@@ -398,8 +376,6 @@ namespace PictureSorting {
 			this->ClientSize = System::Drawing::Size(1269, 541);
 			this->Controls->Add(this->trimCollection);
 			this->Controls->Add(this->deleteItem);
-			this->Controls->Add(this->label4);
-			this->Controls->Add(this->label3);
 			this->Controls->Add(this->saveAndQuit);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->listBox2);
@@ -430,12 +406,12 @@ private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, Syste
 	exit(EXIT_SUCCESS);
 }
 private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^  e) {
-	tempSort(&picList);
 	updateRankings();
 }
 
 void updateRankings()
 {
+	tempSort(&picList);
 	this->listBox1->Items->Clear();
 	this->listBox2->Items->Clear();
 	for (int i = 0; i < picList.size(); i++)
@@ -464,6 +440,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
 		updateRankings();
+		changeComparison(0);
 	}
 }
 
@@ -525,38 +502,45 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			score = "";
 			picList.push_back(temp);
 		}
+		(*reader).Close();
 	}
+	changeComparison(0);
 }
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (picList[index[crntCpr][0]].score > picList[index[crntCpr][1]].score)
-		picList[index[crntCpr][0]].score++;
+	if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
+		picList[get<0>(index[crntCpr])].score++;
 	else
-		picList[index[crntCpr][0]].score = picList[index[crntCpr][1]].score++;
+		picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score++;
 
 	changeComparison(1);
 }
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (picList[index[crntCpr][0]].score < picList[index[crntCpr][1]].score)
-		picList[index[crntCpr][1]].score++;
+	if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
+		picList[get<1>(index[crntCpr])].score++;
 	else
-		picList[index[crntCpr][1]].score = picList[index[crntCpr][0]].score++;
+		picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score++;
 
 	changeComparison(1);
 }
 
+void genComparisons(){
+	
+	for (int i = 0; i < picList.size(); i++)
+	{
+		std::pair<int, int> temp(rand() % picList.size(), rand() % picList.size());
+		index.push_back(temp);
+	}
+ }
+
 void changeComparison(int increment){
 	crntCpr+=increment;
 	if (index.size() < crntCpr + 1)
-		for(int i = 0; i < picList.size(); i++)
-		{
-			index[i][0] = rand() % picList.size();
-			index[i][1] = rand() % picList.size();
-		} 
-	leftImage->Load(gcnew String(picList[index[crntCpr][0]].path.c_str()));
-	rightImage->Load(gcnew String(picList[index[crntCpr][1]].path.c_str()));
-	rightCurrentScore->Text = "Score: " + picList[index[crntCpr][1]].score;
-	leftCurrentScore->Text ="Score: " + (picList[index[crntCpr][0]].score);
+		genComparisons();
+	leftImage->Load(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
+	rightImage->Load(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
+	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
+	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 
 }
 
