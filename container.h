@@ -465,6 +465,7 @@ void saveUserFile()
 			{
 				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
 			}
+			writer->Close();
 		}
 	}
 }
@@ -510,25 +511,40 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
 		picList[get<0>(index[crntCpr])].score++;
+		
 	else
-		picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score++;
+		picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
+		
 
+	
 	changeComparison(1);
 }
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
 		picList[get<1>(index[crntCpr])].score++;
 	else
-		picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score++;
+		picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score + 1;
 
 	changeComparison(1);
 }
 
 void genComparisons(){
-	
+	index.clear();
 	for (int i = 0; i < picList.size(); i++)
 	{
-		std::pair<int, int> temp(rand() % picList.size(), rand() % picList.size());
+		unsigned int a = rand() % picList.size(), b = rand() % picList.size();
+		bool flag = false;
+		while ((a == b) || !flag )
+		{
+			for (int i = 0; i < index.size(); i++)
+				if (!((get<0>(index[i]) == a || get<0>(index[i]) == b) && (get<1>(index[i]) == a || get<1>(index[i]) == b)))
+					flag = true;
+			if (index.size() == 0)
+				flag = true;
+			a = rand() % picList.size();
+			b = rand() % picList.size();
+		}
+		std::pair<int, int> temp(a, b);
 		index.push_back(temp);
 	}
  }
