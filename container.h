@@ -432,6 +432,7 @@ private: System::Void deleteItem_Click(System::Object^  sender, System::EventArg
 }
 
 private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	openedFlag = false;
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
 	System::String^ folderName;
 	if (result == System::Windows::Forms::DialogResult::OK)
@@ -477,12 +478,12 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 	saveUserFile();
 }
 
-
 //open previously saved directory comparison
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)
 	{
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
+		fileName = openExistingSave->FileName;
 		msclr::interop::marshal_context context;
 		std::string holder,score = "";
 		bool flag = false;
@@ -492,13 +493,14 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			image temp;
 			for (int i = 0; i < holder.size(); i++)
 			{
+				if (flag)
+					score += holder[i];
 				if(holder[i] == ',')
 					flag = true;
-				if(flag)
-					score += holder[i];
 				if (!flag && holder[i] != ',')
 					temp.path += holder[i];
 			}
+			flag = false;
 			temp.score = atoi(score.c_str());
 			score = "";
 			picList.push_back(temp);
@@ -506,6 +508,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		(*reader).Close();
 	}
 	changeComparison(0);
+	openedFlag = true;
 }
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -515,8 +518,6 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 	else
 		picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
 		
-
-	
 	changeComparison(1);
 }
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -529,7 +530,6 @@ private: System::Void selectRight_Click(System::Object^  sender, System::EventAr
 }
 
 void genComparisons(){
-	index.clear();
 	for (int i = 0; i < picList.size(); i++)
 	{
 		unsigned int a = rand() % picList.size(), b = rand() % picList.size();
@@ -557,13 +557,13 @@ void changeComparison(int increment){
 	rightImage->Load(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
+	updateRankings();
 
 }
 
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
 	changeComparison(-1);
 }
-
 
 private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);

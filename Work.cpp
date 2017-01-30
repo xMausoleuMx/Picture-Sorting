@@ -97,26 +97,27 @@ static bool checkIfImage(string path)
 
 static vector<image> getFiles(System::String^ directory)
 {
-	vector<image> list;
+	vector<image> list, temp;
 	msclr::interop::marshal_context context;
 	string inputFolderPath = context.marshal_as<std::string>(directory);
 	System::String^ path = gcnew System::String(directory);
 	array<System::String^>^fileEntries = Directory::GetFiles(path);
-	IEnumerator^ dirs = fileEntries->GetEnumerator();
-	while (dirs->MoveNext())
+	IEnumerator^ files = fileEntries->GetEnumerator();
+	while (files->MoveNext())
 	{
-		String^ fileName = safe_cast<String^>(dirs->Current);
+		String^ fileName = safe_cast<String^>(files->Current);
 		image temp;
 		temp.path = context.marshal_as<std::string>(fileName);
 		list.push_back(temp);
 	}
 	
 	array<System::String^>^folderEntries = Directory::GetDirectories(path); 
-	IEnumerator^ files = folderEntries->GetEnumerator();
-	while (files->MoveNext())
+	IEnumerator^ dirs = folderEntries->GetEnumerator();
+	while (dirs->MoveNext())
 	{
-		String^ subDir = safe_cast<String^>(files->Current);
-		getFiles(subDir);
+		String^ subDir = safe_cast<String^>(dirs->Current);
+		temp = getFiles(subDir);
+		list.insert(list.end(), temp.begin(), temp.end());
 	}
 	return list;
 }
