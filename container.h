@@ -1,11 +1,11 @@
 #include "Work.cpp"
 #include <vcclr.h>
 
-
+#using <System.dll>
 
 static vector<image> picList;
 static vector<std::pair<int,int>> index;
-
+static std::string currentDirectory;
 #pragma once
 namespace PictureSorting {
 	
@@ -16,7 +16,7 @@ namespace PictureSorting {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::IO;
-
+	using namespace System::Diagnostics;
 
 	public ref class container : public System::Windows::Forms::Form
 	{
@@ -138,6 +138,7 @@ namespace PictureSorting {
 			this->leftImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->leftImage->TabIndex = 0;
 			this->leftImage->TabStop = false;
+			this->leftImage->Click += gcnew System::EventHandler(this, &container::leftImage_Click);
 			// 
 			// rightImage
 			// 
@@ -148,6 +149,7 @@ namespace PictureSorting {
 			this->rightImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->rightImage->TabIndex = 1;
 			this->rightImage->TabStop = false;
+			this->rightImage->Click += gcnew System::EventHandler(this, &container::rightImage_Click);
 			// 
 			// selectLeft
 			// 
@@ -302,18 +304,18 @@ namespace PictureSorting {
 			// 
 			this->listBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox1->FormattingEnabled = true;
-			this->listBox1->Location = System::Drawing::Point(527, 27);
+			this->listBox1->Location = System::Drawing::Point(474, 27);
 			this->listBox1->Name = L"listBox1";
-			this->listBox1->Size = System::Drawing::Size(223, 160);
+			this->listBox1->Size = System::Drawing::Size(324, 160);
 			this->listBox1->TabIndex = 11;
 			// 
 			// listBox2
 			// 
 			this->listBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->listBox2->FormattingEnabled = true;
-			this->listBox2->Location = System::Drawing::Point(527, 221);
+			this->listBox2->Location = System::Drawing::Point(474, 221);
 			this->listBox2->Name = L"listBox2";
-			this->listBox2->Size = System::Drawing::Size(223, 160);
+			this->listBox2->Size = System::Drawing::Size(324, 160);
 			this->listBox2->TabIndex = 12;
 			// 
 			// button4
@@ -411,19 +413,26 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 
 void updateRankings()
 {
+	
 	tempSort(&picList);
 	this->listBox1->Items->Clear();
 	this->listBox2->Items->Clear();
 	for (int i = 0; i < picList.size(); i++)
 	{
-		std::string holder = picList[i].path + " ";
-		holder += picList[i].score;
+		std::ostringstream convert;
+		convert << picList[i].score;
+		std::string holder = convert.str() + " ";
+		for (int y = currentDirectory.size(); y < picList[i].path.size(); y++)
+			holder += picList[i].path[y];
 		listBox1->Items->Add(gcnew String(holder.c_str()));
 	}
 	for (int i = picList.size()-1; i >= 0; i--)
 	{
-		std::string holder = picList[i].path + " ";
-		holder += picList[i].score;
+		std::ostringstream convert;
+		convert << picList[i].score;
+		std::string holder = convert.str() + " ";
+		for (int y = currentDirectory.size(); y < picList[i].path.size(); y++)
+			holder += picList[i].path[y];
 		listBox2->Items->Add(gcnew String(holder.c_str()));
 	}
 }
@@ -443,6 +452,8 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		updateRankings();
 		changeComparison(0);
 	}
+	msclr::interop::marshal_context context;
+	currentDirectory = context.marshal_as<std::string>(folderName);
 }
 
 void saveUserFile()
@@ -505,6 +516,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			score = "";
 			picList.push_back(temp);
 		}
+		currentDirectory = context.marshal_as<std::string>(fileName);
 		(*reader).Close();
 	}
 	changeComparison(0);
@@ -567,6 +579,15 @@ private: System::Void button4_Click(System::Object^  sender, System::EventArgs^ 
 
 private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
+}
+
+//Open the left image in the default image viewing program
+private: System::Void leftImage_Click(System::Object^  sender, System::EventArgs^  e) {
+	Process::Start(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
+}
+//Open the right image in the default image viewing program
+private: System::Void rightImage_Click(System::Object^  sender, System::EventArgs^  e) {
+	Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }
 };
 }

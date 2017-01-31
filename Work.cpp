@@ -6,6 +6,7 @@
 #include <fstream>
 #include <Windows.h>
 #include <msclr\marshal_cppstd.h>
+#include <sstream>
 
 using namespace std;
 using namespace System;
