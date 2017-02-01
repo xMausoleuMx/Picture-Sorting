@@ -131,6 +131,8 @@ namespace PictureSorting {
 			// 
 			// leftImage
 			// 
+			this->leftImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left));
 			this->leftImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->leftImage->Location = System::Drawing::Point(8, 27);
 			this->leftImage->Name = L"leftImage";
@@ -142,6 +144,8 @@ namespace PictureSorting {
 			// 
 			// rightImage
 			// 
+			this->rightImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->rightImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->rightImage->Location = System::Drawing::Point(804, 27);
 			this->rightImage->Name = L"rightImage";
@@ -164,7 +168,7 @@ namespace PictureSorting {
 			// 
 			// selectRight
 			// 
-			this->selectRight->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->selectRight->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->selectRight->Location = System::Drawing::Point(1067, 436);
 			this->selectRight->Name = L"selectRight";
 			this->selectRight->Size = System::Drawing::Size(197, 41);
@@ -175,7 +179,7 @@ namespace PictureSorting {
 			// 
 			// rightCurrentScore
 			// 
-			this->rightCurrentScore->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->rightCurrentScore->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->rightCurrentScore->AutoSize = true;
 			this->rightCurrentScore->Location = System::Drawing::Point(801, 391);
 			this->rightCurrentScore->Name = L"rightCurrentScore";
@@ -195,7 +199,7 @@ namespace PictureSorting {
 			// 
 			// refresh
 			// 
-			this->refresh->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->refresh->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->refresh->Location = System::Drawing::Point(594, 387);
 			this->refresh->Name = L"refresh";
 			this->refresh->Size = System::Drawing::Size(80, 32);
@@ -302,7 +306,7 @@ namespace PictureSorting {
 			// 
 			// listBox1
 			// 
-			this->listBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->listBox1->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->listBox1->FormattingEnabled = true;
 			this->listBox1->Location = System::Drawing::Point(474, 27);
 			this->listBox1->Name = L"listBox1";
@@ -311,7 +315,7 @@ namespace PictureSorting {
 			// 
 			// listBox2
 			// 
-			this->listBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->listBox2->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->listBox2->FormattingEnabled = true;
 			this->listBox2->Location = System::Drawing::Point(474, 221);
 			this->listBox2->Name = L"listBox2";
@@ -320,7 +324,7 @@ namespace PictureSorting {
 			// 
 			// button4
 			// 
-			this->button4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->button4->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->button4->Location = System::Drawing::Point(1067, 483);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(197, 35);
@@ -342,7 +346,7 @@ namespace PictureSorting {
 			// 
 			// deleteItem
 			// 
-			this->deleteItem->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->deleteItem->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->deleteItem->Location = System::Drawing::Point(554, 436);
 			this->deleteItem->Name = L"deleteItem";
 			this->deleteItem->Size = System::Drawing::Size(154, 41);
@@ -364,6 +368,7 @@ namespace PictureSorting {
 			// 
 			// trimCollection
 			// 
+			this->trimCollection->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->trimCollection->Location = System::Drawing::Point(554, 483);
 			this->trimCollection->Name = L"trimCollection";
 			this->trimCollection->Size = System::Drawing::Size(154, 35);
@@ -404,9 +409,11 @@ namespace PictureSorting {
 		}
 #pragma endregion
 
+//Close the program without saving.
 private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	exit(EXIT_SUCCESS);
 }
+
 private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^  e) {
 	updateRankings();
 }
@@ -452,6 +459,8 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		updateRankings();
 		changeComparison(0);
 	}
+	else
+		MessageBox::Show("ERROR: Inavlid Choice.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 	msclr::interop::marshal_context context;
 	currentDirectory = context.marshal_as<std::string>(folderName);
 }
@@ -482,11 +491,15 @@ void saveUserFile()
 	}
 }
 private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventArgs^  e) {
-	saveUserFile();
+	if (picList.size() > 0)
+		saveUserFile();
 	exit(EXIT_SUCCESS);
 }
 private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	saveUserFile();
+	if(picList.size() > 0)
+		saveUserFile();
+	else
+		MessageBox::Show("ERROR: There is no currently loaded comparison directory to save.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
 //open previously saved directory comparison
@@ -517,30 +530,44 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			picList.push_back(temp);
 		}
 		currentDirectory = context.marshal_as<std::string>(fileName);
+		cout << currentDirectory << endl;
 		(*reader).Close();
+		changeComparison(0);
+		openedFlag = true;
 	}
-	changeComparison(0);
-	openedFlag = true;
+	else{
+		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
+	}
 }
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
-		picList[get<0>(index[crntCpr])].score++;
-		
+	if (picList.size()>0){
+		if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
+			picList[get<0>(index[crntCpr])].score++;
+
+		else
+			picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
+
+		changeComparison(1);
+	}
 	else
-		picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
-		
-	changeComparison(1);
+		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
-		picList[get<1>(index[crntCpr])].score++;
-	else
-		picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score + 1;
+	if (picList.size()>0){
 
-	changeComparison(1);
+		if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
+			picList[get<1>(index[crntCpr])].score++;
+		else
+			picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score + 1;
+
+		changeComparison(1);
+	}
+	else
+		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
+//generate the list of image pairs for the user to compare.
 void genComparisons(){
 	for (int i = 0; i < picList.size(); i++)
 	{
@@ -561,6 +588,7 @@ void genComparisons(){
 	}
  }
 
+//Change the comparison of the two images. Negative numbers to go back one.
 void changeComparison(int increment){
 	crntCpr+=increment;
 	if (index.size() < crntCpr + 1)
@@ -573,10 +601,15 @@ void changeComparison(int increment){
 
 }
 
+//Go back to the previous comparison
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
-	changeComparison(-1);
+	if(picList.size() > 0 && crntCpr > 0)
+		changeComparison(-1);
+	else
+		MessageBox::Show("ERROR: There are no previous comparisons.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
+//open the github page for this program.
 private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
 }
