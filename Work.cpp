@@ -92,7 +92,18 @@ static vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
 static bool checkIfImage(string path)
 {
 	bool flag = true;
-	//check extension and verify it is a image file
+	string extensions[] = { ".gif", "*.jpg", ".jpeg", ".bmp", ".wmf", ".png" };
+	for (int i = 0; i < 6; i++)
+	{
+		flag = true;
+		for (int y = extensions[i].size() - 1; y >= 0; y--)
+		{
+			if (path[path.size() - y] != extensions[i][extensions[i].size() -y])
+				flag = false;
+		}
+		if (flag)
+			return true;
+	}
 	return flag;
 }
 
@@ -109,7 +120,8 @@ static vector<image> getFiles(System::String^ directory)
 		String^ fileName = safe_cast<String^>(files->Current);
 		image temp;
 		temp.path = context.marshal_as<std::string>(fileName);
-		list.push_back(temp);
+		if (checkIfImage(temp.path))
+			list.push_back(temp);
 	}
 	
 	array<System::String^>^folderEntries = Directory::GetDirectories(path); 
@@ -123,5 +135,27 @@ static vector<image> getFiles(System::String^ directory)
 	return list;
 }
 
+static bool validateFile(const std::string& name) {
+	ifstream f(name.c_str());
+	return f.good();
+}
 
-
+static string getDirectory(vector<image> list)
+{
+	image holder = list[0];
+	int marker = 0;
+	string directory;
+	for (int i = 1; i < list.size(); i++)
+	{
+		for (int y = 0; y < list[i].path.size(); y++)
+		{
+			if (y < holder.path.size())
+				break;
+			if (list[i].path[y] != holder.path[y])
+				marker = y - 1;
+		}
+		holder = list[i];
+	}
+	directory.assign(list[0].path.c_str(), marker);
+	return directory;
+}

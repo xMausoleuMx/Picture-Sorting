@@ -44,9 +44,6 @@ namespace PictureSorting {
 	private: System::Windows::Forms::PictureBox^  leftImage;
 	private: System::Windows::Forms::PictureBox^  rightImage;
 
-
-
-
 	private: System::Windows::Forms::Button^  selectLeft;
 	private: System::Windows::Forms::Button^  selectRight;
 	private: System::Windows::Forms::Label^  rightCurrentScore;
@@ -71,7 +68,6 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Button^  button4;
 	private: System::Windows::Forms::Button^  saveAndQuit;
 
-
 	private: System::Windows::Forms::ListBox^  listBox1;
 	private: System::Windows::Forms::Button^  deleteItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
@@ -79,9 +75,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::OpenFileDialog^  openExistingSave;
 	private: System::Windows::Forms::Button^  trimCollection;
 
-
 	protected:
-
 
 	private:
 		/// <summary>
@@ -420,7 +414,6 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 
 void updateRankings()
 {
-	
 	tempSort(&picList);
 	this->listBox1->Items->Clear();
 	this->listBox2->Items->Clear();
@@ -471,9 +464,7 @@ void saveUserFile()
 	{
 		StreamWriter^ writer = gcnew StreamWriter(fileName);
 		for (int i = 0; i < picList.size(); i++)
-		{
 			writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
-		}
 	}
 	else
 	{
@@ -483,9 +474,7 @@ void saveUserFile()
 			fileName = saveFile->FileName;
 			StreamWriter^ writer = gcnew StreamWriter(fileName);
 			for (int i = 0; i < picList.size(); i++)
-			{
 				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
-			}
 			writer->Close();
 		}
 	}
@@ -510,7 +499,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		fileName = openExistingSave->FileName;
 		msclr::interop::marshal_context context;
 		std::string holder,score = "";
-		bool flag = false;
+		bool flag = false, invalidFlag = false, errorFlag=false;
 		while(reader->Peek()>=0)
 		{
 			holder = context.marshal_as<std::string>(reader->ReadLine());
@@ -527,13 +516,23 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			flag = false;
 			temp.score = atoi(score.c_str());
 			score = "";
-			picList.push_back(temp);
+			if (validateFile(temp.path))
+				picList.push_back(temp);
+			else
+				invalidFlag = true;
 		}
-		currentDirectory = context.marshal_as<std::string>(fileName);
-		cout << currentDirectory << endl;
+		if (picList.size() == 0){
+			MessageBox::Show("ERROR: No files could be laoded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+			errorFlag = true;
+		}
+		if (invalidFlag)
+			MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		(*reader).Close();
-		changeComparison(0);
-		openedFlag = true;
+		if (!errorFlag){
+			currentDirectory = getDirectory(picList);
+			changeComparison(0);
+			openedFlag = true;
+		}
 	}
 	else{
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
@@ -555,7 +554,6 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 }
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
-
 		if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
 			picList[get<1>(index[crntCpr])].score++;
 		else
@@ -616,12 +614,16 @@ private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, Sy
 
 //Open the left image in the default image viewing program
 private: System::Void leftImage_Click(System::Object^  sender, System::EventArgs^  e) {
-	Process::Start(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
+	if(picList.size()>0)
+		Process::Start(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
 }
+
 //Open the right image in the default image viewing program
 private: System::Void rightImage_Click(System::Object^  sender, System::EventArgs^  e) {
-	Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
+	if (picList.size()>0)
+		Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }
+
 };
 }
 
