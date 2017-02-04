@@ -74,6 +74,9 @@ namespace PictureSorting {
 	private: System::Windows::Forms::SaveFileDialog^  saveFile;
 	private: System::Windows::Forms::OpenFileDialog^  openExistingSave;
 	private: System::Windows::Forms::Button^  trimCollection;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+
+	private: System::ComponentModel::IContainer^  components;
 
 	protected:
 
@@ -81,7 +84,7 @@ namespace PictureSorting {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -118,33 +121,37 @@ namespace PictureSorting {
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->trimCollection = (gcnew System::Windows::Forms::Button());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
+			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// leftImage
 			// 
-			this->leftImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Left));
+			this->leftImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->leftImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->leftImage->Location = System::Drawing::Point(8, 27);
 			this->leftImage->Name = L"leftImage";
 			this->leftImage->Size = System::Drawing::Size(460, 354);
-			this->leftImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->leftImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->leftImage->TabIndex = 0;
 			this->leftImage->TabStop = false;
 			this->leftImage->Click += gcnew System::EventHandler(this, &container::leftImage_Click);
 			// 
 			// rightImage
 			// 
-			this->rightImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+			this->rightImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->rightImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->rightImage->Location = System::Drawing::Point(804, 27);
 			this->rightImage->Name = L"rightImage";
 			this->rightImage->Size = System::Drawing::Size(460, 354);
-			this->rightImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->rightImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->rightImage->TabIndex = 1;
 			this->rightImage->TabStop = false;
 			this->rightImage->Click += gcnew System::EventHandler(this, &container::rightImage_Click);
@@ -302,7 +309,7 @@ namespace PictureSorting {
 			// 
 			this->listBox1->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->listBox1->FormattingEnabled = true;
-			this->listBox1->Location = System::Drawing::Point(474, 27);
+			this->listBox1->Location = System::Drawing::Point(0, 0);
 			this->listBox1->Name = L"listBox1";
 			this->listBox1->Size = System::Drawing::Size(324, 160);
 			this->listBox1->TabIndex = 11;
@@ -311,7 +318,7 @@ namespace PictureSorting {
 			// 
 			this->listBox2->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->listBox2->FormattingEnabled = true;
-			this->listBox2->Location = System::Drawing::Point(474, 221);
+			this->listBox2->Location = System::Drawing::Point(0, 194);
 			this->listBox2->Name = L"listBox2";
 			this->listBox2->Size = System::Drawing::Size(324, 160);
 			this->listBox2->TabIndex = 12;
@@ -370,17 +377,28 @@ namespace PictureSorting {
 			this->trimCollection->Text = L"Trim Collection";
 			this->trimCollection->UseVisualStyleBackColor = true;
 			// 
+			// groupBox1
+			// 
+			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
+			this->groupBox1->Controls->Add(this->listBox2);
+			this->groupBox1->Controls->Add(this->listBox1);
+			this->groupBox1->Location = System::Drawing::Point(474, 27);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(324, 354);
+			this->groupBox1->TabIndex = 19;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"groupBox1";
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1269, 541);
+			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->trimCollection);
 			this->Controls->Add(this->deleteItem);
 			this->Controls->Add(this->saveAndQuit);
 			this->Controls->Add(this->button4);
-			this->Controls->Add(this->listBox2);
-			this->Controls->Add(this->listBox1);
 			this->Controls->Add(this->refresh);
 			this->Controls->Add(this->leftCurrentScore);
 			this->Controls->Add(this->rightCurrentScore);
@@ -397,6 +415,7 @@ namespace PictureSorting {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->EndInit();
 			this->menuStrip1->ResumeLayout(false);
 			this->menuStrip1->PerformLayout();
+			this->groupBox1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 

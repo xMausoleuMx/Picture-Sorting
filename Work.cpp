@@ -40,54 +40,9 @@ static void tempSort(vector<image>* list)
 				flag = true;
 			}
 		}
-
 	} while (flag);
 }
 
-
-static vector<image> sortPics(vector<image> list)
-{
-	if (list.size() <= 1)
-		return list;
-	vector<image>sorted;
-	int midpoint = 0.5*list.size();
-	vector<image> left(list.begin(), list.begin() + midpoint);
-	vector<image> right(list.begin() + midpoint, list.end());
-	left = sortPics(left);
-	right = sortPics(right);
-	sorted = mergeImages(left, right);
-	return sorted;
-}
-
-
-static vector<image> mergeImages(vector<image> listOne, vector<image> listTwo)
-{
-	vector<image> result;
-	while (listOne.size()>0 || listTwo.size() > 0)
-	{
-		if (listOne.size() > 0 && listTwo.size() > 0) {
-			if (listOne.front().score <= listTwo.front().score) {
-				result.push_back(listOne.front());
-				listOne.erase(listOne.begin());
-			}
-			else {
-				result.push_back(listTwo.front());
-				listTwo.erase(listTwo.begin());
-			}
-		}
-		else if (listOne.size() > 0) {
-			for (int i = 0; i < listOne.size(); i++)
-				result.push_back(listOne[i]);
-			break;
-		}
-		else if (listTwo.size() > 0) {
-			for (int i = 0; i < listTwo.size(); i++)
-				result.push_back(listTwo[i]);
-			break;
-		}
-	}
-	return result;
-}
 
 static bool checkIfImage(string path)
 {
@@ -122,8 +77,7 @@ static vector<image> getFiles(System::String^ directory)
 		temp.path = context.marshal_as<std::string>(fileName);
 		if (checkIfImage(temp.path))
 			list.push_back(temp);
-	}
-	
+	}	
 	array<System::String^>^folderEntries = Directory::GetDirectories(path); 
 	IEnumerator^ dirs = folderEntries->GetEnumerator();
 	while (dirs->MoveNext())
