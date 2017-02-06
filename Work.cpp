@@ -111,5 +111,6 @@ static string getDirectory(vector<image> list)
 		holder = list[i];
 	}
 	directory.assign(list[0].path.c_str(), marker);
+	cout <<"Current directory is: " << directory << endl; //for testing
 	return directory;
 }

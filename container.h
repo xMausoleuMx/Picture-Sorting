@@ -537,8 +537,10 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			score = "";
 			if (validateFile(temp.path))
 				picList.push_back(temp);
-			else
+			else{
 				invalidFlag = true;
+				cout << temp.path << endl; //for testing
+			}
 		}
 		if (picList.size() == 0){
 			MessageBox::Show("ERROR: No files could be laoded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
