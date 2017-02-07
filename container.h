@@ -433,25 +433,26 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 
 void updateRankings()
 {
-	tempSort(&picList);
+	vector<image> sortedList = picList;
+	tempSort(&sortedList);
 	this->listBox1->Items->Clear();
 	this->listBox2->Items->Clear();
-	for (int i = 0; i < picList.size(); i++)
+	for (int i = 0; i < sortedList.size(); i++)
 	{
 		std::ostringstream convert;
-		convert << picList[i].score;
+		convert << sortedList[i].score;
 		std::string holder = convert.str() + " ";
-		for (int y = currentDirectory.size(); y < picList[i].path.size(); y++)
-			holder += picList[i].path[y];
+		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
+			holder += sortedList[i].path[y];
 		listBox1->Items->Add(gcnew String(holder.c_str()));
 	}
-	for (int i = picList.size()-1; i >= 0; i--)
+	for (int i = sortedList.size() - 1; i >= 0; i--)
 	{
 		std::ostringstream convert;
-		convert << picList[i].score;
+		convert << sortedList[i].score;
 		std::string holder = convert.str() + " ";
-		for (int y = currentDirectory.size(); y < picList[i].path.size(); y++)
-			holder += picList[i].path[y];
+		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
+			holder += sortedList[i].path[y];
 		listBox2->Items->Add(gcnew String(holder.c_str()));
 	}
 }
@@ -517,6 +518,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
 		fileName = openExistingSave->FileName;
 		msclr::interop::marshal_context context;
+		cout << context.marshal_as<std::string>(fileName) << endl;
 		std::string holder,score = "";
 		bool flag = false, invalidFlag = false, errorFlag=false;
 		while(reader->Peek()>=0)
@@ -612,11 +614,13 @@ void changeComparison(int increment){
 	crntCpr+=increment;
 	if (index.size() < crntCpr + 1)
 		genComparisons();
+	cout << "Comparing : " << picList[get<0>(index[crntCpr])].path << endl << "and \n" << picList[get<1>(index[crntCpr])].path << endl;//test
 	leftImage->Load(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
 	rightImage->Load(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 	updateRankings();
+	cout << "Comparing : " << picList[get<0>(index[crntCpr])].path << endl << "and \n" << picList[get<1>(index[crntCpr])].path << "\n\n\n\n";//test
 
 }
 
@@ -635,12 +639,14 @@ private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, Sy
 
 //Open the left image in the default image viewing program
 private: System::Void leftImage_Click(System::Object^  sender, System::EventArgs^  e) {
+	cout << picList[get<0>(index[crntCpr])].path << endl; //test
 	if(picList.size()>0)
 		Process::Start(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
 }
 
 //Open the right image in the default image viewing program
 private: System::Void rightImage_Click(System::Object^  sender, System::EventArgs^  e) {
+	cout << picList[get<1>(index[crntCpr])].path << endl;//test
 	if (picList.size()>0)
 		Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }

@@ -103,10 +103,12 @@ static string getDirectory(vector<image> list)
 	{
 		for (int y = 0; y < list[i].path.size(); y++)
 		{
-			if (y < holder.path.size())
+			if (y >= holder.path.size())
 				break;
-			if (list[i].path[y] != holder.path[y])
+			if ((list[i].path[y] != holder.path[y]) && (y < marker)){
 				marker = y - 1;
+				break;
+			}
 		}
 		holder = list[i];
 	}
