@@ -2,11 +2,11 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <fstream>
 #include <Windows.h>
 #include <msclr\marshal_cppstd.h>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 using namespace System;
@@ -47,7 +47,7 @@ static void tempSort(vector<image>* list)
 static bool checkIfImage(string path)
 {
 	bool flag = true;
-	string extensions[] = { ".gif", "*.jpg", ".jpeg", ".bmp", ".wmf", ".png" };
+	string extensions[] = { ".gif", ".jpg", ".jpeg", ".bmp", ".wmf", ".png" };
 	for (int i = 0; i < 6; i++)
 	{
 		flag = true;
@@ -97,7 +97,7 @@ static bool validateFile(const std::string& name) {
 static string getDirectory(vector<image> list)
 {
 	image holder = list[0];
-	int marker = 0;
+	int marker = INT_MAX;
 	string directory;
 	for (int i = 1; i < list.size(); i++)
 	{
@@ -106,13 +106,12 @@ static string getDirectory(vector<image> list)
 			if (y >= holder.path.size())
 				break;
 			if ((list[i].path[y] != holder.path[y]) && (y < marker)){
-				marker = y - 1;
+				marker = y;
+				cout << marker << endl;
 				break;
 			}
 		}
-		holder = list[i];
 	}
 	directory.assign(list[0].path.c_str(), marker);
-	cout <<"Current directory is: " << directory << endl; //for testing
 	return directory;
 }

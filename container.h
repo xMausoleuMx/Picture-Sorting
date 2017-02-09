@@ -62,13 +62,13 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  websiteToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  fAQToolStripMenuItem;
 
-	private: System::Windows::Forms::ListBox^  listBox2;
+	private: System::Windows::Forms::ListBox^  bottomImages;
 	private: System::Windows::Forms::ToolStripMenuItem^  newDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  existingDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::Button^  button4;
 	private: System::Windows::Forms::Button^  saveAndQuit;
 
-	private: System::Windows::Forms::ListBox^  listBox1;
+	private: System::Windows::Forms::ListBox^  topImages;
 	private: System::Windows::Forms::Button^  deleteItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  openNewDirectory;
 	private: System::Windows::Forms::SaveFileDialog^  saveFile;
@@ -112,8 +112,8 @@ namespace PictureSorting {
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->websiteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->fAQToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->listBox1 = (gcnew System::Windows::Forms::ListBox());
-			this->listBox2 = (gcnew System::Windows::Forms::ListBox());
+			this->topImages = (gcnew System::Windows::Forms::ListBox());
+			this->bottomImages = (gcnew System::Windows::Forms::ListBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->saveAndQuit = (gcnew System::Windows::Forms::Button());
 			this->deleteItem = (gcnew System::Windows::Forms::Button());
@@ -305,23 +305,25 @@ namespace PictureSorting {
 			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			// 
-			// listBox1
+			// topImages
 			// 
-			this->listBox1->Anchor = System::Windows::Forms::AnchorStyles::Top;
-			this->listBox1->FormattingEnabled = true;
-			this->listBox1->Location = System::Drawing::Point(0, 0);
-			this->listBox1->Name = L"listBox1";
-			this->listBox1->Size = System::Drawing::Size(324, 160);
-			this->listBox1->TabIndex = 11;
+			this->topImages->Anchor = System::Windows::Forms::AnchorStyles::Top;
+			this->topImages->FormattingEnabled = true;
+			this->topImages->Location = System::Drawing::Point(0, 0);
+			this->topImages->Name = L"topImages";
+			this->topImages->Size = System::Drawing::Size(324, 160);
+			this->topImages->TabIndex = 11;
+			this->topImages->SelectedIndexChanged += gcnew System::EventHandler(this, &container::topImages_SelectedIndexChanged);
 			// 
-			// listBox2
+			// bottomImages
 			// 
-			this->listBox2->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
-			this->listBox2->FormattingEnabled = true;
-			this->listBox2->Location = System::Drawing::Point(0, 194);
-			this->listBox2->Name = L"listBox2";
-			this->listBox2->Size = System::Drawing::Size(324, 160);
-			this->listBox2->TabIndex = 12;
+			this->bottomImages->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
+			this->bottomImages->FormattingEnabled = true;
+			this->bottomImages->Location = System::Drawing::Point(0, 194);
+			this->bottomImages->Name = L"bottomImages";
+			this->bottomImages->Size = System::Drawing::Size(324, 160);
+			this->bottomImages->TabIndex = 12;
+			this->bottomImages->SelectedIndexChanged += gcnew System::EventHandler(this, &container::bottomImages_SelectedIndexChanged);
 			// 
 			// button4
 			// 
@@ -380,8 +382,8 @@ namespace PictureSorting {
 			// groupBox1
 			// 
 			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
-			this->groupBox1->Controls->Add(this->listBox2);
-			this->groupBox1->Controls->Add(this->listBox1);
+			this->groupBox1->Controls->Add(this->bottomImages);
+			this->groupBox1->Controls->Add(this->topImages);
 			this->groupBox1->Location = System::Drawing::Point(474, 27);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(324, 354);
@@ -391,8 +393,8 @@ namespace PictureSorting {
 			// 
 			// container
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoScaleDimensions = System::Drawing::SizeF(96, 96);
+			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Dpi;
 			this->ClientSize = System::Drawing::Size(1269, 541);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->trimCollection);
@@ -435,8 +437,8 @@ void updateRankings()
 {
 	vector<image> sortedList = picList;
 	tempSort(&sortedList);
-	this->listBox1->Items->Clear();
-	this->listBox2->Items->Clear();
+	this->topImages->Items->Clear();
+	this->bottomImages->Items->Clear();
 	for (int i = 0; i < sortedList.size(); i++)
 	{
 		std::ostringstream convert;
@@ -444,7 +446,7 @@ void updateRankings()
 		std::string holder = convert.str() + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
-		listBox1->Items->Add(gcnew String(holder.c_str()));
+		topImages->Items->Add(gcnew String(holder.c_str()));
 	}
 	for (int i = sortedList.size() - 1; i >= 0; i--)
 	{
@@ -453,7 +455,7 @@ void updateRankings()
 		std::string holder = convert.str() + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
-		listBox2->Items->Add(gcnew String(holder.c_str()));
+		bottomImages->Items->Add(gcnew String(holder.c_str()));
 	}
 }
 
@@ -485,6 +487,8 @@ void saveUserFile()
 		StreamWriter^ writer = gcnew StreamWriter(fileName);
 		for (int i = 0; i < picList.size(); i++)
 			writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+
+		writer->Close();
 	}
 	else
 	{
@@ -518,7 +522,6 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
 		fileName = openExistingSave->FileName;
 		msclr::interop::marshal_context context;
-		cout << context.marshal_as<std::string>(fileName) << endl;
 		std::string holder,score = "";
 		bool flag = false, invalidFlag = false, errorFlag=false;
 		while(reader->Peek()>=0)
@@ -539,10 +542,8 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			score = "";
 			if (validateFile(temp.path))
 				picList.push_back(temp);
-			else{
+			else
 				invalidFlag = true;
-				cout << temp.path << endl; //for testing
-			}
 		}
 		if (picList.size() == 0){
 			MessageBox::Show("ERROR: No files could be laoded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -590,6 +591,7 @@ private: System::Void selectRight_Click(System::Object^  sender, System::EventAr
 
 //generate the list of image pairs for the user to compare.
 void genComparisons(){
+	srand(time(NULL));
 	for (int i = 0; i < picList.size(); i++)
 	{
 		unsigned int a = rand() % picList.size(), b = rand() % picList.size();
@@ -614,14 +616,11 @@ void changeComparison(int increment){
 	crntCpr+=increment;
 	if (index.size() < crntCpr + 1)
 		genComparisons();
-	cout << "Comparing : " << picList[get<0>(index[crntCpr])].path << endl << "and \n" << picList[get<1>(index[crntCpr])].path << endl;//test
 	leftImage->Load(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
 	rightImage->Load(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 	updateRankings();
-	cout << "Comparing : " << picList[get<0>(index[crntCpr])].path << endl << "and \n" << picList[get<1>(index[crntCpr])].path << "\n\n\n\n";//test
-
 }
 
 //Go back to the previous comparison
@@ -639,19 +638,47 @@ private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, Sy
 
 //Open the left image in the default image viewing program
 private: System::Void leftImage_Click(System::Object^  sender, System::EventArgs^  e) {
-	cout << picList[get<0>(index[crntCpr])].path << endl; //test
 	if(picList.size()>0)
 		Process::Start(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()));
 }
 
 //Open the right image in the default image viewing program
 private: System::Void rightImage_Click(System::Object^  sender, System::EventArgs^  e) {
-	cout << picList[get<1>(index[crntCpr])].path << endl;//test
 	if (picList.size()>0)
 		Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }
 
-};
+private: System::Void topImages_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size() > 0){
+		string holder = getFullPath(topImages->SelectedItem->ToString());
+		Process::Start(gcnew String(holder.c_str()));
+	}
 }
 
+private: System::Void bottomImages_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size() > 0){
+		string holder = getFullPath(bottomImages->SelectedItem->ToString());
+		Process::Start(gcnew String(holder.c_str()));
+	}
+}
 
+private: string getFullPath(System::String^ partial){
+	msclr::interop::marshal_context context;
+	string holder = context.marshal_as<std::string>(partial);
+	string target;
+	for (int i = holder.size(); i > 0; i--){
+		if (holder[i] == ' '){
+			target.assign(holder.begin()+i+1, holder.end());
+			break;
+		}
+	 }
+	for (int i = 0; i < picList.size(); i++){
+		size_t found = picList[i].path.find(target);
+		if (found != string::npos){
+			return picList[i].path;
+		}
+	}
+}
+
+};
+}
