@@ -313,7 +313,7 @@ namespace PictureSorting {
 			this->topImages->Name = L"topImages";
 			this->topImages->Size = System::Drawing::Size(324, 160);
 			this->topImages->TabIndex = 11;
-			this->topImages->SelectedIndexChanged += gcnew System::EventHandler(this, &container::topImages_SelectedIndexChanged);
+			this->topImages->DoubleClick += gcnew System::EventHandler(this, &container::topImages_DoubleClick);
 			// 
 			// bottomImages
 			// 
@@ -323,7 +323,7 @@ namespace PictureSorting {
 			this->bottomImages->Name = L"bottomImages";
 			this->bottomImages->Size = System::Drawing::Size(324, 160);
 			this->bottomImages->TabIndex = 12;
-			this->bottomImages->SelectedIndexChanged += gcnew System::EventHandler(this, &container::bottomImages_SelectedIndexChanged);
+			this->bottomImages->DoubleClick += gcnew System::EventHandler(this, &container::bottomImages_DoubleClick);
 			// 
 			// button4
 			// 
@@ -413,6 +413,7 @@ namespace PictureSorting {
 			this->Name = L"container";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Picture Sorting";
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &container::container_KeyDown);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->EndInit();
 			this->menuStrip1->ResumeLayout(false);
@@ -420,7 +421,7 @@ namespace PictureSorting {
 			this->groupBox1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
-
+			this->KeyPreview = true;
 		}
 #pragma endregion
 
@@ -473,11 +474,12 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		picList = getFiles(folderName);
 		updateRankings();
 		changeComparison(0);
+		msclr::interop::marshal_context context;
+		currentDirectory = context.marshal_as<std::string>(folderName);
 	}
 	else
 		MessageBox::Show("ERROR: Inavlid Choice.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-	msclr::interop::marshal_context context;
-	currentDirectory = context.marshal_as<std::string>(folderName);
+	
 }
 
 void saveUserFile()
@@ -520,6 +522,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)
 	{
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
+		vector<image> tempList;
 		fileName = openExistingSave->FileName;
 		msclr::interop::marshal_context context;
 		std::string holder,score = "";
@@ -541,18 +544,21 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			temp.score = atoi(score.c_str());
 			score = "";
 			if (validateFile(temp.path))
-				picList.push_back(temp);
-			else
+				tempList.push_back(temp);
+			else{
 				invalidFlag = true;
+				cout << "invalid file\n";
+			}
 		}
-		if (picList.size() == 0){
-			MessageBox::Show("ERROR: No files could be laoded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		if (tempList.size() == 0){
+			MessageBox::Show("ERROR: No files could be loaded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 			errorFlag = true;
 		}
 		if (invalidFlag)
 			MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		(*reader).Close();
 		if (!errorFlag){
+			picList = tempList;
 			currentDirectory = getDirectory(picList);
 			changeComparison(0);
 			openedFlag = true;
@@ -565,24 +571,34 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
-		if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
-			picList[get<0>(index[crntCpr])].score++;
-
-		else
-			picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
-
+		selectItem(2);
 		changeComparison(1);
 	}
 	else
 		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
-private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
-	if (picList.size()>0){
+
+private: void selectItem(int choice){
+	switch (choice){
+	case 1:
 		if (picList[get<0>(index[crntCpr])].score < picList[get<1>(index[crntCpr])].score)
 			picList[get<1>(index[crntCpr])].score++;
 		else
 			picList[get<1>(index[crntCpr])].score = picList[get<0>(index[crntCpr])].score + 1;
+		break;
+	case 2:
+		if (picList[get<0>(index[crntCpr])].score > picList[get<1>(index[crntCpr])].score)
+			picList[get<0>(index[crntCpr])].score++;
 
+		else
+			picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
+		break;
+	}
+
+}
+private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size()>0){
+		selectItem(1);
 		changeComparison(1);
 	}
 	else
@@ -648,14 +664,14 @@ private: System::Void rightImage_Click(System::Object^  sender, System::EventArg
 		Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }
 
-private: System::Void topImages_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+private: System::Void topImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(topImages->SelectedItem->ToString());
 		Process::Start(gcnew String(holder.c_str()));
 	}
 }
 
-private: System::Void bottomImages_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+private: System::Void bottomImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(bottomImages->SelectedItem->ToString());
 		Process::Start(gcnew String(holder.c_str()));
@@ -680,5 +696,17 @@ private: string getFullPath(System::String^ partial){
 	}
 }
 
+private: System::Void container_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+	if (e->KeyCode == Keys::F1)
+		ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
+	if ((e->KeyCode == Keys::Right) && picList.size() > 0){
+		selectItem(1);
+		changeComparison(1);
+	}
+	if ((e->KeyCode == Keys::Left) && picList.size() > 0){
+		selectItem(2);
+		changeComparison(1);
+	}
+}
 };
 }
