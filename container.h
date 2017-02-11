@@ -38,7 +38,7 @@ namespace PictureSorting {
 				delete components;
 			}
 		}
-	private:bool openedFlag = false;
+	private:bool openedFlag = false, updateContinuosly = false;
 	private: System::String^ fileName;
 	private: int crntCpr = 0;
 	private: System::Windows::Forms::PictureBox^  leftImage;
@@ -75,6 +75,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::OpenFileDialog^  openExistingSave;
 	private: System::Windows::Forms::Button^  trimCollection;
 	private: System::Windows::Forms::GroupBox^  groupBox1;
+
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -409,6 +410,7 @@ namespace PictureSorting {
 			this->Controls->Add(this->rightImage);
 			this->Controls->Add(this->leftImage);
 			this->Controls->Add(this->menuStrip1);
+			this->KeyPreview = true;
 			this->MainMenuStrip = this->menuStrip1;
 			this->Name = L"container";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -421,7 +423,7 @@ namespace PictureSorting {
 			this->groupBox1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
-			this->KeyPreview = true;
+
 		}
 #pragma endregion
 
@@ -434,10 +436,11 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 	updateRankings();
 }
 
+//updates the top and bottom lists with sorted scores.
 void updateRankings()
 {
 	vector<image> sortedList = picList;
-	tempSort(&sortedList);
+	sortedList = imageSort(sortedList);
 	this->topImages->Items->Clear();
 	this->bottomImages->Items->Clear();
 	for (int i = 0; i < sortedList.size(); i++)
@@ -461,6 +464,7 @@ void updateRankings()
 }
 
 private: System::Void deleteItem_Click(System::Object^  sender, System::EventArgs^  e) {
+
 }
 
 private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -550,10 +554,12 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 				cout << "invalid file\n";
 			}
 		}
+		//if no items are loaded throw an error
 		if (tempList.size() == 0){
 			MessageBox::Show("ERROR: No files could be loaded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 			errorFlag = true;
 		}
+		//if some images can not be loaded or are not valid tell the user via error box
 		if (invalidFlag)
 			MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		(*reader).Close();
@@ -561,6 +567,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			picList = tempList;
 			currentDirectory = getDirectory(picList);
 			changeComparison(0);
+			updateRankings();
 			openedFlag = true;
 		}
 	}
@@ -577,7 +584,7 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 	else
 		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
-
+//User chose an image and that image will now increment its score by either 1 or be set to 1+score of other image
 private: void selectItem(int choice){
 	switch (choice){
 	case 1:
@@ -596,6 +603,7 @@ private: void selectItem(int choice){
 	}
 
 }
+
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
 		selectItem(1);
@@ -636,7 +644,8 @@ void changeComparison(int increment){
 	rightImage->Load(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
-	updateRankings();
+	if(updateContinuosly)
+		updateRankings();
 }
 
 //Go back to the previous comparison
@@ -663,14 +672,14 @@ private: System::Void rightImage_Click(System::Object^  sender, System::EventArg
 	if (picList.size()>0)
 		Process::Start(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()));
 }
-
+		 //When an item in the listbox is double clicked, it is opened externally
 private: System::Void topImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(topImages->SelectedItem->ToString());
 		Process::Start(gcnew String(holder.c_str()));
 	}
 }
-
+//When an item in the listbox is double clicked, it is opened externally
 private: System::Void bottomImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(bottomImages->SelectedItem->ToString());
@@ -699,14 +708,19 @@ private: string getFullPath(System::String^ partial){
 private: System::Void container_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 	if (e->KeyCode == Keys::F1)
 		ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
-	if ((e->KeyCode == Keys::Right) && picList.size() > 0){
+	if ((e->KeyCode == Keys::D) && picList.size() > 0){
 		selectItem(1);
 		changeComparison(1);
 	}
-	if ((e->KeyCode == Keys::Left) && picList.size() > 0){
+	if ((e->KeyCode == Keys::A) && picList.size() > 0){
 		selectItem(2);
 		changeComparison(1);
 	}
+	if (e->KeyCode == Keys::S && picList.size() > 0){
+		saveUserFile();
+	}
 }
+
+
 };
 }

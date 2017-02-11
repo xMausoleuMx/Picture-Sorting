@@ -115,3 +115,33 @@ static string getDirectory(vector<image> list)
 	directory.assign(list[0].path.c_str(), marker);
 	return directory;
 }
+
+static vector<image> merge(vector<image> left, vector<image> right)
+{
+	vector<image>holder;
+	int i = 0, k = 0;
+	do{
+		if (i < left.size() && (left[i].score > right[k].score)){
+			holder.push_back(left[i]);
+			i++;
+		}
+		else {
+			holder.push_back(right[k]);
+			k++;
+		}
+	} while (i < left.size() && k < right.size());
+	return holder;
+}
+
+static vector<image> imageSort(vector<image> list)
+{
+	if (list.size() == 1)
+		return list;
+	vector<image> left, right;
+	left.assign(list.begin(),list.begin()+(list.size()/2));
+	right.assign(list.begin() + (list.size() / 2) + 1, list.end());
+	imageSort(left);
+	imageSort(right);
+	list = merge(left, right);
+	return list;
+}
