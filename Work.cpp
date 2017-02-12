@@ -121,27 +121,43 @@ static vector<image> merge(vector<image> left, vector<image> right)
 	vector<image>holder;
 	int i = 0, k = 0;
 	do{
-		if (i < left.size() && (left[i].score > right[k].score)){
-			holder.push_back(left[i]);
-			i++;
-		}
-		else {
+		if (i >= left.size()){
 			holder.push_back(right[k]);
 			k++;
 		}
-	} while (i < left.size() && k < right.size());
+		if (k >= right.size()){
+			holder.push_back(left[i]);
+			i++;
+		}
+		else if ((left[i].score > right[k].score)){
+			holder.push_back(left[i]);
+			i++;
+		}
+		else if (left[i].score <= right[k].score){
+			holder.push_back(right[k]);
+			k++;
+		}
+	} while (i < left.size() || k < right.size());
+	for (int i = 0; i < holder.size(); i++)
+	{
+		cout << holder[i].score << " " ;
+	}
+	cout << "\nsize: "<< holder.size() <<endl;
 	return holder;
 }
 
-static vector<image> imageSort(vector<image> list)
+static void imageSort(vector<image>* list)
 {
-	if (list.size() == 1)
-		return list;
+	//cout << "original: " << list->size() << endl;
+	if (list->size() <= 1)
+		return;
 	vector<image> left, right;
-	left.assign(list.begin(),list.begin()+(list.size()/2));
-	right.assign(list.begin() + (list.size() / 2) + 1, list.end());
-	imageSort(left);
-	imageSort(right);
-	list = merge(left, right);
-	return list;
+	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
+	//cout << "left: " << left.size() << endl;
+	right.assign(list->begin() + (list->size() / 2), list->end());
+	//cout << "right: " << right.size() << endl;
+	imageSort(&left);
+	imageSort(&right);
+	(*list) = merge(left, right);
+	return;
 }
