@@ -3,15 +3,16 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <Windows.h>
 #include <msclr\marshal_cppstd.h>
 #include <sstream>
+#include <algorithm>
 #include <ctime>
 
 using namespace std;
 using namespace System;
 using namespace System::IO;
 using namespace System::Collections;
+
 
 static struct image{
 	string path;
@@ -22,6 +23,11 @@ bool saveFile();
 void tempSort(vector<image>* list);
 vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
 vector<image> sortPics(vector<image> list);
+
+static string Stringtostring(System::String^ x){
+	msclr::interop::marshal_context context;
+	return context.marshal_as<std::string>(x);
+}
 
 static void tempSort(vector<image>* list)
 {
@@ -65,8 +71,7 @@ static bool checkIfImage(string path)
 static vector<image> getFiles(System::String^ directory)
 {
 	vector<image> list, temp;
-	msclr::interop::marshal_context context;
-	string inputFolderPath = context.marshal_as<std::string>(directory);
+	string inputFolderPath = Stringtostring(directory);
 	System::String^ path = gcnew System::String(directory);
 	array<System::String^>^fileEntries = Directory::GetFiles(path);
 	IEnumerator^ files = fileEntries->GetEnumerator();
@@ -74,7 +79,7 @@ static vector<image> getFiles(System::String^ directory)
 	{
 		String^ fileName = safe_cast<String^>(files->Current);
 		image temp;
-		temp.path = context.marshal_as<std::string>(fileName);
+		temp.path = Stringtostring(fileName);
 		if (checkIfImage(temp.path))
 			list.push_back(temp);
 	}	

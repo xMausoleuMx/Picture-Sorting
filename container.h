@@ -84,6 +84,8 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripStatusLabel^  leftPath;
 	private: System::Windows::Forms::ToolStripStatusLabel^  rightPath;
 	private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabel1;
+	private: System::Windows::Forms::ToolStripProgressBar^  toolStripProgressBar1;
+
 
 
 
@@ -135,6 +137,7 @@ namespace PictureSorting {
 			this->leftPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->rightPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->toolStripProgressBar1 = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -253,7 +256,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -273,21 +276,21 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			this->optionsToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::optionsToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -319,6 +322,7 @@ namespace PictureSorting {
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
 			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
+			this->fAQToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::fAQToolStripMenuItem_Click);
 			// 
 			// topImages
 			// 
@@ -387,9 +391,9 @@ namespace PictureSorting {
 			// 
 			// statusStrip1
 			// 
-			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
-				this->leftPath, this->toolStripStatusLabel1,
-					this->rightPath
+			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
+				this->toolStripProgressBar1,
+					this->leftPath, this->toolStripStatusLabel1, this->rightPath
 			});
 			this->statusStrip1->Location = System::Drawing::Point(0, 527);
 			this->statusStrip1->Name = L"statusStrip1";
@@ -414,6 +418,12 @@ namespace PictureSorting {
 			this->rightPath->Name = L"rightPath";
 			this->rightPath->Size = System::Drawing::Size(32, 17);
 			this->rightPath->Text = L"right";
+			// 
+			// toolStripProgressBar1
+			// 
+			this->toolStripProgressBar1->Name = L"toolStripProgressBar1";
+			this->toolStripProgressBar1->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->toolStripProgressBar1->Size = System::Drawing::Size(100, 16);
 			// 
 			// container
 			// 
@@ -499,8 +509,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		picList = getFiles(folderName);
 		updateRankings();
 		changeComparison(0);
-		msclr::interop::marshal_context context;
-		currentDirectory = context.marshal_as<std::string>(folderName);
+		currentDirectory = Stringtostring(folderName);
 	}
 	else
 		MessageBox::Show("ERROR: Inavlid Choice.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -544,19 +553,34 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 		MessageBox::Show("ERROR: There is no currently loaded comparison directory to save.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
+private: int countFileLines(String^ filePath)
+{
+	StreamReader^ r = gcnew StreamReader(filePath);
+	 int i = 0;
+	 while (r->ReadLine())
+		 i++;
+
+	 return i;
+}
+
+
 //open previously saved directory comparison
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)//ask user to select the save file
 	{
+		toolStripProgressBar1->Visible = true;
+		toolStripProgressBar1->Minimum = 1;
+		toolStripProgressBar1->Maximum = countFileLines(openExistingSave->FileName); //unknown
+		toolStripProgressBar1->Value = 1;
+		toolStripProgressBar1->Step = 1;
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
 		vector<image> tempList;
 		fileName = openExistingSave->FileName;
-		msclr::interop::marshal_context context;
 		std::string holder,score = "";
 		bool flag = false, invalidFlag = false, errorFlag=false;
 		while(reader->Peek()>=0)
 		{
-			holder = context.marshal_as<std::string>(reader->ReadLine());
+			holder = Stringtostring(reader->ReadLine());
 			image temp;
 			for (int i = 0; i < holder.size(); i++)
 			{
@@ -574,6 +598,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 				tempList.push_back(temp);
 			else
 				invalidFlag = true;
+			toolStripProgressBar1->PerformStep();
 		}
 		//if no items are loaded throw an error
 		if (tempList.size() == 0){
@@ -593,9 +618,8 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			openedFlag = true; //flag to show that that user opened a pre existing file
 		}
 	}
-	else{
+	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
-	}
 }
 
 
@@ -640,22 +664,44 @@ private: System::Void selectRight_Click(System::Object^  sender, System::EventAr
 //generate the list of image pairs for the user to compare.
 void genComparisons(){
 	srand(time(NULL));
-	for (int i = 0; i < picList.size(); i++)
+	int k = picList.size()-1;
+	while (k > 0)
 	{
-		unsigned int a = rand() % picList.size(), b = rand() % picList.size();
 		bool flag = false;
-		while ((a == b) || !flag )
-		{
-			for (int i = 0; i < index.size(); i++)
-				if (!((get<0>(index[i]) == a || get<0>(index[i]) == b) && (get<1>(index[i]) == a || get<1>(index[i]) == b)))
-					flag = true;
-			if (index.size() == 0)
-				flag = true;
-			a = rand() % picList.size();
-			b = rand() % picList.size();
+		int c = rand() % k;
+		
+		if (picList[c].score == picList[k].score){ //if the two chosen pictures have the same score search through the generated comparisons to look and see if either has appeared yet
+			for (int i = 0; i < index.size(); i++){
+				if (!((c == get<0>(index[i]) || k == get<0>(index[i])) || (c == get<1>(index[i]) || k == get<1>(index[i])))){
+					pair<int, int> temp(c, k);
+					index.push_back(temp);
+					k--;
+					break;
+				}
+			}
 		}
-		std::pair<int, int> temp(a, b);
-		index.push_back(temp);
+		else{
+			for (int i = c; i < k; i++){//if the two chosen pictures do not have the same score search for one that does. only searches up to maintain some randomness
+				if (picList[i].score == picList[k].score && i != k){
+					for (int i = 0; i < index.size(); i++){
+						if (!((c == get<0>(index[i]) || k == get<0>(index[i])) || (c == get<1>(index[i]) || k == get<1>(index[i])))){
+							pair<int, int> temp(i, k);
+							index.push_back(temp);
+							flag = true;
+							k--;
+						}
+					}
+				}
+			}
+			if (!flag){
+				pair<int, int> temp(c, k);
+				index.push_back(temp);
+				k--;
+			}
+
+		}
+		flag = false;
+		std::random_shuffle(index.begin(), index.end());
 	}
  }
 
@@ -698,7 +744,7 @@ private: System::Void button4_Click(System::Object^  sender, System::EventArgs^ 
 
 //open the github page for this program.
 private: System::Void websiteToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
+	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting");
 }
 
 //Open the left image in the default image viewing program
@@ -729,8 +775,7 @@ private: System::Void bottomImages_DoubleClick(System::Object^  sender, System::
 
 //used to get the partial path displayed in the listboxes and search for their full paths
 private: string getFullPath(System::String^ partial){
-	msclr::interop::marshal_context context;
-	string holder = context.marshal_as<std::string>(partial);
+	string holder = Stringtostring(partial);
 	string target;
 	for (int i = holder.size(); i > 0; i--){ //cut off the score and just retrieve the partial path.
 		if (holder[i] == ' '){
@@ -749,7 +794,9 @@ private: string getFullPath(System::String^ partial){
 //shortcut keys
 private: System::Void container_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 	if (e->KeyCode == Keys::F1)
-		ShellExecute(0, 0, L"https://github.com/xMausoleuMx/Picture-Sorting", 0, 0, SW_SHOW);
+		Process::Start("https://github.com/xMausoleuMx/Picture-Sorting");
+	if (e->KeyCode == Keys::F4)
+		exit(EXIT_SUCCESS);
 	if ((e->KeyCode == Keys::D) && picList.size() > 0){
 		selectItem(1);
 		changeComparison(1);
@@ -763,10 +810,12 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 	}
 }
 
-
 private: System::Void optionsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	optionsForm ^ form = gcnew optionsForm;
 	form->ShowDialog();
+}
+private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
 }
 };
 
