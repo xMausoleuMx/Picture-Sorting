@@ -112,7 +112,6 @@ static string getDirectory(vector<image> list)
 				break;
 			if ((list[i].path[y] != holder.path[y]) && (y < marker)){
 				marker = y;
-				cout << marker << endl;
 				break;
 			}
 		}

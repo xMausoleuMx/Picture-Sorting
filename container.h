@@ -508,6 +508,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
 		updateRankings();
+		genComparisons();
 		changeComparison(0);
 		currentDirectory = Stringtostring(folderName);
 	}
@@ -613,6 +614,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 			picList = tempList;
 			tempSort(&picList);
 			currentDirectory = getDirectory(picList);
+			genComparisons();
 			changeComparison(0);
 			updateRankings();
 			openedFlag = true; //flag to show that that user opened a pre existing file
@@ -620,6 +622,9 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 	}
 	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
+
+	toolStripProgressBar1->Visible = false;
+
 }
 
 
@@ -667,24 +672,24 @@ void genComparisons(){
 	int k = picList.size()-1;
 	while (k > 0)
 	{
-		bool flag = false;
+		bool flag = false, inflag = false;
 		int c = rand() % k;
-		
-		if (picList[c].score == picList[k].score){ //if the two chosen pictures have the same score search through the generated comparisons to look and see if either has appeared yet
-			for (int i = 0; i < index.size(); i++){
-				if (!((c == get<0>(index[i]) || k == get<0>(index[i])) || (c == get<1>(index[i]) || k == get<1>(index[i])))){
+		inflag = checkIfCompared(c);
+		if (checkIfCompared(k)){
+			k--;
+			inflag = true;
+		}
+		if (!inflag){ 
+			if (picList[c].score == picList[k].score){//if the two chosen pictures have the same score search through the generated comparisons to look and see if either has appeared yet
 					pair<int, int> temp(c, k);
 					index.push_back(temp);
 					k--;
 					break;
-				}
 			}
-		}
-		else{
-			for (int i = c; i < k; i++){//if the two chosen pictures do not have the same score search for one that does. only searches up to maintain some randomness
-				if (picList[i].score == picList[k].score && i != k){
-					for (int i = 0; i < index.size(); i++){
-						if (!((c == get<0>(index[i]) || k == get<0>(index[i])) || (c == get<1>(index[i]) || k == get<1>(index[i])))){
+			else{
+				for (int i = c; i < k; i++){//if the two chosen pictures do not have the same score search for one that does. only searches up to maintain some randomness
+					if (picList[i].score == picList[k].score && i != k){
+						if (!checkIfCompared(i)){
 							pair<int, int> temp(i, k);
 							index.push_back(temp);
 							flag = true;
@@ -692,30 +697,47 @@ void genComparisons(){
 						}
 					}
 				}
-			}
-			if (!flag){
-				pair<int, int> temp(c, k);
-				index.push_back(temp);
-				k--;
-			}
+				if (!flag){
+					pair<int, int> temp(c, k);
+					index.push_back(temp);
+					k--;
+				}
 
+			}
 		}
-		flag = false;
-		std::random_shuffle(index.begin(), index.end());
 	}
+	std::random_shuffle(index.begin(), index.end());
  }
+
+//check to see if a item already has a comparison
+bool checkIfCompared(int c){
+	bool inflag = false;
+	for (int i = 0; i < index.size(); i++){
+		if (c == get<0>(index[i]) || c == get<1>(index[i])){
+			return true;
+		}
+	}
+	return false;
+}
 
 //Change the comparison of the two images. Negative numbers to go back one.
 void changeComparison(int increment){
 	crntCpr+=increment;
-	if (index.size() < crntCpr + 1)
+	if (index.size() < crntCpr+1){
+		pair<int, int> temp = index[crntCpr-1];
+		index.clear();
 		genComparisons();
+		index.insert(index.begin(),temp);
+		crntCpr = 1;
+	}
 	try{
 		leftImage->Load(leftString());
 	}
 	catch (...){ //mostly to catch files that can not be loaded by picturebox (usually corrupt) 
 		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		picList[get<0>(index[crntCpr])].path = "";
+		picList.erase(picList.begin()+ get<0>(index[crntCpr]));
+		index.clear();
+		genComparisons();
 		changeComparison(1);
 	}
 	try{
@@ -723,7 +745,9 @@ void changeComparison(int increment){
 	}
 	catch (...){//mostly to catch files that can not be loaded by picturebox (usually corrupt) 
 		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.\n", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		picList[get<1>(index[crntCpr])].path = "";
+		picList.erase(picList.begin() + get<1>(index[crntCpr]));
+		index.clear();
+		genComparisons();
 		changeComparison(1);
 	}
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
