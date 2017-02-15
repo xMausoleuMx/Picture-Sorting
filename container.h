@@ -6,7 +6,8 @@
 static vector<image> picList;
 static vector<std::pair<int,int>> index;
 static std::string currentDirectory;
-
+static bool  updateContinuosly = false;
+static vector<int>shorcuts{112,115, 65, 68, 83};
 #define leftString()(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()))
 #define rightString()(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()))
 
@@ -43,7 +44,7 @@ namespace PictureSorting {
 				delete components;
 			}
 		}
-	private:bool openedFlag = false, updateContinuosly = false;
+	private:bool openedFlag = false, saveDifference = false;
 	private: System::String^ fileName;
 	private: int crntCpr = 0;
 	private: System::Windows::Forms::PictureBox^  leftImage;
@@ -463,7 +464,7 @@ namespace PictureSorting {
 
 //Close the program without saving.
 private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	exit(EXIT_SUCCESS);
+	quit();
 }
 
 //button to trigger the refresh of the top and bottom lists
@@ -526,6 +527,7 @@ void saveUserFile()
 			writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
 
 		writer->Close();
+		saveDifference = false;
 	}
 	else
 	{
@@ -537,6 +539,7 @@ void saveUserFile()
 			for (int i = 0; i < picList.size(); i++)
 				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
 			writer->Close();
+			saveDifference = false;
 		}
 	}
 }
@@ -545,7 +548,8 @@ void saveUserFile()
 private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0)//only save if there is a directory loaded
 		saveUserFile();
-	exit(EXIT_SUCCESS);
+	if (!saveDifference)
+		quit();
 }
 private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if(picList.size() > 0)
@@ -627,7 +631,6 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 
 }
 
-
 //User chose an image and that image will now increment its score by either 1 or be set to 1+score of other image
 private: void selectItem(int choice){
 	switch (choice){
@@ -645,7 +648,7 @@ private: void selectItem(int choice){
 			picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
 		break;
 	}
-
+	saveDifference = true;
 }
 
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -820,7 +823,7 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 	if (e->KeyCode == Keys::F1)
 		Process::Start("https://github.com/xMausoleuMx/Picture-Sorting");
 	if (e->KeyCode == Keys::F4)
-		exit(EXIT_SUCCESS);
+		quit();
 	if ((e->KeyCode == Keys::D) && picList.size() > 0){
 		selectItem(1);
 		changeComparison(1);
@@ -835,11 +838,27 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 }
 
 private: System::Void optionsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	optionsForm ^ form = gcnew optionsForm;
+	bool *holder = updateContinuosly;
+	optionsForm ^ form = gcnew optionsForm(holder);
 	form->ShowDialog();
 }
 private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
+}
+
+void quit(){
+	if (!saveDifference)
+		exit(EXIT_SUCCESS);
+	else{
+		if (MessageBox::Show("You have unsaved changes to your directory, would\nyou like to save them before you quit?", "Save?", MessageBoxButtons::YesNo, MessageBoxIcon::Asterisk) == System::Windows::Forms::DialogResult::Yes){
+			saveUserFile();
+			quit();
+		}
+		else
+			exit(EXIT_SUCCESS);
+	}
+
+
 }
 };
 

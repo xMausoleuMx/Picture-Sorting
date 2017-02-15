@@ -19,6 +19,7 @@ static struct image{
 	int score = 0;
 };
 
+
 bool saveFile();
 void tempSort(vector<image>* list);
 vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
