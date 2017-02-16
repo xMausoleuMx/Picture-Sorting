@@ -568,7 +568,6 @@ private: int countFileLines(String^ filePath)
 	 return i;
 }
 
-
 //open previously saved directory comparison
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)//ask user to select the save file
@@ -857,8 +856,6 @@ void quit(){
 		else
 			exit(EXIT_SUCCESS);
 	}
-
-
 }
 };
 
