@@ -135,10 +135,10 @@ namespace PictureSorting {
 			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
+			this->toolStripProgressBar1 = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			this->leftPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->rightPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
-			this->toolStripProgressBar1 = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -380,7 +380,9 @@ namespace PictureSorting {
 			// 
 			// groupBox1
 			// 
-			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
+			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->groupBox1->Controls->Add(this->bottomImages);
 			this->groupBox1->Controls->Add(this->topImages);
 			this->groupBox1->Location = System::Drawing::Point(474, 27);
@@ -388,7 +390,6 @@ namespace PictureSorting {
 			this->groupBox1->Size = System::Drawing::Size(324, 362);
 			this->groupBox1->TabIndex = 19;
 			this->groupBox1->TabStop = false;
-			this->groupBox1->Text = L"groupBox1";
 			// 
 			// statusStrip1
 			// 
@@ -401,6 +402,12 @@ namespace PictureSorting {
 			this->statusStrip1->Size = System::Drawing::Size(1269, 22);
 			this->statusStrip1->TabIndex = 20;
 			this->statusStrip1->Text = L"statusStrip1";
+			// 
+			// toolStripProgressBar1
+			// 
+			this->toolStripProgressBar1->Name = L"toolStripProgressBar1";
+			this->toolStripProgressBar1->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->toolStripProgressBar1->Size = System::Drawing::Size(100, 16);
 			// 
 			// leftPath
 			// 
@@ -419,12 +426,6 @@ namespace PictureSorting {
 			this->rightPath->Name = L"rightPath";
 			this->rightPath->Size = System::Drawing::Size(32, 17);
 			this->rightPath->Text = L"right";
-			// 
-			// toolStripProgressBar1
-			// 
-			this->toolStripProgressBar1->Name = L"toolStripProgressBar1";
-			this->toolStripProgressBar1->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->toolStripProgressBar1->Size = System::Drawing::Size(100, 16);
 			// 
 			// container
 			// 
@@ -524,7 +525,7 @@ void saveUserFile()
 	{
 		StreamWriter^ writer = gcnew StreamWriter(fileName);
 		for (int i = 0; i < picList.size(); i++)
-			writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+			writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
 
 		writer->Close();
 		saveDifference = false;
@@ -580,24 +581,29 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
 		vector<image> tempList;
 		fileName = openExistingSave->FileName;
-		std::string holder,score = "";
-		bool flag = false, invalidFlag = false, errorFlag=false;
+		std::string holder,score = "",compare = "";
+		bool invalidFlag = false, errorFlag=false;
+		int flag = 0;
 		while(reader->Peek()>=0)
 		{
 			holder = Stringtostring(reader->ReadLine());
 			image temp;
 			for (int i = 0; i < holder.size(); i++)
 			{
-				if (flag)
+				if (flag == 1 && holder[i] != ',')
 					score += holder[i];
+				if (flag == 2)
+					compare += holder[i];
 				if(holder[i] == ',')
-					flag = true;
+					flag++;
 				if (!flag && holder[i] != ',')
 					temp.path += holder[i];
 			}
-			flag = false;
+			flag = 0;
 			temp.score = atoi(score.c_str());//convert score to an int
+			temp.comparisons = atoi(compare.c_str());
 			score = "";
+			compare = "";
 			if (validateFile(temp.path))
 				tempList.push_back(temp);
 			else
@@ -615,7 +621,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 		(*reader).Close();
 		if (!errorFlag){
 			picList = tempList;
-			tempSort(&picList);
+			imageSort(&picList);
 			currentDirectory = getDirectory(picList);
 			genComparisons();
 			changeComparison(0);
@@ -647,6 +653,8 @@ private: void selectItem(int choice){
 			picList[get<0>(index[crntCpr])].score = picList[get<1>(index[crntCpr])].score + 1;
 		break;
 	}
+	picList[get<0>(index[crntCpr])].comparisons++;
+	picList[get<1>(index[crntCpr])].comparisons++;
 	saveDifference = true;
 }
 
@@ -682,7 +690,7 @@ void genComparisons(){
 			inflag = true;
 		}
 		if (!inflag){ 
-			if (picList[c].score == picList[k].score){//if the two chosen pictures have the same score search through the generated comparisons to look and see if either has appeared yet
+			if (picList[c].score == picList[k].score){
 					pair<int, int> temp(c, k);
 					index.push_back(temp);
 					k--;
@@ -704,12 +712,52 @@ void genComparisons(){
 					index.push_back(temp);
 					k--;
 				}
-
 			}
 		}
 	}
-	std::random_shuffle(index.begin(), index.end());
+	comparisonSort(&index);
+	for (int i = 0; i < index.size(); i++){
+		cout << picList[get<0>(index[i])].comparisons << " and " << picList[get<1>(index[i])].comparisons << endl;
+	}
  }
+
+vector<std::pair<int, int>> comparisonMerge(vector<std::pair<int, int>> left, vector<std::pair<int, int>> right)
+{
+	vector<std::pair<int, int>> holder;
+	int i = 0, k = 0;
+	do{
+		if ((get<0>(left[i]) > get<1>(left[i]) ? picList[get<0>(left[i])].comparisons : picList[get<1>(left[i])].comparisons) > (get<0>(right[i]) > get<1>(right[i]) ? picList[get<0>(right[i])].comparisons : picList[get<1>(right[i])].comparisons)){
+			holder.push_back(left[i]);
+			i++;
+		}
+		else{
+			holder.push_back(right[k]);
+			k++;
+		}
+	} while (i < left.size() && k < right.size());
+	while (i < left.size()){
+		holder.push_back(left[i]);
+		i++;
+	}
+	while (k < right.size()){
+		holder.push_back(right[k]);
+		k++;
+	}
+	return holder;
+}
+
+void comparisonSort(vector<std::pair<int, int>>* list)
+{
+	if (list->size() <= 1)
+		return;
+	vector<std::pair<int, int>> left, right;
+	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
+	right.assign(list->begin() + (list->size() / 2), list->end());
+	comparisonSort(&left);
+	comparisonSort(&right);
+	(*list) = comparisonMerge(left, right);
+	return;
+}
 
 //check to see if a item already has a comparison
 bool checkIfCompared(int c){
