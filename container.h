@@ -6,6 +6,7 @@
 static vector<image> picList;
 static vector<std::pair<int,int>> index;
 static std::string currentDirectory;
+static vector<setting> settings;
 static bool  updateContinuosly = false;
 static vector<int>shorcuts{112,115, 65, 68, 83};
 #define leftString()(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()))
@@ -459,9 +460,62 @@ namespace PictureSorting {
 			this->statusStrip1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
-
+			loadSettings(); //load settings on startup
 		}
 #pragma endregion
+
+//load the users settings from a file.
+void loadSettings(){
+	if (validateFile("config.ini")){ //checks to make sure there is an ini file to read from
+		StreamReader^ reader = gcnew StreamReader("config.ini");
+		string holder, temp = "";
+		int y = 0;
+		bool flag = false;
+		while (reader->Peek() >= 0)
+		{
+			setting k;
+			holder = Stringtostring(reader->ReadLine());
+			for (int i = 0; i < holder.size(); i++)
+			{
+				if (flag)
+					temp += holder[i];
+				if (holder[i] == '='){
+					flag = true;
+					i++;
+				}
+			}
+			if (!temp.compare("false"))
+				k.flag = false;
+			else
+				k.flag = true;
+			settings.push_back(k);
+			flag = false;
+			if (y == 3 && temp.compare("false")){
+				cout << temp;
+				//openFile(gcnew String(temp.c_str())); not working yet
+			}
+			y++;
+			temp = "";
+		}
+
+	}
+	else{//if there is no ini file generate a new one with default values
+		MessageBox::Show("ERROR: No configuration file could be found.\nGenerating one with default values", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		StreamWriter^ writer = gcnew StreamWriter("config.ini");
+		writer->WriteLine("continuoslyUpdate = false");
+		writer->WriteLine("openSpecificDirectory = false");
+		writer->WriteLine("sortByScore = true");
+		writer->WriteLine("sortByRating = false");
+		writer->Close();
+		setting temp;
+		temp.flag = false;
+		settings.push_back(temp);
+		settings.push_back(temp);
+		settings.push_back(temp);
+		temp.flag = true;
+		settings.insert(settings.begin() + 3, temp);
+	}
+}
 
 //Close the program without saving.
 private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -500,6 +554,7 @@ void updateRankings()
 	}
 }
 
+//open up a new directory of images
 private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	openedFlag = false;
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
@@ -519,9 +574,10 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	
 }
 
+//save the current scores and comparisons to a csv to be opened later
 void saveUserFile()
 {
-	if (openedFlag)
+	if (openedFlag)//if the current directory was read from a file update that same file
 	{
 		StreamWriter^ writer = gcnew StreamWriter(fileName);
 		for (int i = 0; i < picList.size(); i++)
@@ -530,7 +586,7 @@ void saveUserFile()
 		writer->Close();
 		saveDifference = false;
 	}
-	else
+	else//if the current directory is one that has never been saved then save it as a new file
 	{
 		saveFile->ShowDialog();
 		if (saveFile->FileName != "")
@@ -543,6 +599,7 @@ void saveUserFile()
 			saveDifference = false;
 		}
 	}
+	MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 }
 
 //save file and exit the program
@@ -552,6 +609,7 @@ private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventAr
 	if (!saveDifference)
 		quit();
 }
+
 private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if(picList.size() > 0)
 		saveUserFile();
@@ -569,65 +627,71 @@ private: int countFileLines(String^ filePath)
 	 return i;
 }
 
+//opens a directory when given the path of a csv containing all of the saved data
+void openFile(System::String^ filename){
+	toolStripProgressBar1->Visible = true;
+	toolStripProgressBar1->Minimum = 1;
+	toolStripProgressBar1->Maximum = countFileLines(filename); //counts the number of lines in a file so that the progress bar knows how much is left
+	toolStripProgressBar1->Value = 1;
+	toolStripProgressBar1->Step = 1;
+	StreamReader^ reader = gcnew StreamReader(filename);
+	vector<image> tempList;
+	fileName = openExistingSave->FileName;
+	std::string holder, score = "", compare = "";
+	bool invalidFlag = false, errorFlag = false;
+	int flag = 0;
+	while (reader->Peek() >= 0)
+	{
+		holder = Stringtostring(reader->ReadLine());
+		image temp;
+		for (int i = 0; i < holder.size(); i++)
+		{
+			if (flag == 1 && holder[i] != ',')
+				score += holder[i];
+			if (flag == 2)
+				compare += holder[i];
+			if (holder[i] == ',')
+				flag++;
+			if (!flag && holder[i] != ',')
+				temp.path += holder[i];
+		}
+		flag = 0;
+		temp.score = atoi(score.c_str());//convert score to an int
+		temp.comparisons = atoi(compare.c_str());
+		score = "";
+		compare = "";
+		if (validateFile(temp.path))
+			tempList.push_back(temp);
+		else
+			invalidFlag = true;
+		toolStripProgressBar1->PerformStep();
+	}
+	//if no items are loaded throw an error
+	if (tempList.size() == 0){
+		MessageBox::Show("ERROR: No files could be loaded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		errorFlag = true;
+	}
+	//if some images can not be loaded or are not valid tell the user via error box
+	if (invalidFlag)
+		MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	(*reader).Close();
+	if (!errorFlag){
+		picList = tempList;
+		imageSort(&picList);
+		currentDirectory = getDirectory(picList);
+		genComparisons();
+		changeComparison(0);
+		updateRankings();
+		openedFlag = true; //flag to show that that user opened a pre existing file
+	}
+}
+
+
 //open previously saved directory comparison
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)//ask user to select the save file
 	{
-		toolStripProgressBar1->Visible = true;
-		toolStripProgressBar1->Minimum = 1;
-		toolStripProgressBar1->Maximum = countFileLines(openExistingSave->FileName); //unknown
-		toolStripProgressBar1->Value = 1;
-		toolStripProgressBar1->Step = 1;
-		StreamReader^ reader = gcnew StreamReader(openExistingSave->FileName);
-		vector<image> tempList;
-		fileName = openExistingSave->FileName;
-		std::string holder,score = "",compare = "";
-		bool invalidFlag = false, errorFlag=false;
-		int flag = 0;
-		while(reader->Peek()>=0)
-		{
-			holder = Stringtostring(reader->ReadLine());
-			image temp;
-			for (int i = 0; i < holder.size(); i++)
-			{
-				if (flag == 1 && holder[i] != ',')
-					score += holder[i];
-				if (flag == 2)
-					compare += holder[i];
-				if(holder[i] == ',')
-					flag++;
-				if (!flag && holder[i] != ',')
-					temp.path += holder[i];
-			}
-			flag = 0;
-			temp.score = atoi(score.c_str());//convert score to an int
-			temp.comparisons = atoi(compare.c_str());
-			score = "";
-			compare = "";
-			if (validateFile(temp.path))
-				tempList.push_back(temp);
-			else
-				invalidFlag = true;
-			toolStripProgressBar1->PerformStep();
-		}
-		//if no items are loaded throw an error
-		if (tempList.size() == 0){
-			MessageBox::Show("ERROR: No files could be loaded from this save\nFile may be empty or corrupted", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-			errorFlag = true;
-		}
-		//if some images can not be loaded or are not valid tell the user via error box
-		if (invalidFlag)
-			MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		(*reader).Close();
-		if (!errorFlag){
-			picList = tempList;
-			imageSort(&picList);
-			currentDirectory = getDirectory(picList);
-			genComparisons();
-			changeComparison(0);
-			updateRankings();
-			openedFlag = true; //flag to show that that user opened a pre existing file
-		}
+		openFile(openExistingSave->FileName);
 	}
 	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);

@@ -38,19 +38,24 @@ namespace PictureSorting {
 	protected:
 	private: System::Windows::Forms::CheckBox^  checkBox1;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::CheckBox^  checkBox2;
+
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
-	private: System::Windows::Forms::Label^  label5;
-	private: System::Windows::Forms::Label^  label6;
-	private: System::Windows::Forms::Label^  label7;
-	private: System::Windows::Forms::Label^  label8;
-	private: System::Windows::Forms::Button^  leftImageKey;
-	private: System::Windows::Forms::Button^  rightImageKey;
-	private: System::Windows::Forms::Button^  saveKey;
-	private: System::Windows::Forms::Button^  helpKey;
-	private: System::Windows::Forms::Button^  exitKey;
+	private: System::Windows::Forms::CheckBox^  checkBox3;
+	private: System::Windows::Forms::CheckBox^  checkBox4;
+	private: System::Windows::Forms::Button^  button1;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -73,19 +78,12 @@ namespace PictureSorting {
 			this->tableLayoutPanel1 = (gcnew System::Windows::Forms::TableLayoutPanel());
 			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->checkBox2 = (gcnew System::Windows::Forms::CheckBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->label5 = (gcnew System::Windows::Forms::Label());
-			this->label6 = (gcnew System::Windows::Forms::Label());
-			this->label7 = (gcnew System::Windows::Forms::Label());
-			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->leftImageKey = (gcnew System::Windows::Forms::Button());
-			this->rightImageKey = (gcnew System::Windows::Forms::Button());
-			this->saveKey = (gcnew System::Windows::Forms::Button());
-			this->helpKey = (gcnew System::Windows::Forms::Button());
-			this->exitKey = (gcnew System::Windows::Forms::Button());
+			this->checkBox3 = (gcnew System::Windows::Forms::CheckBox());
+			this->checkBox4 = (gcnew System::Windows::Forms::CheckBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->tableLayoutPanel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -97,29 +95,22 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent,
 				42.61604F)));
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Absolute,
-				23)));
+				25)));
 			this->tableLayoutPanel1->Controls->Add(this->checkBox1, 1, 0);
 			this->tableLayoutPanel1->Controls->Add(this->label1, 0, 0);
-			this->tableLayoutPanel1->Controls->Add(this->checkBox2, 1, 1);
 			this->tableLayoutPanel1->Controls->Add(this->label2, 0, 1);
 			this->tableLayoutPanel1->Controls->Add(this->label3, 0, 2);
 			this->tableLayoutPanel1->Controls->Add(this->label4, 0, 3);
-			this->tableLayoutPanel1->Controls->Add(this->label5, 0, 4);
-			this->tableLayoutPanel1->Controls->Add(this->label6, 0, 5);
-			this->tableLayoutPanel1->Controls->Add(this->label7, 0, 6);
-			this->tableLayoutPanel1->Controls->Add(this->label8, 0, 7);
-			this->tableLayoutPanel1->Controls->Add(this->leftImageKey, 1, 3);
-			this->tableLayoutPanel1->Controls->Add(this->rightImageKey, 1, 4);
-			this->tableLayoutPanel1->Controls->Add(this->saveKey, 1, 5);
-			this->tableLayoutPanel1->Controls->Add(this->helpKey, 1, 6);
-			this->tableLayoutPanel1->Controls->Add(this->exitKey, 1, 7);
+			this->tableLayoutPanel1->Controls->Add(this->checkBox3, 1, 2);
+			this->tableLayoutPanel1->Controls->Add(this->checkBox4, 1, 3);
+			this->tableLayoutPanel1->Controls->Add(this->button1, 1, 1);
 			this->tableLayoutPanel1->Location = System::Drawing::Point(12, 12);
 			this->tableLayoutPanel1->Name = L"tableLayoutPanel1";
 			this->tableLayoutPanel1->RowCount = 8;
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 50)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 50)));
+			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 26)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 23)));
-			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 29)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 28)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 29)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 27)));
@@ -130,7 +121,7 @@ namespace PictureSorting {
 			// checkBox1
 			// 
 			this->checkBox1->AutoSize = true;
-			this->checkBox1->Location = System::Drawing::Point(137, 3);
+			this->checkBox1->Location = System::Drawing::Point(136, 3);
 			this->checkBox1->Name = L"checkBox1";
 			this->checkBox1->Size = System::Drawing::Size(15, 14);
 			this->checkBox1->TabIndex = 0;
@@ -146,19 +137,10 @@ namespace PictureSorting {
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"Continuosly update the ranked list";
 			// 
-			// checkBox2
-			// 
-			this->checkBox2->AutoSize = true;
-			this->checkBox2->Location = System::Drawing::Point(137, 34);
-			this->checkBox2->Name = L"checkBox2";
-			this->checkBox2->Size = System::Drawing::Size(15, 14);
-			this->checkBox2->TabIndex = 2;
-			this->checkBox2->UseVisualStyleBackColor = true;
-			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(3, 31);
+			this->label2->Location = System::Drawing::Point(3, 32);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(118, 26);
 			this->label2->TabIndex = 3;
@@ -167,108 +149,47 @@ namespace PictureSorting {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(3, 62);
+			this->label3->Location = System::Drawing::Point(3, 64);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(79, 20);
+			this->label3->Size = System::Drawing::Size(69, 13);
 			this->label3->TabIndex = 4;
-			this->label3->Text = L"Hotkeys:";
+			this->label3->Text = L"Sort by score";
 			// 
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(3, 85);
+			this->label4->Location = System::Drawing::Point(3, 90);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(96, 13);
+			this->label4->Size = System::Drawing::Size(69, 13);
 			this->label4->TabIndex = 5;
-			this->label4->Text = L"Choose Left Image";
+			this->label4->Text = L"Sort by rating";
 			// 
-			// label5
+			// checkBox3
 			// 
-			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(3, 114);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(103, 13);
-			this->label5->TabIndex = 6;
-			this->label5->Text = L"Choose Right Image";
+			this->checkBox3->AutoSize = true;
+			this->checkBox3->Location = System::Drawing::Point(136, 67);
+			this->checkBox3->Name = L"checkBox3";
+			this->checkBox3->Size = System::Drawing::Size(15, 14);
+			this->checkBox3->TabIndex = 6;
+			this->checkBox3->UseVisualStyleBackColor = true;
 			// 
-			// label6
+			// checkBox4
 			// 
-			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(3, 142);
-			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(32, 13);
-			this->label6->TabIndex = 7;
-			this->label6->Text = L"Save";
+			this->checkBox4->AutoSize = true;
+			this->checkBox4->Location = System::Drawing::Point(136, 93);
+			this->checkBox4->Name = L"checkBox4";
+			this->checkBox4->Size = System::Drawing::Size(15, 14);
+			this->checkBox4->TabIndex = 7;
+			this->checkBox4->UseVisualStyleBackColor = true;
 			// 
-			// label7
+			// button1
 			// 
-			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(3, 171);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(29, 13);
-			this->label7->TabIndex = 8;
-			this->label7->Text = L"Help";
-			// 
-			// label8
-			// 
-			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(3, 198);
-			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(24, 13);
-			this->label8->TabIndex = 9;
-			this->label8->Text = L"Exit";
-			// 
-			// leftImageKey
-			// 
-			this->leftImageKey->Location = System::Drawing::Point(137, 88);
-			this->leftImageKey->Name = L"leftImageKey";
-			this->leftImageKey->Size = System::Drawing::Size(31, 23);
-			this->leftImageKey->TabIndex = 11;
-			this->leftImageKey->Text = L"A";
-			this->leftImageKey->UseVisualStyleBackColor = true;
-			this->leftImageKey->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &optionsForm::leftImageKey_KeyDown);
-			// 
-			// rightImageKey
-			// 
-			this->rightImageKey->Location = System::Drawing::Point(137, 117);
-			this->rightImageKey->Name = L"rightImageKey";
-			this->rightImageKey->Size = System::Drawing::Size(31, 22);
-			this->rightImageKey->TabIndex = 12;
-			this->rightImageKey->Text = L"D";
-			this->rightImageKey->UseVisualStyleBackColor = true;
-			this->rightImageKey->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &optionsForm::rightImageKey_KeyDown);
-			// 
-			// saveKey
-			// 
-			this->saveKey->Location = System::Drawing::Point(137, 145);
-			this->saveKey->Name = L"saveKey";
-			this->saveKey->Size = System::Drawing::Size(31, 23);
-			this->saveKey->TabIndex = 13;
-			this->saveKey->Text = L"S";
-			this->saveKey->UseVisualStyleBackColor = true;
-			this->saveKey->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &optionsForm::saveKey_KeyDown);
-			// 
-			// helpKey
-			// 
-			this->helpKey->Location = System::Drawing::Point(137, 174);
-			this->helpKey->Name = L"helpKey";
-			this->helpKey->Size = System::Drawing::Size(31, 21);
-			this->helpKey->TabIndex = 14;
-			this->helpKey->Text = L"F1";
-			this->helpKey->UseVisualStyleBackColor = true;
-			this->helpKey->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &optionsForm::helpKey_KeyDown);
-			// 
-			// exitKey
-			// 
-			this->exitKey->Location = System::Drawing::Point(137, 201);
-			this->exitKey->Name = L"exitKey";
-			this->exitKey->Size = System::Drawing::Size(34, 22);
-			this->exitKey->TabIndex = 15;
-			this->exitKey->Text = L"F4";
-			this->exitKey->UseVisualStyleBackColor = true;
-			this->exitKey->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &optionsForm::exitKey_KeyDown);
+			this->button1->Location = System::Drawing::Point(136, 35);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(75, 23);
+			this->button1->TabIndex = 8;
+			this->button1->Text = L"Browse";
+			this->button1->UseVisualStyleBackColor = true;
 			// 
 			// optionsForm
 			// 
@@ -293,20 +214,5 @@ private: System::Void checkBox1_CheckedChanged(System::Object^  sender, System::
 }
 
 
-private: System::Void leftImageKey_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-
-}
-private: System::Void rightImageKey_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-
-}
-private: System::Void saveKey_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-
-}
-private: System::Void helpKey_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-
-}
-private: System::Void exitKey_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-
-}
 };
 }

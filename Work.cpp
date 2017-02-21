@@ -21,6 +21,10 @@ static struct image{
 	double rating;
 };
 
+static struct setting{
+	bool flag;
+};
+
 
 bool saveFile();
 void tempSort(vector<image>* list);
