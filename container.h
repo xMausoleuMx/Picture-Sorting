@@ -1,6 +1,5 @@
-#include "Work.cpp"
 #include <vcclr.h>
-
+#include "optionsForm.h"
 #using <System.dll>
 
 static vector<image> picList;
@@ -13,7 +12,6 @@ static vector<int>shorcuts{112,115, 65, 68, 83};
 #define rightString()(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()))
 
 #pragma once
-#include "optionsForm.h"
 namespace PictureSorting {
 	
 	using namespace System;
@@ -468,7 +466,7 @@ namespace PictureSorting {
 void loadSettings(){
 	if (validateFile("config.ini")){ //checks to make sure there is an ini file to read from
 		StreamReader^ reader = gcnew StreamReader("config.ini");
-		string holder, temp = "";
+		string holder, flagTemp = "", nameTemp = "";
 		int y = 0;
 		bool flag = false;
 		while (reader->Peek() >= 0)
@@ -478,42 +476,52 @@ void loadSettings(){
 			for (int i = 0; i < holder.size(); i++)
 			{
 				if (flag)
-					temp += holder[i];
+					flagTemp += holder[i];
 				if (holder[i] == '='){
 					flag = true;
 					i++;
 				}
+				if (!flag && holder[i] != ' ')
+					nameTemp += holder[i];
 			}
-			if (!temp.compare("false"))
+			k.name = nameTemp;
+			if (!flagTemp.compare("false"))
 				k.flag = false;
 			else
 				k.flag = true;
 			settings.push_back(k);
 			flag = false;
-			if (y == 3 && temp.compare("false")){
-				cout << temp;
-				//openFile(gcnew String(temp.c_str())); not working yet
+			if (y == 1 && flagTemp.compare("false")){
+				cout << flagTemp;
+				openFile(gcnew String(flagTemp.c_str()));
 			}
 			y++;
-			temp = "";
+			nameTemp = "";
+			flagTemp = "";
 		}
 
 	}
 	else{//if there is no ini file generate a new one with default values
 		MessageBox::Show("ERROR: No configuration file could be found.\nGenerating one with default values", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		StreamWriter^ writer = gcnew StreamWriter("config.ini");
-		writer->WriteLine("continuoslyUpdate = false");
+		writer->WriteLine("continuouslyUpdate = false");
 		writer->WriteLine("openSpecificDirectory = false");
 		writer->WriteLine("sortByScore = true");
 		writer->WriteLine("sortByRating = false");
 		writer->Close();
 		setting temp;
+		temp.name = "continuouslyUpdate";
 		temp.flag = false;
 		settings.push_back(temp);
+		temp.name = "openSpecificDirectory";
+		temp.flag = false;
 		settings.push_back(temp);
-		settings.push_back(temp);
+		temp.name = "sortByScore";
 		temp.flag = true;
-		settings.insert(settings.begin() + 3, temp);
+		settings.push_back(temp);
+		temp.name = "sortByRating";
+		temp.flag = false;
+		settings.push_back(temp);
 	}
 }
 
@@ -636,7 +644,7 @@ void openFile(System::String^ filename){
 	toolStripProgressBar1->Step = 1;
 	StreamReader^ reader = gcnew StreamReader(filename);
 	vector<image> tempList;
-	fileName = openExistingSave->FileName;
+	fileName = filename;
 	std::string holder, score = "", compare = "";
 	bool invalidFlag = false, errorFlag = false;
 	int flag = 0;
@@ -949,8 +957,7 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 }
 
 private: System::Void optionsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	bool *holder = updateContinuosly;
-	optionsForm ^ form = gcnew optionsForm(holder);
+	optionsForm ^ form = gcnew optionsForm(&settings);
 	form->ShowDialog();
 }
 private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {

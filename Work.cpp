@@ -22,6 +22,8 @@ static struct image{
 };
 
 static struct setting{
+	string name;
+	string path = "";
 	bool flag;
 };
 
