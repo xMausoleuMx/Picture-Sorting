@@ -499,7 +499,7 @@ void loadSettings(){
 			nameTemp = "";
 			flagTemp = "";
 		}
-
+		reader->Close();
 	}
 	else{//if there is no ini file generate a new one with default values
 		MessageBox::Show("ERROR: No configuration file could be found.\nGenerating one with default values", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -625,6 +625,7 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 		MessageBox::Show("ERROR: There is no currently loaded comparison directory to save.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
+//counts the number of lines in a savefile so that the progress bar knows how to represent the steps.
 private: int countFileLines(String^ filePath)
 {
 	StreamReader^ r = gcnew StreamReader(filePath);
@@ -635,7 +636,7 @@ private: int countFileLines(String^ filePath)
 	 return i;
 }
 
-//opens a directory when given the path of a csv containing all of the saved data
+//opens a collection when given the path of a csv containing all of the saved data
 void openFile(System::String^ filename){
 	toolStripProgressBar1->Visible = true;
 	toolStripProgressBar1->Minimum = 1;
@@ -766,7 +767,6 @@ void genComparisons(){
 					pair<int, int> temp(c, k);
 					index.push_back(temp);
 					k--;
-					break;
 			}
 			else{
 				for (int i = c; i < k; i++){//if the two chosen pictures do not have the same score search for one that does. only searches up to maintain some randomness
@@ -776,6 +776,7 @@ void genComparisons(){
 							index.push_back(temp);
 							flag = true;
 							k--;
+							break;
 						}
 					}
 				}
@@ -788,17 +789,16 @@ void genComparisons(){
 		}
 	}
 	comparisonSort(&index);
-	for (int i = 0; i < index.size(); i++){
-		cout << picList[get<0>(index[i])].comparisons << " and " << picList[get<1>(index[i])].comparisons << endl;
-	}
  }
 
+
+//sorts the pairs of images by the number of comparisons they have gone through
 vector<std::pair<int, int>> comparisonMerge(vector<std::pair<int, int>> left, vector<std::pair<int, int>> right)
 {
 	vector<std::pair<int, int>> holder;
 	int i = 0, k = 0;
 	do{
-		if ((get<0>(left[i]) > get<1>(left[i]) ? picList[get<0>(left[i])].comparisons : picList[get<1>(left[i])].comparisons) > (get<0>(right[i]) > get<1>(right[i]) ? picList[get<0>(right[i])].comparisons : picList[get<1>(right[i])].comparisons)){
+		if (picList[get<0>(right[i])].comparisons + picList[get<1>(right[i])].comparisons > picList[get<0>(left[i])].comparisons + picList[get<1>(left[i])].comparisons){
 			holder.push_back(left[i]);
 			i++;
 		}
@@ -904,14 +904,14 @@ private: System::Void rightImage_Click(System::Object^  sender, System::EventArg
 	if (picList.size()>0)
 		Process::Start(rightString());
 }
-		 //When an item in the listbox is double clicked, it is opened externally
+//When an item in the top listbox is double clicked, it is opened externally
 private: System::Void topImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(topImages->SelectedItem->ToString());
 		Process::Start(gcnew String(holder.c_str()));
 	}
 }
-//When an item in the listbox is double clicked, it is opened externally
+//When an item in the bottom listbox is double clicked, it is opened externally
 private: System::Void bottomImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(bottomImages->SelectedItem->ToString());
