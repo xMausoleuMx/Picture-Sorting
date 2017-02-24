@@ -57,7 +57,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label7;
 	private: System::ComponentModel::IContainer^  components;
-
+	private: bool doneLoading = false;
 
 
 
@@ -279,7 +279,7 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->ResumeLayout(false);
 			this->tableLayoutPanel1->PerformLayout();
 			this->ResumeLayout(false);
-
+			load();
 		}
 #pragma endregion
 
@@ -287,12 +287,15 @@ namespace PictureSorting {
 void load(){
 	if ((*userSettings)[0].flag)
 		checkBoxUpdateContinuously->Checked = true;
-	if (!(*userSettings)[1].path.compare(""))
+	if ((*userSettings)[1].path.compare("") || (*userSettings)[1].path.compare("false")){
 		fileChosen->Text = gcnew String((*userSettings)[1].path.c_str());
+		checkBoxOpenOnStartup->Checked = true;
+	}
 	if ((*userSettings)[2].flag)
 		checkBoxScoreSort->Checked = true;
 	if ((*userSettings)[3].flag)
 		checkBoxRatingSort->Checked = true;
+	doneLoading = true;
 }
 
 //if the first checkbox is ticked change the setting to continuously sort
@@ -307,19 +310,21 @@ private: System::Void checkBoxUpdateContinuously_CheckedChanged(System::Object^ 
 
 //if the second checkbox is ticked open a openFileDialog and have the user select the save file that they want open by default
 private: System::Void checkBoxOpenOnStartup_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (checkBoxOpenOnStartup->Checked){
-		if ((selectStartupCollection->ShowDialog() == System::Windows::Forms::DialogResult::OK)){
-			fileChosen->Text = selectStartupCollection->FileName;
-			(*userSettings)[1].flag = true;
-			(*userSettings)[1].path = Stringtostring(selectStartupCollection->FileName);
-			writeConfig();
+	if(doneLoading){//so that it doesnt open when the form is first opened
+		if (checkBoxOpenOnStartup->Checked){
+			if ((selectStartupCollection->ShowDialog() == System::Windows::Forms::DialogResult::OK)){
+				fileChosen->Text = selectStartupCollection->FileName;
+				(*userSettings)[1].flag = true;
+				(*userSettings)[1].path = Stringtostring(selectStartupCollection->FileName);
+				writeConfig();
+			}
 		}
-	}
-	else{//if they disable this setting it sets the path to empty.
-		(*userSettings)[1].flag = false;
-		(*userSettings)[1].path = "";
-		writeConfig();
-		fileChosen->Text = "No file chosen";
+		else{//if they disable this setting it sets the path to empty.
+			(*userSettings)[1].flag = false;
+			(*userSettings)[1].path = "";
+			writeConfig();
+			fileChosen->Text = "No file chosen";
+		}
 	}
 }
 

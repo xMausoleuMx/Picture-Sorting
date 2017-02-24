@@ -38,7 +38,7 @@ static string Stringtostring(System::String^ x){
 	return context.marshal_as<std::string>(x);
 }
 
-static void tempSort(vector<image>* list)
+static void continuousScoreSort(vector<image>* list)
 {
 	bool flag;
 	do
@@ -58,6 +58,26 @@ static void tempSort(vector<image>* list)
 	} while (flag);
 }
 
+
+static void continuousRatingSort(vector<image>* list)
+{
+	bool flag;
+	do
+	{
+		flag = false;
+		for (int i = 1; i < (*list).size(); i++)
+		{
+			if ((double)(*list)[i].score / (*list)[i].comparisons >(double)(*list)[i - 1].score / (*list)[i-1].comparisons)
+			{
+				image a = (*list)[i];
+				image b = (*list)[i - 1];
+				(*list)[i] = b;
+				(*list)[i - 1] = a;
+				flag = true;
+			}
+		}
+	} while (flag);
+}
 
 static bool checkIfImage(string path)
 {
@@ -129,7 +149,7 @@ static string getDirectory(vector<image> list)
 	return directory;
 }
 
-static vector<image> merge(vector<image> left, vector<image> right)
+static vector<image> scoreMerge(vector<image> left, vector<image> right)
 {
 	vector<image>holder;
 	int i = 0, k = 0;
@@ -154,17 +174,54 @@ static vector<image> merge(vector<image> left, vector<image> right)
 	return holder;
 }
 
-static void imageSort(vector<image>* list)
+static void scoreSort(vector<image>* list)
 {
 	if (list->size() <= 1)
 		return;
 	vector<image> left, right;
 	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
 	right.assign(list->begin() + (list->size() / 2), list->end());
-	imageSort(&left);
-	imageSort(&right);
-	(*list) = merge(left, right);
+	scoreSort(&left);
+	scoreSort(&right);
+	(*list) = scoreMerge(left, right);
 	return;
 }
 
 
+static vector<image> ratingMerge(vector<image> left, vector<image> right)
+{
+	vector<image>holder;
+	int i = 0, k = 0;
+	do{
+		if (((double)left[i].score / left[i].comparisons) > ((double)right[k].score/right[k].comparisons)){
+			holder.push_back(left[i]);
+			i++;
+		}
+		else{
+			holder.push_back(right[k]);
+			k++;
+		}
+	} while (i < left.size() && k < right.size());
+	while (i < left.size()){
+		holder.push_back(left[i]);
+		i++;
+	}
+	while (k < right.size()){
+		holder.push_back(right[k]);
+		k++;
+	}
+	return holder;
+}
+
+static void ratingSort(vector<image>* list)
+{
+	if (list->size() <= 1)
+		return;
+	vector<image> left, right;
+	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
+	right.assign(list->begin() + (list->size() / 2), list->end());
+	ratingSort(&left);
+	ratingSort(&right);
+	(*list) = ratingMerge(left, right);
+	return;
+}

@@ -6,10 +6,12 @@ static vector<image> picList;
 static vector<std::pair<int,int>> index;
 static std::string currentDirectory;
 static vector<setting> settings;
-static bool  updateContinuosly = false;
 static vector<int>shorcuts{112,115, 65, 68, 83};
 #define leftString()(gcnew String(picList[get<0>(index[crntCpr])].path.c_str()))
 #define rightString()(gcnew String(picList[get<1>(index[crntCpr])].path.c_str()))
+#define updateContinuously()(settings[0].flag)
+#define sortByScore()(settings[2].flag)
+#define sortByRating()(settings[3].flag)
 
 #pragma once
 namespace PictureSorting {
@@ -48,13 +50,10 @@ namespace PictureSorting {
 	private: int crntCpr = 0;
 	private: System::Windows::Forms::PictureBox^  leftImage;
 	private: System::Windows::Forms::PictureBox^  rightImage;
-
 	private: System::Windows::Forms::Button^  selectLeft;
 	private: System::Windows::Forms::Button^  selectRight;
 	private: System::Windows::Forms::Label^  rightCurrentScore;
-
 	private: System::Windows::Forms::Label^  leftCurrentScore;
-
 	private: System::Windows::Forms::Button^  refresh;
 	private: System::Windows::Forms::MenuStrip^  menuStrip1;
 	private: System::Windows::Forms::ToolStripMenuItem^  fieToolStripMenuItem;
@@ -85,6 +84,15 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripStatusLabel^  rightPath;
 	private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabel1;
 	private: System::Windows::Forms::ToolStripProgressBar^  toolStripProgressBar1;
+	private: System::Windows::Forms::Label^  leftNumComparisons;
+	private: System::Windows::Forms::Label^  leftRating;
+	private: System::Windows::Forms::Label^  rightNumComparisons;
+	private: System::Windows::Forms::Label^  rightRating;
+
+
+
+
+	private: System::Windows::Forms::ToolTip^  toolTip1;
 
 
 
@@ -106,6 +114,7 @@ namespace PictureSorting {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->leftImage = (gcnew System::Windows::Forms::PictureBox());
 			this->rightImage = (gcnew System::Windows::Forms::PictureBox());
 			this->selectLeft = (gcnew System::Windows::Forms::Button());
@@ -138,6 +147,11 @@ namespace PictureSorting {
 			this->leftPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->rightPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->leftNumComparisons = (gcnew System::Windows::Forms::Label());
+			this->leftRating = (gcnew System::Windows::Forms::Label());
+			this->rightNumComparisons = (gcnew System::Windows::Forms::Label());
+			this->rightRating = (gcnew System::Windows::Forms::Label());
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -426,11 +440,51 @@ namespace PictureSorting {
 			this->rightPath->Size = System::Drawing::Size(32, 17);
 			this->rightPath->Text = L"right";
 			// 
+			// leftNumComparisons
+			// 
+			this->leftNumComparisons->AutoSize = true;
+			this->leftNumComparisons->Location = System::Drawing::Point(154, 399);
+			this->leftNumComparisons->Name = L"leftNumComparisons";
+			this->leftNumComparisons->Size = System::Drawing::Size(125, 13);
+			this->leftNumComparisons->TabIndex = 21;
+			this->leftNumComparisons->Text = L"Number of Comparisons: ";
+			// 
+			// leftRating
+			// 
+			this->leftRating->AutoSize = true;
+			this->leftRating->Location = System::Drawing::Point(383, 399);
+			this->leftRating->Name = L"leftRating";
+			this->leftRating->Size = System::Drawing::Size(41, 13);
+			this->leftRating->TabIndex = 22;
+			this->leftRating->Text = L"Rating:";
+			// 
+			// rightNumComparisons
+			// 
+			this->rightNumComparisons->AutoSize = true;
+			this->rightNumComparisons->Location = System::Drawing::Point(972, 399);
+			this->rightNumComparisons->Name = L"rightNumComparisons";
+			this->rightNumComparisons->Size = System::Drawing::Size(125, 13);
+			this->rightNumComparisons->TabIndex = 23;
+			this->rightNumComparisons->Text = L"Number of Comparisons: ";
+			// 
+			// rightRating
+			// 
+			this->rightRating->AutoSize = true;
+			this->rightRating->Location = System::Drawing::Point(1187, 399);
+			this->rightRating->Name = L"rightRating";
+			this->rightRating->Size = System::Drawing::Size(41, 13);
+			this->rightRating->TabIndex = 24;
+			this->rightRating->Text = L"Rating:";
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(96, 96);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Dpi;
 			this->ClientSize = System::Drawing::Size(1269, 549);
+			this->Controls->Add(this->rightRating);
+			this->Controls->Add(this->rightNumComparisons);
+			this->Controls->Add(this->leftRating);
+			this->Controls->Add(this->leftNumComparisons);
 			this->Controls->Add(this->statusStrip1);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->saveAndQuit);
@@ -458,17 +512,19 @@ namespace PictureSorting {
 			this->statusStrip1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
-			loadSettings(); //load settings on startup
+			cout << "loading"<<endl;
+			loadSettings();
 		}
 #pragma endregion
 
 //load the users settings from a file.
 void loadSettings(){
 	if (validateFile("config.ini")){ //checks to make sure there is an ini file to read from
+		cout << "valid config loading settings.\n";
 		StreamReader^ reader = gcnew StreamReader("config.ini");
 		string holder, flagTemp = "", nameTemp = "";
 		int y = 0;
-		bool flag = false;
+		bool flag = false, defaultCollection = false;
 		while (reader->Peek() >= 0)
 		{
 			setting k;
@@ -489,16 +545,19 @@ void loadSettings(){
 				k.flag = false;
 			else
 				k.flag = true;
-			settings.push_back(k);
+			
 			flag = false;
 			if (y == 1 && flagTemp.compare("false")){
-				cout << flagTemp;
-				openFile(gcnew String(flagTemp.c_str()));
+				defaultCollection = true;
+				k.path = flagTemp;
 			}
+			settings.push_back(k);
 			y++;
 			nameTemp = "";
 			flagTemp = "";
 		}
+		if (defaultCollection)
+			openFile(gcnew String(settings[1].path.c_str()));
 		reader->Close();
 	}
 	else{//if there is no ini file generate a new one with default values
@@ -523,6 +582,7 @@ void loadSettings(){
 		temp.flag = false;
 		settings.push_back(temp);
 	}
+	cout << settings.size();
 }
 
 //Close the program without saving.
@@ -539,7 +599,14 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 void updateRankings()
 {
 	vector<image> sortedList = picList;
-	tempSort(&sortedList);
+	if (updateContinuously() && sortByScore())
+		continuousScoreSort(&sortedList);
+	else if (updateContinuously() && sortByRating())
+		continuousRatingSort(&sortedList);
+	else if (!updateContinuously() && sortByRating())
+		ratingSort(&sortedList);
+	else if (!updateContinuously() && sortByScore())
+		scoreSort(&sortedList);
 	this->topImages->Items->Clear();
 	this->bottomImages->Items->Clear();
 	for (int i = 0; i < sortedList.size(); i++)
@@ -686,13 +753,17 @@ void openFile(System::String^ filename){
 	(*reader).Close();
 	if (!errorFlag){
 		picList = tempList;
-		imageSort(&picList);
+		if(sortByScore())
+			scoreSort(&picList);
+		if(sortByRating())
+			ratingSort(&picList);
 		currentDirectory = getDirectory(picList);
 		genComparisons();
 		changeComparison(0);
 		updateRankings();
 		openedFlag = true; //flag to show that that user opened a pre existing file
 	}
+	toolStripProgressBar1->Visible = false;
 }
 
 
@@ -704,8 +775,6 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 	}
 	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
-
-	toolStripProgressBar1->Visible = false;
 
 }
 
@@ -874,9 +943,15 @@ void changeComparison(int increment){
 	}
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
+	rightNumComparisons->Text = "Number of comparisons: " + picList[get<1>(index[crntCpr])].comparisons;
+	leftNumComparisons->Text = "Number of comparisons: " + picList[get<0>(index[crntCpr])].comparisons;
+	double rating = (double)picList[get<1>(index[crntCpr])].score /(double)picList[get<1>(index[crntCpr])].comparisons;
+	leftRating->Text = "Rating: "  + rating;
+	rating = (double)picList[get<0>(index[crntCpr])].score / (double)picList[get<0>(index[crntCpr])].comparisons;
+	rightRating->Text = "Rating: " + rating;
 	leftPath->Text = leftString();
 	rightPath->Text = rightString();
-	if(updateContinuosly) //only update ranking if that setting is active
+	if (updateContinuously()) //only update ranking if that setting is active
 		updateRankings();
 }
 
