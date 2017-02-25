@@ -21,6 +21,7 @@ namespace PictureSorting {
 		{
 			userSettings = temp;
 			InitializeComponent();
+			load();
 		}
 
 	protected:
@@ -57,6 +58,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label7;
 	private: System::ComponentModel::IContainer^  components;
+
 	private: bool doneLoading = false;
 
 
@@ -114,7 +116,7 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent,
 				17.97753F)));
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Absolute,
-				214)));
+				215)));
 			this->tableLayoutPanel1->Controls->Add(this->checkBoxUpdateContinuously, 1, 0);
 			this->tableLayoutPanel1->Controls->Add(this->label1, 0, 0);
 			this->tableLayoutPanel1->Controls->Add(this->label2, 0, 1);
@@ -138,13 +140,13 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 29)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 27)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 39)));
-			this->tableLayoutPanel1->Size = System::Drawing::Size(393, 237);
+			this->tableLayoutPanel1->Size = System::Drawing::Size(375, 237);
 			this->tableLayoutPanel1->TabIndex = 0;
 			// 
 			// checkBoxUpdateContinuously
 			// 
 			this->checkBoxUpdateContinuously->AutoSize = true;
-			this->checkBoxUpdateContinuously->Location = System::Drawing::Point(149, 3);
+			this->checkBoxUpdateContinuously->Location = System::Drawing::Point(134, 3);
 			this->checkBoxUpdateContinuously->Name = L"checkBoxUpdateContinuously";
 			this->checkBoxUpdateContinuously->Size = System::Drawing::Size(15, 14);
 			this->checkBoxUpdateContinuously->TabIndex = 0;
@@ -156,7 +158,7 @@ namespace PictureSorting {
 			this->label1->AutoSize = true;
 			this->label1->Location = System::Drawing::Point(3, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(118, 26);
+			this->label1->Size = System::Drawing::Size(124, 26);
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"Continuously update the ranked list";
 			this->toolTip1->SetToolTip(this->label1, L"Refresh the top and bottom lists every time there is a change in the scores of th"
@@ -167,7 +169,7 @@ namespace PictureSorting {
 			this->label2->AutoSize = true;
 			this->label2->Location = System::Drawing::Point(3, 32);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(133, 26);
+			this->label2->Size = System::Drawing::Size(118, 26);
 			this->label2->TabIndex = 3;
 			this->label2->Text = L"Open specific directory on open ";
 			this->toolTip1->SetToolTip(this->label2, L"On open, load a collection of images that has been previously saved.");
@@ -197,7 +199,7 @@ namespace PictureSorting {
 			this->checkBoxScoreSort->AutoSize = true;
 			this->checkBoxScoreSort->Checked = true;
 			this->checkBoxScoreSort->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBoxScoreSort->Location = System::Drawing::Point(149, 67);
+			this->checkBoxScoreSort->Location = System::Drawing::Point(134, 67);
 			this->checkBoxScoreSort->Name = L"checkBoxScoreSort";
 			this->checkBoxScoreSort->Size = System::Drawing::Size(15, 14);
 			this->checkBoxScoreSort->TabIndex = 6;
@@ -207,7 +209,7 @@ namespace PictureSorting {
 			// checkBoxRatingSort
 			// 
 			this->checkBoxRatingSort->AutoSize = true;
-			this->checkBoxRatingSort->Location = System::Drawing::Point(149, 93);
+			this->checkBoxRatingSort->Location = System::Drawing::Point(134, 93);
 			this->checkBoxRatingSort->Name = L"checkBoxRatingSort";
 			this->checkBoxRatingSort->Size = System::Drawing::Size(15, 14);
 			this->checkBoxRatingSort->TabIndex = 7;
@@ -217,7 +219,7 @@ namespace PictureSorting {
 			// checkBoxOpenOnStartup
 			// 
 			this->checkBoxOpenOnStartup->AutoSize = true;
-			this->checkBoxOpenOnStartup->Location = System::Drawing::Point(149, 35);
+			this->checkBoxOpenOnStartup->Location = System::Drawing::Point(134, 35);
 			this->checkBoxOpenOnStartup->Name = L"checkBoxOpenOnStartup";
 			this->checkBoxOpenOnStartup->Size = System::Drawing::Size(15, 14);
 			this->checkBoxOpenOnStartup->TabIndex = 8;
@@ -229,7 +231,7 @@ namespace PictureSorting {
 			this->fileChosen->AutoSize = true;
 			this->fileChosen->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->fileChosen->Location = System::Drawing::Point(181, 32);
+			this->fileChosen->Location = System::Drawing::Point(162, 32);
 			this->fileChosen->Name = L"fileChosen";
 			this->fileChosen->Size = System::Drawing::Size(89, 13);
 			this->fileChosen->TabIndex = 9;
@@ -238,7 +240,7 @@ namespace PictureSorting {
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(181, 0);
+			this->label5->Location = System::Drawing::Point(162, 0);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(205, 26);
 			this->label5->TabIndex = 10;
@@ -247,7 +249,7 @@ namespace PictureSorting {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(181, 64);
+			this->label6->Location = System::Drawing::Point(162, 64);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(112, 13);
 			this->label6->TabIndex = 11;
@@ -256,7 +258,7 @@ namespace PictureSorting {
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(181, 90);
+			this->label7->Location = System::Drawing::Point(162, 90);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(112, 13);
 			this->label7->TabIndex = 12;
@@ -270,7 +272,7 @@ namespace PictureSorting {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(417, 261);
+			this->ClientSize = System::Drawing::Size(399, 185);
 			this->Controls->Add(this->tableLayoutPanel1);
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
@@ -279,7 +281,7 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->ResumeLayout(false);
 			this->tableLayoutPanel1->PerformLayout();
 			this->ResumeLayout(false);
-			load();
+
 		}
 #pragma endregion
 

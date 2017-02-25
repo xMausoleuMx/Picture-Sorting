@@ -31,7 +31,7 @@ namespace PictureSorting {
 		container(void)
 		{
 			InitializeComponent();
-			
+			loadSettings();
 		}
 
 	protected:
@@ -59,7 +59,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  fieToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  saveToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  optionsToolStripMenuItem;
+
 	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  editToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
@@ -93,6 +93,8 @@ namespace PictureSorting {
 
 
 	private: System::Windows::Forms::ToolTip^  toolTip1;
+	private: System::Windows::Forms::ToolStripMenuItem^  editOptions;
+
 
 
 
@@ -128,7 +130,6 @@ namespace PictureSorting {
 			this->newDirectoryToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->existingDirectoryToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->saveToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -152,6 +153,7 @@ namespace PictureSorting {
 			this->rightNumComparisons = (gcnew System::Windows::Forms::Label());
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
+			this->editOptions = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -255,9 +257,9 @@ namespace PictureSorting {
 			// 
 			// fieToolStripMenuItem
 			// 
-			this->fieToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
+			this->fieToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 				this->openToolStripMenuItem,
-					this->saveToolStripMenuItem, this->optionsToolStripMenuItem, this->exitToolStripMenuItem
+					this->saveToolStripMenuItem, this->exitToolStripMenuItem
 			});
 			this->fieToolStripMenuItem->Name = L"fieToolStripMenuItem";
 			this->fieToolStripMenuItem->Size = System::Drawing::Size(37, 20);
@@ -270,7 +272,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -290,26 +292,20 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
-			// 
-			// optionsToolStripMenuItem
-			// 
-			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(116, 22);
-			this->optionsToolStripMenuItem->Text = L"Options";
-			this->optionsToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::optionsToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
 			// editToolStripMenuItem
 			// 
+			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->editOptions });
 			this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
 			this->editToolStripMenuItem->Text = L"Edit";
@@ -346,6 +342,7 @@ namespace PictureSorting {
 			this->topImages->Name = L"topImages";
 			this->topImages->Size = System::Drawing::Size(324, 160);
 			this->topImages->TabIndex = 11;
+			this->toolTip1->SetToolTip(this->topImages, L"Images sorted from top to bottom");
 			this->topImages->DoubleClick += gcnew System::EventHandler(this, &container::topImages_DoubleClick);
 			// 
 			// bottomImages
@@ -356,6 +353,7 @@ namespace PictureSorting {
 			this->bottomImages->Name = L"bottomImages";
 			this->bottomImages->Size = System::Drawing::Size(324, 160);
 			this->bottomImages->TabIndex = 12;
+			this->toolTip1->SetToolTip(this->bottomImages, L"Images sorted from bottom to top");
 			this->bottomImages->DoubleClick += gcnew System::EventHandler(this, &container::bottomImages_DoubleClick);
 			// 
 			// button4
@@ -366,6 +364,7 @@ namespace PictureSorting {
 			this->button4->Size = System::Drawing::Size(197, 35);
 			this->button4->TabIndex = 13;
 			this->button4->Text = L"Previous Comparison";
+			this->toolTip1->SetToolTip(this->button4, L"Goes back to the previous comparison but does not revert the choice made.");
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &container::button4_Click);
 			// 
@@ -390,12 +389,11 @@ namespace PictureSorting {
 			// 
 			this->openExistingSave->DefaultExt = L"csv";
 			this->openExistingSave->FileName = L"openExistingSave";
+			this->openExistingSave->Filter = L"CSV (*.csv)|*.csv|All files (*.*)|*.*";
 			// 
 			// groupBox1
 			// 
-			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
 			this->groupBox1->Controls->Add(this->bottomImages);
 			this->groupBox1->Controls->Add(this->topImages);
 			this->groupBox1->Location = System::Drawing::Point(474, 27);
@@ -442,6 +440,7 @@ namespace PictureSorting {
 			// 
 			// leftNumComparisons
 			// 
+			this->leftNumComparisons->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->leftNumComparisons->AutoSize = true;
 			this->leftNumComparisons->Location = System::Drawing::Point(154, 399);
 			this->leftNumComparisons->Name = L"leftNumComparisons";
@@ -451,15 +450,18 @@ namespace PictureSorting {
 			// 
 			// leftRating
 			// 
+			this->leftRating->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->leftRating->AutoSize = true;
 			this->leftRating->Location = System::Drawing::Point(383, 399);
 			this->leftRating->Name = L"leftRating";
 			this->leftRating->Size = System::Drawing::Size(41, 13);
 			this->leftRating->TabIndex = 22;
 			this->leftRating->Text = L"Rating:";
+			this->toolTip1->SetToolTip(this->leftRating, L"Defined as Score divided by the number of comparisons");
 			// 
 			// rightNumComparisons
 			// 
+			this->rightNumComparisons->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->rightNumComparisons->AutoSize = true;
 			this->rightNumComparisons->Location = System::Drawing::Point(972, 399);
 			this->rightNumComparisons->Name = L"rightNumComparisons";
@@ -469,12 +471,21 @@ namespace PictureSorting {
 			// 
 			// rightRating
 			// 
+			this->rightRating->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
 			this->rightRating->AutoSize = true;
 			this->rightRating->Location = System::Drawing::Point(1187, 399);
 			this->rightRating->Name = L"rightRating";
 			this->rightRating->Size = System::Drawing::Size(41, 13);
 			this->rightRating->TabIndex = 24;
 			this->rightRating->Text = L"Rating:";
+			this->toolTip1->SetToolTip(this->rightRating, L"Defined as Score divided by the number of comparisons");
+			// 
+			// editOptions
+			// 
+			this->editOptions->Name = L"editOptions";
+			this->editOptions->Size = System::Drawing::Size(152, 22);
+			this->editOptions->Text = L"Options";
+			this->editOptions->Click += gcnew System::EventHandler(this, &container::editOptions_Click);
 			// 
 			// container
 			// 
@@ -512,8 +523,7 @@ namespace PictureSorting {
 			this->statusStrip1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
-			cout << "loading"<<endl;
-			loadSettings();
+
 		}
 #pragma endregion
 
@@ -599,6 +609,8 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 void updateRankings()
 {
 	vector<image> sortedList = picList;
+	cout << "in rankings\n" ;
+	cout << settings.size();
 	if (updateContinuously() && sortByScore())
 		continuousScoreSort(&sortedList);
 	else if (updateContinuously() && sortByRating())
@@ -639,7 +651,8 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
-		updateRankings();
+		cout << "got files\n";
+		updateRankings();//error
 		genComparisons();
 		changeComparison(0);
 		currentDirectory = Stringtostring(folderName);
@@ -1031,10 +1044,6 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 	}
 }
 
-private: System::Void optionsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	optionsForm ^ form = gcnew optionsForm(&settings);
-	form->ShowDialog();
-}
 private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
 }
@@ -1050,6 +1059,10 @@ void quit(){
 		else
 			exit(EXIT_SUCCESS);
 	}
+}
+private: System::Void editOptions_Click(System::Object^  sender, System::EventArgs^  e) {
+	optionsForm ^ form = gcnew optionsForm(&settings);
+	form->ShowDialog();
 }
 };
 
