@@ -530,7 +530,6 @@ namespace PictureSorting {
 //load the users settings from a file.
 void loadSettings(){
 	if (validateFile("config.ini")){ //checks to make sure there is an ini file to read from
-		cout << "valid config loading settings.\n";
 		StreamReader^ reader = gcnew StreamReader("config.ini");
 		string holder, flagTemp = "", nameTemp = "";
 		int y = 0;
@@ -592,7 +591,6 @@ void loadSettings(){
 		temp.flag = false;
 		settings.push_back(temp);
 	}
-	cout << settings.size();
 }
 
 //Close the program without saving.
@@ -609,8 +607,6 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 void updateRankings()
 {
 	vector<image> sortedList = picList;
-	cout << "in rankings\n" ;
-	cout << settings.size();
 	if (updateContinuously() && sortByScore())
 		continuousScoreSort(&sortedList);
 	else if (updateContinuously() && sortByRating())
@@ -651,7 +647,6 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
-		cout << "got files\n";
 		updateRankings();//error
 		genComparisons();
 		changeComparison(0);
@@ -673,21 +668,24 @@ void saveUserFile()
 
 		writer->Close();
 		saveDifference = false;
+		MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 	}
 	else//if the current directory is one that has never been saved then save it as a new file
 	{
-		saveFile->ShowDialog();
-		if (saveFile->FileName != "")
-		{
-			fileName = saveFile->FileName;
-			StreamWriter^ writer = gcnew StreamWriter(fileName);
-			for (int i = 0; i < picList.size(); i++)
-				writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
-			writer->Close();
-			saveDifference = false;
+		if (saveFile->ShowDialog() == System::Windows::Forms::DialogResult::OK){
+			if (saveFile->FileName != "")
+			{
+				fileName = saveFile->FileName;
+				StreamWriter^ writer = gcnew StreamWriter(fileName);
+				for (int i = 0; i < picList.size(); i++)
+					writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+				writer->Close();
+				saveDifference = false;
+				MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+			}
 		}
 	}
-	MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+	
 }
 
 //save file and exit the program
