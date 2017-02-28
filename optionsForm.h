@@ -116,7 +116,7 @@ namespace PictureSorting {
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent,
 				17.97753F)));
 			this->tableLayoutPanel1->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Absolute,
-				215)));
+				216)));
 			this->tableLayoutPanel1->Controls->Add(this->checkBoxUpdateContinuously, 1, 0);
 			this->tableLayoutPanel1->Controls->Add(this->label1, 0, 0);
 			this->tableLayoutPanel1->Controls->Add(this->label2, 0, 1);
@@ -146,10 +146,12 @@ namespace PictureSorting {
 			// checkBoxUpdateContinuously
 			// 
 			this->checkBoxUpdateContinuously->AutoSize = true;
-			this->checkBoxUpdateContinuously->Location = System::Drawing::Point(134, 3);
+			this->checkBoxUpdateContinuously->Location = System::Drawing::Point(133, 3);
 			this->checkBoxUpdateContinuously->Name = L"checkBoxUpdateContinuously";
 			this->checkBoxUpdateContinuously->Size = System::Drawing::Size(15, 14);
 			this->checkBoxUpdateContinuously->TabIndex = 0;
+			this->toolTip1->SetToolTip(this->checkBoxUpdateContinuously, L"Refresh the top and bottom lists every time there is a change in the scores of th"
+				L"e collection. Impacts performance slightly.");
 			this->checkBoxUpdateContinuously->UseVisualStyleBackColor = true;
 			this->checkBoxUpdateContinuously->CheckedChanged += gcnew System::EventHandler(this, &optionsForm::checkBoxUpdateContinuously_CheckedChanged);
 			// 
@@ -162,7 +164,7 @@ namespace PictureSorting {
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"Continuously update the ranked list";
 			this->toolTip1->SetToolTip(this->label1, L"Refresh the top and bottom lists every time there is a change in the scores of th"
-				L"e collection. Note there will be performance imapcts.");
+				L"e collection. Impacts performance slightly.");
 			// 
 			// label2
 			// 
@@ -182,7 +184,6 @@ namespace PictureSorting {
 			this->label3->Size = System::Drawing::Size(69, 13);
 			this->label3->TabIndex = 4;
 			this->label3->Text = L"Sort by score";
-			this->toolTip1->SetToolTip(this->label3, L"Sort the pictures by their raw score.(default)");
 			// 
 			// label4
 			// 
@@ -192,14 +193,15 @@ namespace PictureSorting {
 			this->label4->Size = System::Drawing::Size(69, 13);
 			this->label4->TabIndex = 5;
 			this->label4->Text = L"Sort by rating";
-			this->toolTip1->SetToolTip(this->label4, L"Sort pictures by their rating (score divided by the number of comparisons).");
+			this->toolTip1->SetToolTip(this->label4, L"Sorts top and bottom list based on rating (score divided by comparisons). Usefull"
+				L" for large image collections where it is unreasonable to compare all images");
 			// 
 			// checkBoxScoreSort
 			// 
 			this->checkBoxScoreSort->AutoSize = true;
 			this->checkBoxScoreSort->Checked = true;
 			this->checkBoxScoreSort->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBoxScoreSort->Location = System::Drawing::Point(134, 67);
+			this->checkBoxScoreSort->Location = System::Drawing::Point(133, 67);
 			this->checkBoxScoreSort->Name = L"checkBoxScoreSort";
 			this->checkBoxScoreSort->Size = System::Drawing::Size(15, 14);
 			this->checkBoxScoreSort->TabIndex = 6;
@@ -209,17 +211,19 @@ namespace PictureSorting {
 			// checkBoxRatingSort
 			// 
 			this->checkBoxRatingSort->AutoSize = true;
-			this->checkBoxRatingSort->Location = System::Drawing::Point(134, 93);
+			this->checkBoxRatingSort->Location = System::Drawing::Point(133, 93);
 			this->checkBoxRatingSort->Name = L"checkBoxRatingSort";
 			this->checkBoxRatingSort->Size = System::Drawing::Size(15, 14);
 			this->checkBoxRatingSort->TabIndex = 7;
+			this->toolTip1->SetToolTip(this->checkBoxRatingSort, L"Sorts top and bottom list based on rating (score divided by comparisons). Usefull"
+				L" for large image collections where it is unreasonable to compare all images");
 			this->checkBoxRatingSort->UseVisualStyleBackColor = true;
 			this->checkBoxRatingSort->CheckedChanged += gcnew System::EventHandler(this, &optionsForm::checkBoxRatingSort_CheckedChanged);
 			// 
 			// checkBoxOpenOnStartup
 			// 
 			this->checkBoxOpenOnStartup->AutoSize = true;
-			this->checkBoxOpenOnStartup->Location = System::Drawing::Point(134, 35);
+			this->checkBoxOpenOnStartup->Location = System::Drawing::Point(133, 35);
 			this->checkBoxOpenOnStartup->Name = L"checkBoxOpenOnStartup";
 			this->checkBoxOpenOnStartup->Size = System::Drawing::Size(15, 14);
 			this->checkBoxOpenOnStartup->TabIndex = 8;
@@ -231,7 +235,7 @@ namespace PictureSorting {
 			this->fileChosen->AutoSize = true;
 			this->fileChosen->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->fileChosen->Location = System::Drawing::Point(162, 32);
+			this->fileChosen->Location = System::Drawing::Point(161, 32);
 			this->fileChosen->Name = L"fileChosen";
 			this->fileChosen->Size = System::Drawing::Size(89, 13);
 			this->fileChosen->TabIndex = 9;
@@ -240,16 +244,18 @@ namespace PictureSorting {
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(162, 0);
+			this->label5->Location = System::Drawing::Point(161, 0);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(205, 26);
 			this->label5->TabIndex = 10;
 			this->label5->Text = L"Will enable the ranked list to continuously update";
+			this->toolTip1->SetToolTip(this->label5, L"Refresh the top and bottom lists every time there is a change in the scores of th"
+				L"e collection. Impacts performance slightly.");
 			// 
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(162, 64);
+			this->label6->Location = System::Drawing::Point(161, 64);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(112, 13);
 			this->label6->TabIndex = 11;
@@ -258,11 +264,13 @@ namespace PictureSorting {
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(162, 90);
+			this->label7->Location = System::Drawing::Point(161, 90);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(112, 13);
 			this->label7->TabIndex = 12;
 			this->label7->Text = L"Will rank files by rating";
+			this->toolTip1->SetToolTip(this->label7, L"Sorts top and bottom list based on rating (score divided by comparisons). Usefull"
+				L" for large image collections where it is unreasonable to compare all images");
 			// 
 			// selectStartupCollection
 			// 

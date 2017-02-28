@@ -132,6 +132,7 @@ namespace PictureSorting {
 			this->saveToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->editOptions = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->websiteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->fAQToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -153,7 +154,6 @@ namespace PictureSorting {
 			this->rightNumComparisons = (gcnew System::Windows::Forms::Label());
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
-			this->editOptions = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -173,6 +173,7 @@ namespace PictureSorting {
 			this->leftImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->leftImage->TabIndex = 0;
 			this->leftImage->TabStop = false;
+			this->toolTip1->SetToolTip(this->leftImage, L"Click to open image in default image viewing software");
 			this->leftImage->Click += gcnew System::EventHandler(this, &container::leftImage_Click);
 			// 
 			// rightImage
@@ -187,6 +188,7 @@ namespace PictureSorting {
 			this->rightImage->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->rightImage->TabIndex = 1;
 			this->rightImage->TabStop = false;
+			this->toolTip1->SetToolTip(this->rightImage, L"Click to open image in default image viewing software");
 			this->rightImage->Click += gcnew System::EventHandler(this, &container::rightImage_Click);
 			// 
 			// selectLeft
@@ -220,6 +222,7 @@ namespace PictureSorting {
 			this->rightCurrentScore->Size = System::Drawing::Size(78, 13);
 			this->rightCurrentScore->TabIndex = 4;
 			this->rightCurrentScore->Text = L"Current Score: ";
+			this->toolTip1->SetToolTip(this->rightCurrentScore, L"Score of the above image");
 			// 
 			// leftCurrentScore
 			// 
@@ -230,6 +233,7 @@ namespace PictureSorting {
 			this->leftCurrentScore->Size = System::Drawing::Size(78, 13);
 			this->leftCurrentScore->TabIndex = 5;
 			this->leftCurrentScore->Text = L"Current Score: ";
+			this->toolTip1->SetToolTip(this->leftCurrentScore, L"Score of the above image");
 			// 
 			// refresh
 			// 
@@ -239,6 +243,7 @@ namespace PictureSorting {
 			this->refresh->Size = System::Drawing::Size(80, 32);
 			this->refresh->TabIndex = 6;
 			this->refresh->Text = L"Refresh";
+			this->toolTip1->SetToolTip(this->refresh, L"Refreshes the top and bottom lists");
 			this->refresh->UseVisualStyleBackColor = true;
 			this->refresh->Click += gcnew System::EventHandler(this, &container::refresh_Click);
 			// 
@@ -310,6 +315,13 @@ namespace PictureSorting {
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
 			this->editToolStripMenuItem->Text = L"Edit";
 			// 
+			// editOptions
+			// 
+			this->editOptions->Name = L"editOptions";
+			this->editOptions->Size = System::Drawing::Size(116, 22);
+			this->editOptions->Text = L"Options";
+			this->editOptions->Click += gcnew System::EventHandler(this, &container::editOptions_Click);
+			// 
 			// helpToolStripMenuItem
 			// 
 			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
@@ -323,14 +335,14 @@ namespace PictureSorting {
 			// websiteToolStripMenuItem
 			// 
 			this->websiteToolStripMenuItem->Name = L"websiteToolStripMenuItem";
-			this->websiteToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->websiteToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->websiteToolStripMenuItem->Text = L"Website";
 			this->websiteToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::websiteToolStripMenuItem_Click);
 			// 
 			// fAQToolStripMenuItem
 			// 
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
-			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
+			this->fAQToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			this->fAQToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::fAQToolStripMenuItem_Click);
 			// 
@@ -342,7 +354,7 @@ namespace PictureSorting {
 			this->topImages->Name = L"topImages";
 			this->topImages->Size = System::Drawing::Size(324, 160);
 			this->topImages->TabIndex = 11;
-			this->toolTip1->SetToolTip(this->topImages, L"Images sorted from top to bottom");
+			this->toolTip1->SetToolTip(this->topImages, L"double click on an item to open it externally");
 			this->topImages->DoubleClick += gcnew System::EventHandler(this, &container::topImages_DoubleClick);
 			// 
 			// bottomImages
@@ -353,7 +365,7 @@ namespace PictureSorting {
 			this->bottomImages->Name = L"bottomImages";
 			this->bottomImages->Size = System::Drawing::Size(324, 160);
 			this->bottomImages->TabIndex = 12;
-			this->toolTip1->SetToolTip(this->bottomImages, L"Images sorted from bottom to top");
+			this->toolTip1->SetToolTip(this->bottomImages, L"double click on an item to open it externally");
 			this->bottomImages->DoubleClick += gcnew System::EventHandler(this, &container::bottomImages_DoubleClick);
 			// 
 			// button4
@@ -447,6 +459,7 @@ namespace PictureSorting {
 			this->leftNumComparisons->Size = System::Drawing::Size(125, 13);
 			this->leftNumComparisons->TabIndex = 21;
 			this->leftNumComparisons->Text = L"Number of Comparisons: ";
+			this->toolTip1->SetToolTip(this->leftNumComparisons, L"How many times this image has been compared to another");
 			// 
 			// leftRating
 			// 
@@ -468,6 +481,7 @@ namespace PictureSorting {
 			this->rightNumComparisons->Size = System::Drawing::Size(125, 13);
 			this->rightNumComparisons->TabIndex = 23;
 			this->rightNumComparisons->Text = L"Number of Comparisons: ";
+			this->toolTip1->SetToolTip(this->rightNumComparisons, L"How many times this image has been compared to another");
 			// 
 			// rightRating
 			// 
@@ -479,13 +493,6 @@ namespace PictureSorting {
 			this->rightRating->TabIndex = 24;
 			this->rightRating->Text = L"Rating:";
 			this->toolTip1->SetToolTip(this->rightRating, L"Defined as Score divided by the number of comparisons");
-			// 
-			// editOptions
-			// 
-			this->editOptions->Name = L"editOptions";
-			this->editOptions->Size = System::Drawing::Size(152, 22);
-			this->editOptions->Text = L"Options";
-			this->editOptions->Click += gcnew System::EventHandler(this, &container::editOptions_Click);
 			// 
 			// container
 			// 
@@ -878,7 +885,7 @@ vector<std::pair<int, int>> comparisonMerge(vector<std::pair<int, int>> left, ve
 	vector<std::pair<int, int>> holder;
 	int i = 0, k = 0;
 	do{
-		if (picList[get<0>(right[i])].comparisons + picList[get<1>(right[i])].comparisons > picList[get<0>(left[i])].comparisons + picList[get<1>(left[i])].comparisons){
+		if (picList[get<0>(right[k])].comparisons + picList[get<1>(right[k])].comparisons > picList[get<0>(left[i])].comparisons + picList[get<1>(left[i])].comparisons){
 			holder.push_back(left[i]);
 			i++;
 		}
@@ -1025,19 +1032,19 @@ private: string getFullPath(System::String^ partial){
 
 //shortcut keys
 private: System::Void container_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-	if (e->KeyCode == Keys::F1)
+	if (e->KeyCode == Keys::F1)//opens github page
 		Process::Start("https://github.com/xMausoleuMx/Picture-Sorting");
-	if (e->KeyCode == Keys::F4)
+	if (e->KeyCode == Keys::F4)//closes program
 		quit();
-	if ((e->KeyCode == Keys::D) && picList.size() > 0){
+	if ((e->KeyCode == Keys::D) && picList.size() > 0){//selects right image
 		selectItem(1);
 		changeComparison(1);
 	}
-	if ((e->KeyCode == Keys::A) && picList.size() > 0){
+	if ((e->KeyCode == Keys::A) && picList.size() > 0){//selects left image
 		selectItem(2);
 		changeComparison(1);
 	}
-	if (e->KeyCode == Keys::S && picList.size() > 0){
+	if (e->KeyCode == Keys::S && picList.size() > 0){//saves file
 		saveUserFile();
 	}
 }
