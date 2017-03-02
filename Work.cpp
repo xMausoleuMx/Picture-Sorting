@@ -33,11 +33,13 @@ void tempSort(vector<image>* list);
 vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
 vector<image> sortPics(vector<image> list);
 
+//changes a System::String^ to a std::string
 static string Stringtostring(System::String^ x){
 	msclr::interop::marshal_context context;
 	return context.marshal_as<std::string>(x);
 }
 
+//sorting used when continuous sorting and sort by score is checked 
 static void continuousScoreSort(vector<image>* list)
 {
 	bool flag;
@@ -58,7 +60,7 @@ static void continuousScoreSort(vector<image>* list)
 	} while (flag);
 }
 
-
+//sorting used when continuous sorting and sort by rating is checked 
 static void continuousRatingSort(vector<image>* list)
 {
 	bool flag;
@@ -79,6 +81,7 @@ static void continuousRatingSort(vector<image>* list)
 	} while (flag);
 }
 
+//checks if image is one of the supported formats
 static bool checkIfImage(string path)
 {
 	bool flag = true;
@@ -97,6 +100,7 @@ static bool checkIfImage(string path)
 	return flag;
 }
 
+//recursively searches the given directory for valid image files
 static vector<image> getFiles(System::String^ directory)
 {
 	vector<image> list, temp;
@@ -123,11 +127,13 @@ static vector<image> getFiles(System::String^ directory)
 	return list;
 }
 
+//checks to make sure the file is still valid, used when loading a collection
 static bool validateFile(const std::string& name) {
 	ifstream f(name.c_str());
 	return f.good();
 }
 
+//gets common directory from a list of images, used to exclude it from the top and bottom lists to make them shorter
 static string getDirectory(vector<image> list)
 {
 	image holder = list[0];
@@ -149,6 +155,7 @@ static string getDirectory(vector<image> list)
 	return directory;
 }
 
+//mergesort method to sort images by score
 static vector<image> scoreMerge(vector<image> left, vector<image> right)
 {
 	vector<image>holder;
@@ -188,6 +195,7 @@ static void scoreSort(vector<image>* list)
 }
 
 
+//mergesort method to sort images by rating
 static vector<image> ratingMerge(vector<image> left, vector<image> right)
 {
 	vector<image>holder;

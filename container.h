@@ -959,6 +959,7 @@ void changeComparison(int increment){
 		genComparisons();
 		changeComparison(1);
 	}
+	//set all the dependent text after the images are loaded
 	rightCurrentScore->Text = "Score: " + picList[get<1>(index[crntCpr])].score;
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 	rightNumComparisons->Text = "Number of comparisons: " + picList[get<1>(index[crntCpr])].comparisons;
@@ -1053,8 +1054,9 @@ private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System
 	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
 }
 
+
 void quit(){
-	if (!saveDifference)
+	if (!saveDifference)//checks if the user has made changes since the last save and prompts them to save before quitting if not
 		exit(EXIT_SUCCESS);
 	else{
 		if (MessageBox::Show("You have unsaved changes to your directory, would\nyou like to save them before you quit?", "Save?", MessageBoxButtons::YesNo, MessageBoxIcon::Asterisk) == System::Windows::Forms::DialogResult::Yes){
