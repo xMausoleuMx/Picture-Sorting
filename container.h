@@ -654,7 +654,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
-		updateRankings();//error
+		updateRankings();
 		genComparisons();
 		changeComparison(0);
 		currentDirectory = Stringtostring(folderName);
@@ -844,13 +844,12 @@ void genComparisons(){
 	{
 		bool flag = false, inflag = false;
 		int c = rand() % k;
-		inflag = checkIfCompared(c);
 		if (checkIfCompared(k)){
 			k--;
 			inflag = true;
 		}
 		if (!inflag){ 
-			if (picList[c].score == picList[k].score){
+			if (picList[c].score == picList[k].score && checkIfCompared(c)){
 					pair<int, int> temp(c, k);
 					index.push_back(temp);
 					k--;
@@ -965,9 +964,9 @@ void changeComparison(int increment){
 	rightNumComparisons->Text = "Number of comparisons: " + picList[get<1>(index[crntCpr])].comparisons;
 	leftNumComparisons->Text = "Number of comparisons: " + picList[get<0>(index[crntCpr])].comparisons;
 	double rating = (double)picList[get<1>(index[crntCpr])].score /(double)picList[get<1>(index[crntCpr])].comparisons;
-	leftRating->Text = "Rating: "  + rating;
+	rightRating->Text = "Rating: "  + rating;
 	rating = (double)picList[get<0>(index[crntCpr])].score / (double)picList[get<0>(index[crntCpr])].comparisons;
-	rightRating->Text = "Rating: " + rating;
+	leftRating->Text = "Rating: " + rating;
 	leftPath->Text = leftString();
 	rightPath->Text = rightString();
 	if (updateContinuously()) //only update ranking if that setting is active
