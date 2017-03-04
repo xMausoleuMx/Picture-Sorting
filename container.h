@@ -1,5 +1,6 @@
 #include <vcclr.h>
 #include "optionsForm.h"
+
 #using <System.dll>
 
 static vector<image> picList;
@@ -14,6 +15,7 @@ static vector<int>shorcuts{112,115, 65, 68, 83};
 #define sortByRating()(settings[3].flag)
 
 #pragma once
+#include "trimCollection.h"
 namespace PictureSorting {
 	
 	using namespace System;
@@ -94,6 +96,7 @@ namespace PictureSorting {
 
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::ToolStripMenuItem^  editOptions;
+	private: System::Windows::Forms::Button^  trimCollection;
 
 
 
@@ -154,6 +157,7 @@ namespace PictureSorting {
 			this->rightNumComparisons = (gcnew System::Windows::Forms::Label());
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
+			this->trimCollection = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -277,7 +281,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -297,14 +301,14 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -335,14 +339,14 @@ namespace PictureSorting {
 			// websiteToolStripMenuItem
 			// 
 			this->websiteToolStripMenuItem->Name = L"websiteToolStripMenuItem";
-			this->websiteToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->websiteToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->websiteToolStripMenuItem->Text = L"Website";
 			this->websiteToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::websiteToolStripMenuItem_Click);
 			// 
 			// fAQToolStripMenuItem
 			// 
 			this->fAQToolStripMenuItem->Name = L"fAQToolStripMenuItem";
-			this->fAQToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->fAQToolStripMenuItem->Size = System::Drawing::Size(116, 22);
 			this->fAQToolStripMenuItem->Text = L"FAQ";
 			this->fAQToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::fAQToolStripMenuItem_Click);
 			// 
@@ -494,11 +498,22 @@ namespace PictureSorting {
 			this->rightRating->Text = L"Rating:";
 			this->toolTip1->SetToolTip(this->rightRating, L"Defined as Score divided by the number of comparisons");
 			// 
+			// trimCollection
+			// 
+			this->trimCollection->Location = System::Drawing::Point(594, 444);
+			this->trimCollection->Name = L"trimCollection";
+			this->trimCollection->Size = System::Drawing::Size(80, 41);
+			this->trimCollection->TabIndex = 25;
+			this->trimCollection->Text = L"Trim Collection";
+			this->trimCollection->UseVisualStyleBackColor = true;
+			this->trimCollection->Click += gcnew System::EventHandler(this, &container::trimCollection_Click);
+			// 
 			// container
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(96, 96);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Dpi;
 			this->ClientSize = System::Drawing::Size(1269, 549);
+			this->Controls->Add(this->trimCollection);
 			this->Controls->Add(this->rightRating);
 			this->Controls->Add(this->rightNumComparisons);
 			this->Controls->Add(this->leftRating);
@@ -1067,8 +1082,12 @@ void quit(){
 	}
 }
 private: System::Void editOptions_Click(System::Object^  sender, System::EventArgs^  e) {
-	optionsForm ^ form = gcnew optionsForm(&settings);
-	form->ShowDialog();
+	optionsForm ^ optionWindow = gcnew optionsForm(&settings);
+	optionWindow->ShowDialog();
+}
+private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
+	trimCollection^  trimWindow = gcnew trimCollection();
+	trimWindow->ShowDialog();
 }
 };
 
