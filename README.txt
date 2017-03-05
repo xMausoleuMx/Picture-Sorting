@@ -15,3 +15,8 @@ F4 = close the program
 S = save file
 A = select the left image
 D = select the right image
+
+
+Planned features.
+Trim function to take either a top or bottom section (size defined by the user) and move the files to another place (to be deleted, uploaded, whatever)
+Add aditional files to the collection.

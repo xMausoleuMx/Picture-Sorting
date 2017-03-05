@@ -1,6 +1,4 @@
 #include <vcclr.h>
-#include "optionsForm.h"
-
 #using <System.dll>
 
 static vector<image> picList;
@@ -1068,7 +1066,7 @@ private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System
 	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
 }
 
-
+//close the program
 void quit(){
 	if (!saveDifference)//checks if the user has made changes since the last save and prompts them to save before quitting if not
 		exit(EXIT_SUCCESS);
@@ -1081,13 +1079,17 @@ void quit(){
 			exit(EXIT_SUCCESS);
 	}
 }
+
+//open the form to edit user options
 private: System::Void editOptions_Click(System::Object^  sender, System::EventArgs^  e) {
 	optionsForm ^ optionWindow = gcnew optionsForm(&settings);
 	optionWindow->ShowDialog();
 }
 private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
-	trimCollection^  trimWindow = gcnew trimCollection();
+	scoreSort(picList);
+	PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
 	trimWindow->ShowDialog();
+	genComparisons();
 }
 };
 

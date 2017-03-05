@@ -1,3 +1,4 @@
+#include "optionsForm.h"
 #pragma once
 
 namespace PictureSorting {
@@ -15,12 +16,10 @@ namespace PictureSorting {
 	public ref class trimCollection : public System::Windows::Forms::Form
 	{
 	public:
-		trimCollection(void)
+		trimCollection(vector<image>* trimList)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			
 		}
 
 	protected:
@@ -38,6 +37,13 @@ namespace PictureSorting {
 	protected:
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Button^  button2;
+	private: System::Windows::Forms::CheckBox^  checkBox1;
+	private: System::Windows::Forms::CheckBox^  checkBox2;
+
+	private: System::Windows::Forms::NumericUpDown^  numericUpDown2;
+	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::CheckBox^  checkBox3;
+	private: System::Windows::Forms::CheckBox^  checkBox4;
 
 	private:
 		/// <summary>
@@ -55,7 +61,14 @@ namespace PictureSorting {
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->checkBox2 = (gcnew System::Windows::Forms::CheckBox());
+			this->numericUpDown2 = (gcnew System::Windows::Forms::NumericUpDown());
+			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->checkBox3 = (gcnew System::Windows::Forms::CheckBox());
+			this->checkBox4 = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// pictureBox1
@@ -74,7 +87,7 @@ namespace PictureSorting {
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(90, 37);
 			this->button1->TabIndex = 1;
-			this->button1->Text = L"button1";
+			this->button1->Text = L"Yes";
 			this->button1->UseVisualStyleBackColor = true;
 			// 
 			// button2
@@ -83,21 +96,85 @@ namespace PictureSorting {
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(90, 37);
 			this->button2->TabIndex = 2;
-			this->button2->Text = L"button2";
+			this->button2->Text = L"No";
 			this->button2->UseVisualStyleBackColor = true;
+			// 
+			// checkBox1
+			// 
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->Location = System::Drawing::Point(107, 303);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(45, 17);
+			this->checkBox1->TabIndex = 3;
+			this->checkBox1->Text = L"Top";
+			this->checkBox1->UseVisualStyleBackColor = true;
+			// 
+			// checkBox2
+			// 
+			this->checkBox2->AutoSize = true;
+			this->checkBox2->Location = System::Drawing::Point(107, 326);
+			this->checkBox2->Name = L"checkBox2";
+			this->checkBox2->Size = System::Drawing::Size(59, 17);
+			this->checkBox2->TabIndex = 4;
+			this->checkBox2->Text = L"Bottom";
+			this->checkBox2->UseVisualStyleBackColor = true;
+			// 
+			// numericUpDown2
+			// 
+			this->numericUpDown2->Location = System::Drawing::Point(359, 314);
+			this->numericUpDown2->Name = L"numericUpDown2";
+			this->numericUpDown2->Size = System::Drawing::Size(46, 20);
+			this->numericUpDown2->TabIndex = 6;
+			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(218, 379);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(103, 44);
+			this->button3->TabIndex = 7;
+			this->button3->Text = L"Start";
+			this->button3->UseVisualStyleBackColor = true;
+			// 
+			// checkBox3
+			// 
+			this->checkBox3->AutoSize = true;
+			this->checkBox3->Location = System::Drawing::Point(193, 303);
+			this->checkBox3->Name = L"checkBox3";
+			this->checkBox3->Size = System::Drawing::Size(63, 17);
+			this->checkBox3->TabIndex = 8;
+			this->checkBox3->Text = L"Percent";
+			this->checkBox3->UseVisualStyleBackColor = true;
+			// 
+			// checkBox4
+			// 
+			this->checkBox4->AutoSize = true;
+			this->checkBox4->Location = System::Drawing::Point(193, 326);
+			this->checkBox4->Name = L"checkBox4";
+			this->checkBox4->Size = System::Drawing::Size(62, 17);
+			this->checkBox4->TabIndex = 9;
+			this->checkBox4->Text = L"Amount";
+			this->checkBox4->UseVisualStyleBackColor = true;
 			// 
 			// trimCollection
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(526, 436);
+			this->Controls->Add(this->checkBox4);
+			this->Controls->Add(this->checkBox3);
+			this->Controls->Add(this->button3);
+			this->Controls->Add(this->numericUpDown2);
+			this->Controls->Add(this->checkBox2);
+			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->pictureBox1);
 			this->Name = L"trimCollection";
-			this->Text = L"trimCollection";
+			this->Text = L"Trim";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 	#pragma endregion
