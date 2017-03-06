@@ -9,17 +9,17 @@ namespace PictureSorting {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
+	vector<image>* trimList;
 	/// <summary>
 	/// Summary for trimCollection
 	/// </summary>
 	public ref class trimCollection : public System::Windows::Forms::Form
 	{
 	public:
-		trimCollection(vector<image>* trimList)
+		trimCollection(vector<image>* tempList)
 		{
 			InitializeComponent();
-			
+			trimList = tempList;
 		}
 
 	protected:
@@ -37,19 +37,22 @@ namespace PictureSorting {
 	protected:
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Button^  button2;
-	private: System::Windows::Forms::CheckBox^  checkBox1;
-	private: System::Windows::Forms::CheckBox^  checkBox2;
+	private: System::Windows::Forms::CheckBox^  topCheckBox;
+	private: System::Windows::Forms::CheckBox^  bottomCheckBox;
 
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown2;
-	private: System::Windows::Forms::Button^  button3;
-	private: System::Windows::Forms::CheckBox^  checkBox3;
-	private: System::Windows::Forms::CheckBox^  checkBox4;
+	private: System::Windows::Forms::Button^  start;
+
+	private: System::Windows::Forms::CheckBox^  percentCheckBox;
+	private: System::Windows::Forms::CheckBox^  amountCheckBox;
+	private: System::Windows::Forms::ToolTip^  toolTip1;
+	private: System::ComponentModel::IContainer^  components;
 
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -58,15 +61,17 @@ namespace PictureSorting {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
-			this->checkBox2 = (gcnew System::Windows::Forms::CheckBox());
+			this->topCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->bottomCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->numericUpDown2 = (gcnew System::Windows::Forms::NumericUpDown());
-			this->button3 = (gcnew System::Windows::Forms::Button());
-			this->checkBox3 = (gcnew System::Windows::Forms::CheckBox());
-			this->checkBox4 = (gcnew System::Windows::Forms::CheckBox());
+			this->start = (gcnew System::Windows::Forms::Button());
+			this->percentCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->amountCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->BeginInit();
 			this->SuspendLayout();
@@ -80,6 +85,7 @@ namespace PictureSorting {
 			this->pictureBox1->Size = System::Drawing::Size(502, 285);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
+			this->pictureBox1->Click += gcnew System::EventHandler(this, &trimCollection::pictureBox1_Click);
 			// 
 			// button1
 			// 
@@ -99,73 +105,88 @@ namespace PictureSorting {
 			this->button2->Text = L"No";
 			this->button2->UseVisualStyleBackColor = true;
 			// 
-			// checkBox1
+			// topCheckBox
 			// 
-			this->checkBox1->AutoSize = true;
-			this->checkBox1->Location = System::Drawing::Point(107, 303);
-			this->checkBox1->Name = L"checkBox1";
-			this->checkBox1->Size = System::Drawing::Size(45, 17);
-			this->checkBox1->TabIndex = 3;
-			this->checkBox1->Text = L"Top";
-			this->checkBox1->UseVisualStyleBackColor = true;
+			this->topCheckBox->AutoSize = true;
+			this->topCheckBox->Location = System::Drawing::Point(13, 325);
+			this->topCheckBox->Name = L"topCheckBox";
+			this->topCheckBox->Size = System::Drawing::Size(45, 17);
+			this->topCheckBox->TabIndex = 3;
+			this->topCheckBox->Text = L"Top";
+			this->toolTip1->SetToolTip(this->topCheckBox, L"Will choose the top down");
+			this->topCheckBox->UseVisualStyleBackColor = true;
+			this->topCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::topCheckBox_CheckedChanged);
 			// 
-			// checkBox2
+			// bottomCheckBox
 			// 
-			this->checkBox2->AutoSize = true;
-			this->checkBox2->Location = System::Drawing::Point(107, 326);
-			this->checkBox2->Name = L"checkBox2";
-			this->checkBox2->Size = System::Drawing::Size(59, 17);
-			this->checkBox2->TabIndex = 4;
-			this->checkBox2->Text = L"Bottom";
-			this->checkBox2->UseVisualStyleBackColor = true;
+			this->bottomCheckBox->AutoSize = true;
+			this->bottomCheckBox->Checked = true;
+			this->bottomCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->bottomCheckBox->Location = System::Drawing::Point(12, 348);
+			this->bottomCheckBox->Name = L"bottomCheckBox";
+			this->bottomCheckBox->Size = System::Drawing::Size(59, 17);
+			this->bottomCheckBox->TabIndex = 4;
+			this->bottomCheckBox->Text = L"Bottom";
+			this->toolTip1->SetToolTip(this->bottomCheckBox, L"Will choose files from the bottom up.");
+			this->bottomCheckBox->UseVisualStyleBackColor = true;
+			this->bottomCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::bottomCheckBox_CheckedChanged);
 			// 
 			// numericUpDown2
 			// 
-			this->numericUpDown2->Location = System::Drawing::Point(359, 314);
+			this->numericUpDown2->Location = System::Drawing::Point(244, 336);
 			this->numericUpDown2->Name = L"numericUpDown2";
 			this->numericUpDown2->Size = System::Drawing::Size(46, 20);
 			this->numericUpDown2->TabIndex = 6;
+			this->toolTip1->SetToolTip(this->numericUpDown2, L"This number corresponds to either the percentage or number of files that will be "
+				L"selected");
 			// 
-			// button3
+			// start
 			// 
-			this->button3->Location = System::Drawing::Point(218, 379);
-			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(103, 44);
-			this->button3->TabIndex = 7;
-			this->button3->Text = L"Start";
-			this->button3->UseVisualStyleBackColor = true;
+			this->start->Location = System::Drawing::Point(218, 379);
+			this->start->Name = L"start";
+			this->start->Size = System::Drawing::Size(103, 44);
+			this->start->TabIndex = 7;
+			this->start->Text = L"Start";
+			this->start->UseVisualStyleBackColor = true;
+			this->start->Click += gcnew System::EventHandler(this, &trimCollection::startButton_Click);
 			// 
-			// checkBox3
+			// percentCheckBox
 			// 
-			this->checkBox3->AutoSize = true;
-			this->checkBox3->Location = System::Drawing::Point(193, 303);
-			this->checkBox3->Name = L"checkBox3";
-			this->checkBox3->Size = System::Drawing::Size(63, 17);
-			this->checkBox3->TabIndex = 8;
-			this->checkBox3->Text = L"Percent";
-			this->checkBox3->UseVisualStyleBackColor = true;
+			this->percentCheckBox->AutoSize = true;
+			this->percentCheckBox->Checked = true;
+			this->percentCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->percentCheckBox->Location = System::Drawing::Point(424, 325);
+			this->percentCheckBox->Name = L"percentCheckBox";
+			this->percentCheckBox->Size = System::Drawing::Size(63, 17);
+			this->percentCheckBox->TabIndex = 8;
+			this->percentCheckBox->Text = L"Percent";
+			this->toolTip1->SetToolTip(this->percentCheckBox, L"Will choose a percent of the overall ");
+			this->percentCheckBox->UseVisualStyleBackColor = true;
+			this->percentCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::percentCheckBox_CheckedChanged);
 			// 
-			// checkBox4
+			// amountCheckBox
 			// 
-			this->checkBox4->AutoSize = true;
-			this->checkBox4->Location = System::Drawing::Point(193, 326);
-			this->checkBox4->Name = L"checkBox4";
-			this->checkBox4->Size = System::Drawing::Size(62, 17);
-			this->checkBox4->TabIndex = 9;
-			this->checkBox4->Text = L"Amount";
-			this->checkBox4->UseVisualStyleBackColor = true;
+			this->amountCheckBox->AutoSize = true;
+			this->amountCheckBox->Location = System::Drawing::Point(424, 348);
+			this->amountCheckBox->Name = L"amountCheckBox";
+			this->amountCheckBox->Size = System::Drawing::Size(62, 17);
+			this->amountCheckBox->TabIndex = 9;
+			this->amountCheckBox->Text = L"Amount";
+			this->toolTip1->SetToolTip(this->amountCheckBox, L"Will choose a static number of files instead of a percentage.");
+			this->amountCheckBox->UseVisualStyleBackColor = true;
+			this->amountCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::amountCheckBox_CheckedChanged);
 			// 
 			// trimCollection
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(526, 436);
-			this->Controls->Add(this->checkBox4);
-			this->Controls->Add(this->checkBox3);
-			this->Controls->Add(this->button3);
+			this->Controls->Add(this->amountCheckBox);
+			this->Controls->Add(this->percentCheckBox);
+			this->Controls->Add(this->start);
 			this->Controls->Add(this->numericUpDown2);
-			this->Controls->Add(this->checkBox2);
-			this->Controls->Add(this->checkBox1);
+			this->Controls->Add(this->bottomCheckBox);
+			this->Controls->Add(this->topCheckBox);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->pictureBox1);
@@ -178,5 +199,46 @@ namespace PictureSorting {
 
 		}
 	#pragma endregion
-	};
+
+private: System::Void topCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (topCheckBox->Checked){
+
+	}
+	else
+		bottomCheckBox->Checked = true;
+}
+
+
+private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (bottomCheckBox->Checked){
+
+	}
+	else
+		topCheckBox->Checked = true;
+}
+
+private: System::Void percentCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (percentCheckBox->Checked){
+
+	}
+	else
+		amountCheckBox->Checked = true;
+}
+
+private: System::Void amountCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (amountCheckBox->Checked){
+
+	}
+	else
+		percentCheckBox->Checked = true;
+}
+
+private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+}
+
+private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
+	//Process::Start("insert path here") open the image in its default software
+}
+};
 }
