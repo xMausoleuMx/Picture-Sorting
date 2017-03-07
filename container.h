@@ -1,4 +1,5 @@
 #include <vcclr.h>
+#include "trimCollection.h"
 #using <System.dll>
 
 static vector<image> picList;
@@ -13,7 +14,6 @@ static vector<int>shorcuts{112,115, 65, 68, 83};
 #define sortByRating()(settings[3].flag)
 
 #pragma once
-#include "trimCollection.h"
 namespace PictureSorting {
 	
 	using namespace System;
@@ -1086,10 +1086,9 @@ private: System::Void editOptions_Click(System::Object^  sender, System::EventAr
 	optionWindow->ShowDialog();
 }
 private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
-	scoreSort(picList);
+	scoreSort(&picList);
 	PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
 	trimWindow->ShowDialog();
-	genComparisons();
 }
 };
 

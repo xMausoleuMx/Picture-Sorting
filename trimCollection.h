@@ -89,7 +89,7 @@ namespace PictureSorting {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(13, 387);
+			this->button1->Location = System::Drawing::Point(12, 387);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(90, 37);
 			this->button1->TabIndex = 1;
@@ -134,6 +134,7 @@ namespace PictureSorting {
 			// numericUpDown2
 			// 
 			this->numericUpDown2->Location = System::Drawing::Point(244, 336);
+			this->numericUpDown2->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->numericUpDown2->Name = L"numericUpDown2";
 			this->numericUpDown2->Size = System::Drawing::Size(46, 20);
 			this->numericUpDown2->TabIndex = 6;
@@ -192,6 +193,7 @@ namespace PictureSorting {
 			this->Controls->Add(this->pictureBox1);
 			this->Name = L"trimCollection";
 			this->Text = L"Trim";
+			this->Load += gcnew System::EventHandler(this, &trimCollection::trimCollection_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->EndInit();
 			this->ResumeLayout(false);
@@ -203,6 +205,7 @@ namespace PictureSorting {
 private: System::Void topCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (topCheckBox->Checked){
 
+		bottomCheckBox->Checked = false;
 	}
 	else
 		bottomCheckBox->Checked = true;
@@ -212,6 +215,7 @@ private: System::Void topCheckBox_CheckedChanged(System::Object^  sender, System
 private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (bottomCheckBox->Checked){
 
+		topCheckBox->Checked = false;
 	}
 	else
 		topCheckBox->Checked = true;
@@ -220,6 +224,7 @@ private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, Sys
 private: System::Void percentCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (percentCheckBox->Checked){
 
+		amountCheckBox->Checked = false;
 	}
 	else
 		amountCheckBox->Checked = true;
@@ -228,6 +233,7 @@ private: System::Void percentCheckBox_CheckedChanged(System::Object^  sender, Sy
 private: System::Void amountCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (amountCheckBox->Checked){
 
+		percentCheckBox->Checked = false;
 	}
 	else
 		percentCheckBox->Checked = true;
@@ -239,6 +245,9 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 
 private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
 	//Process::Start("insert path here") open the image in its default software
+}
+private: System::Void trimCollection_Load(System::Object^  sender, System::EventArgs^  e) {
+	MessageBox::Show("This program will allow you to move a portion of the image collection to a seperate sub-folder\nFrom there you can do whatever you want with the files.\nNote that it will not remove them from the collection", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 };
 }
