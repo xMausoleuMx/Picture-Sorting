@@ -95,6 +95,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::ToolStripMenuItem^  editOptions;
 	private: System::Windows::Forms::Button^  trimCollection;
+	private: System::Windows::Forms::ToolStripMenuItem^  addItemsToolStripMenuItem;
 
 
 
@@ -133,6 +134,7 @@ namespace PictureSorting {
 			this->saveToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->addItemsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editOptions = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->websiteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -285,15 +287,15 @@ namespace PictureSorting {
 			// newDirectoryToolStripMenuItem
 			// 
 			this->newDirectoryToolStripMenuItem->Name = L"newDirectoryToolStripMenuItem";
-			this->newDirectoryToolStripMenuItem->Size = System::Drawing::Size(165, 22);
+			this->newDirectoryToolStripMenuItem->Size = System::Drawing::Size(171, 22);
 			this->newDirectoryToolStripMenuItem->Text = L"New Directory";
 			this->newDirectoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::newDirectoryToolStripMenuItem_Click);
 			// 
 			// existingDirectoryToolStripMenuItem
 			// 
 			this->existingDirectoryToolStripMenuItem->Name = L"existingDirectoryToolStripMenuItem";
-			this->existingDirectoryToolStripMenuItem->Size = System::Drawing::Size(165, 22);
-			this->existingDirectoryToolStripMenuItem->Text = L"Existing Directory";
+			this->existingDirectoryToolStripMenuItem->Size = System::Drawing::Size(171, 22);
+			this->existingDirectoryToolStripMenuItem->Text = L"Existing Collection";
 			this->existingDirectoryToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::existingDirectoryToolStripMenuItem_Click);
 			// 
 			// saveToolStripMenuItem
@@ -312,15 +314,25 @@ namespace PictureSorting {
 			// 
 			// editToolStripMenuItem
 			// 
-			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->editOptions });
+			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->addItemsToolStripMenuItem,
+					this->editOptions
+			});
 			this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
 			this->editToolStripMenuItem->Text = L"Edit";
 			// 
+			// addItemsToolStripMenuItem
+			// 
+			this->addItemsToolStripMenuItem->Name = L"addItemsToolStripMenuItem";
+			this->addItemsToolStripMenuItem->Size = System::Drawing::Size(199, 22);
+			this->addItemsToolStripMenuItem->Text = L"Add Items to Collection";
+			this->addItemsToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::addItemsToolStripMenuItem_Click);
+			// 
 			// editOptions
 			// 
 			this->editOptions->Name = L"editOptions";
-			this->editOptions->Size = System::Drawing::Size(116, 22);
+			this->editOptions->Size = System::Drawing::Size(199, 22);
 			this->editOptions->Text = L"Options";
 			this->editOptions->Click += gcnew System::EventHandler(this, &container::editOptions_Click);
 			// 
@@ -503,6 +515,8 @@ namespace PictureSorting {
 			this->trimCollection->Size = System::Drawing::Size(80, 41);
 			this->trimCollection->TabIndex = 25;
 			this->trimCollection->Text = L"Trim Collection";
+			this->toolTip1->SetToolTip(this->trimCollection, L"Opens a new window to select a portion of your collection to move to a new folder"
+				L"");
 			this->trimCollection->UseVisualStyleBackColor = true;
 			this->trimCollection->Click += gcnew System::EventHandler(this, &container::trimCollection_Click);
 			// 
@@ -585,7 +599,7 @@ void loadSettings(){
 			nameTemp = "";
 			flagTemp = "";
 		}
-		if (defaultCollection)
+		if (defaultCollection)//if the setting for the openSpecificDirectory is not "false" assume that it is a path to a savefile and open it.
 			openFile(gcnew String(settings[1].path.c_str()));
 		reader->Close();
 	}
@@ -637,7 +651,7 @@ void updateRankings()
 		scoreSort(&sortedList);
 	this->topImages->Items->Clear();
 	this->bottomImages->Items->Clear();
-	for (int i = 0; i < sortedList.size(); i++)
+	for (int i = 0; i < sortedList.size(); i++)//adding items to the top list
 	{
 		std::ostringstream convert;
 		convert << sortedList[i].score;
@@ -646,7 +660,7 @@ void updateRankings()
 			holder += sortedList[i].path[y];
 		topImages->Items->Add(gcnew String(holder.c_str()));
 	}
-	for (int i = sortedList.size() - 1; i >= 0; i--)
+	for (int i = sortedList.size() - 1; i >= 0; i--)//adding items to the bottom list
 	{
 		std::ostringstream convert;
 		convert << sortedList[i].score;
@@ -667,6 +681,8 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
+		if (picList.size() ==0)
+			MessageBox::Show("ERROR: No files could be loaded from the chosen directory.\nMake sure there are files of an acceptable file type.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		updateRankings();
 		genComparisons();
 		changeComparison(0);
@@ -678,33 +694,32 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 }
 
 //save the current scores and comparisons to a csv to be opened later
-void saveUserFile()
-{
-	if (openedFlag)//if the current directory was read from a file update that same file
-	{
-		StreamWriter^ writer = gcnew StreamWriter(fileName);
-		for (int i = 0; i < picList.size(); i++)
-			writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
+void saveUserFile(){
+	if(saveDifference){
+		if (openedFlag){//if the current directory was read from a file update that same file
+			StreamWriter^ writer = gcnew StreamWriter(fileName);
+			for (int i = 0; i < picList.size(); i++)
+				writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
 
-		writer->Close();
-		saveDifference = false;
-		MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
-	}
-	else//if the current directory is one that has never been saved then save it as a new file
-	{
-		if (saveFile->ShowDialog() == System::Windows::Forms::DialogResult::OK){
-			if (saveFile->FileName != "")
-			{
-				fileName = saveFile->FileName;
-				StreamWriter^ writer = gcnew StreamWriter(fileName);
-				for (int i = 0; i < picList.size(); i++)
-					writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
-				writer->Close();
-				saveDifference = false;
-				MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+			writer->Close();
+			saveDifference = false;
+			MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+		}
+		else{//if the current directory is one that has never been saved then save it as a new file		
+			if (saveFile->ShowDialog() == System::Windows::Forms::DialogResult::OK){
+				if (saveFile->FileName != ""){
+					fileName = saveFile->FileName;
+					StreamWriter^ writer = gcnew StreamWriter(fileName);
+					for (int i = 0; i < picList.size(); i++)
+						writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+					writer->Close();
+					saveDifference = false;
+					MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+				}
 			}
 		}
 	}
+
 	
 }
 
@@ -831,6 +846,7 @@ private: void selectItem(int choice){
 	saveDifference = true;
 }
 
+//when user selects the left image, increment the score and change the comparison
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
 		selectItem(2);
@@ -840,6 +856,7 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
 
+//when user selects the right image, increment the score and change the comparison
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
 		selectItem(1);
@@ -1089,6 +1106,22 @@ private: System::Void trimCollection_Click(System::Object^  sender, System::Even
 	scoreSort(&picList);
 	PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
 	trimWindow->ShowDialog();
+}
+private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
+	System::String^ folderName;
+	if (result == System::Windows::Forms::DialogResult::OK)
+	{
+		vector<image> tempList;
+		folderName = openNewDirectory->SelectedPath;
+		folderName = (*folderName).Concat(folderName, "\\");
+		tempList = getFiles(folderName);
+		if (tempList.size() == 0)
+			MessageBox::Show("ERROR: No files could be loaded from the chosen directory.\nMake sure there are files of an acceptable file type.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		picList.insert(picList.end(),tempList.begin(),tempList.end());
+		updateRankings();
+		genComparisons();
+	}
 }
 };
 
