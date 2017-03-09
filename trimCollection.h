@@ -46,6 +46,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::CheckBox^  percentCheckBox;
 	private: System::Windows::Forms::CheckBox^  amountCheckBox;
 	private: System::Windows::Forms::ToolTip^  toolTip1;
+	private: System::Windows::Forms::FolderBrowserDialog^  moveFilesTo;
 	private: System::ComponentModel::IContainer^  components;
 
 	private:
@@ -72,6 +73,7 @@ namespace PictureSorting {
 			this->percentCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->amountCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
+			this->moveFilesTo = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->BeginInit();
 			this->SuspendLayout();
@@ -202,50 +204,58 @@ namespace PictureSorting {
 		}
 	#pragma endregion
 
+//checkbox to choose from the top portion of the collection
 private: System::Void topCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (topCheckBox->Checked){
-
+	if (topCheckBox->Checked)
 		bottomCheckBox->Checked = false;
-	}
 	else
 		bottomCheckBox->Checked = true;
 }
 
 
+//checkbox to choose from the bottom portion of the collection
 private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (bottomCheckBox->Checked){
-
+	if (bottomCheckBox->Checked)
 		topCheckBox->Checked = false;
-	}
 	else
 		topCheckBox->Checked = true;
 }
 
+//checkbox to choose that the user wants a percentage of the total collection.
 private: System::Void percentCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (percentCheckBox->Checked){
-
+	if (percentCheckBox->Checked)
 		amountCheckBox->Checked = false;
-	}
 	else
 		amountCheckBox->Checked = true;
 }
 
+//checkbox to choose that that user wants a specific amount of images from the collection.
 private: System::Void amountCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (amountCheckBox->Checked){
-
+	if (amountCheckBox->Checked)
 		percentCheckBox->Checked = false;
-	}
 	else
 		percentCheckBox->Checked = true;
 }
 
 private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
+	if (result == System::Windows::Forms::DialogResult::OK){
+		//todo
+	}
+	else
+		MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+}
+
+//gets the valid divisions for the collection based on the lowest number of comparisons
+void getValidPortions(){
 
 }
 
 private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
 	//Process::Start("insert path here") open the image in its default software
 }
+
 private: System::Void trimCollection_Load(System::Object^  sender, System::EventArgs^  e) {
 	MessageBox::Show("This program will allow you to move a portion of the image collection to a seperate sub-folder\nFrom there you can do whatever you want with the files.\nNote that it will not remove them from the collection", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
