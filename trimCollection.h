@@ -39,8 +39,9 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Button^  button2;
 	private: System::Windows::Forms::CheckBox^  topCheckBox;
 	private: System::Windows::Forms::CheckBox^  bottomCheckBox;
+	private: System::Windows::Forms::NumericUpDown^  sectionSet;
 
-	private: System::Windows::Forms::NumericUpDown^  numericUpDown2;
+
 	private: System::Windows::Forms::Button^  start;
 
 	private: System::Windows::Forms::CheckBox^  percentCheckBox;
@@ -68,14 +69,14 @@ namespace PictureSorting {
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->topCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->bottomCheckBox = (gcnew System::Windows::Forms::CheckBox());
-			this->numericUpDown2 = (gcnew System::Windows::Forms::NumericUpDown());
+			this->sectionSet = (gcnew System::Windows::Forms::NumericUpDown());
 			this->start = (gcnew System::Windows::Forms::Button());
 			this->percentCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->amountCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->moveFilesTo = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sectionSet))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// pictureBox1
@@ -133,14 +134,14 @@ namespace PictureSorting {
 			this->bottomCheckBox->UseVisualStyleBackColor = true;
 			this->bottomCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::bottomCheckBox_CheckedChanged);
 			// 
-			// numericUpDown2
+			// sectionSet
 			// 
-			this->numericUpDown2->Location = System::Drawing::Point(244, 336);
-			this->numericUpDown2->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
-			this->numericUpDown2->Name = L"numericUpDown2";
-			this->numericUpDown2->Size = System::Drawing::Size(46, 20);
-			this->numericUpDown2->TabIndex = 6;
-			this->toolTip1->SetToolTip(this->numericUpDown2, L"This number corresponds to either the percentage or number of files that will be "
+			this->sectionSet->Location = System::Drawing::Point(244, 336);
+			this->sectionSet->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
+			this->sectionSet->Name = L"sectionSet";
+			this->sectionSet->Size = System::Drawing::Size(46, 20);
+			this->sectionSet->TabIndex = 6;
+			this->toolTip1->SetToolTip(this->sectionSet, L"This number corresponds to either the percentage or number of files that will be "
 				L"selected");
 			// 
 			// start
@@ -187,7 +188,7 @@ namespace PictureSorting {
 			this->Controls->Add(this->amountCheckBox);
 			this->Controls->Add(this->percentCheckBox);
 			this->Controls->Add(this->start);
-			this->Controls->Add(this->numericUpDown2);
+			this->Controls->Add(this->sectionSet);
 			this->Controls->Add(this->bottomCheckBox);
 			this->Controls->Add(this->topCheckBox);
 			this->Controls->Add(this->button2);
@@ -197,7 +198,7 @@ namespace PictureSorting {
 			this->Text = L"Trim";
 			this->Load += gcnew System::EventHandler(this, &trimCollection::trimCollection_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown2))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sectionSet))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -238,18 +239,49 @@ private: System::Void amountCheckBox_CheckedChanged(System::Object^  sender, Sys
 }
 
 private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
-	MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-	System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
-	if (result == System::Windows::Forms::DialogResult::OK){
-		//todo
+	bool flag = false;
+	if (amountCheckBox->Checked){
+		if (sectionSet->Value > trimList->size()){
+			MessageBox::Show("Error:You cannot select a number larger than the amount of images in you collection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		}
+		else if(sectionSet->Value % getValidPortions() !=0 ){
+
+		}
+		else{
+
+		}
 	}
-	else
-		MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	else if (percentCheckBox->Checked){
+		if (sectionSet->Value > 100 || sectionSet->Value < 0){
+			MessageBox::Show("Error:You have selected a value that is invalid when using percentages.\nIf want to select a percent of the collection make sure you choose a value between 100 and 0", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		}
+		else if ((trimList->size()*sectionSet->Value/100) % getValidPortions() != 0){
+
+		}
+		else{
+
+		}
+	}
+	if(flag){
+		MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
+		if (result == System::Windows::Forms::DialogResult::OK){
+
+		}
+		else
+			MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
 }
 
 //gets the valid divisions for the collection based on the lowest number of comparisons
-void getValidPortions(){
-
+int getValidPortions(){
+	int lowestComparison = INT_MAX, sectionSize = 0;
+	for (int i = 0; i < trimList->size(); i++){
+		if ((*trimList)[i].comparisons < lowestComparison)
+			lowestComparison = (*trimList)[i].comparisons;
+	}
+	sectionSize = trimList->size()/pow(2,lowestComparison);
+	return sectionSize;
 }
 
 private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
