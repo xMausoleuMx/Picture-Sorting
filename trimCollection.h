@@ -4,6 +4,7 @@
 namespace PictureSorting {
 
 	using namespace System;
+	using namespace std;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
@@ -245,34 +246,51 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 			MessageBox::Show("Error:You cannot select a number larger than the amount of images in you collection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
 		else if(sectionSet->Value % getValidPortions() !=0 ){
-
+			std::string messageValue = "Error:You have chosen a number that does not fit evenly with the number of comparisons in your collection\nPlease choose a multiple of ";
+			messageValue += getValidPortions();
+			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
-		else{
-
-		}
+		else
+			flag = true;
 	}
 	else if (percentCheckBox->Checked){
 		if (sectionSet->Value > 100 || sectionSet->Value < 0){
 			MessageBox::Show("Error:You have selected a value that is invalid when using percentages.\nIf want to select a percent of the collection make sure you choose a value between 100 and 0", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
 		else if ((trimList->size()*sectionSet->Value/100) % getValidPortions() != 0){
-
+			std::string messageValue = "Error:You have chosen a number that does not fit evenly with the number of comparisons in your collection\nPlease choose a multiple of ";
+			messageValue += (getValidPortions() * 100) / trimList->size();
+			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
-		else{
-
-		}
+		else
+			flag = true;
 	}
 	if(flag){
 		MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
 		if (result == System::Windows::Forms::DialogResult::OK){
-
+			if (bottomCheckBox->Checked){
+				for (int i = 0; i < ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i++){
+					MoveFileA((*trimList)[i].path.c_str(), Stringtostring(moveFilesTo->SelectedPath).c_str());
+				}
+			}
+			else{
+				for (System::Decimal i = ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i <trimList->size(); i++){
+					MoveFileA((*trimList)[(int)i].path.c_str(), Stringtostring(moveFilesTo->SelectedPath).c_str());
+				}
+			}
 		}
 		else
 			MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 	}
 }
 
+
+void moveFiles(int begin, int end){
+	for (int i = begin; i < end; i++){
+		
+	}
+}
 //gets the valid divisions for the collection based on the lowest number of comparisons
 int getValidPortions(){
 	int lowestComparison = INT_MAX, sectionSize = 0;

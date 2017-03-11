@@ -678,6 +678,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	System::String^ folderName;
 	if (result == System::Windows::Forms::DialogResult::OK)
 	{
+		index.clear();
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
@@ -815,8 +816,10 @@ void openFile(System::String^ filename){
 
 //open previously saved directory comparison
 private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	
 	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)//ask user to select the save file
 	{
+		index.clear();
 		openFile(openExistingSave->FileName);
 	}
 	else
