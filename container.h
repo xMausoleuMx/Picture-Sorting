@@ -712,7 +712,7 @@ void saveUserFile(){
 					fileName = saveFile->FileName;
 					StreamWriter^ writer = gcnew StreamWriter(fileName);
 					for (int i = 0; i < picList.size(); i++)
-						writer->WriteLine("{0},{1}", (gcnew String(picList[i].path.c_str())), picList[i].score);
+						writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
 					writer->Close();
 					saveDifference = false;
 					MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
