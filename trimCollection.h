@@ -245,9 +245,8 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 		if (sectionSet->Value > trimList->size()){
 			MessageBox::Show("Error:You cannot select a number larger than the amount of images in you collection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
-		else if(sectionSet->Value % getValidPortions() !=0 ){
-			std::string messageValue = "Error:You have chosen a number that does not fit evenly with the number of comparisons in your collection\nPlease choose a multiple of ";
-			messageValue += getValidPortions();
+		else if(getLowestComparison() < 4 ){
+			std::string messageValue = "Warning: There are images in your collection that have less than 4 comparisons, this could ";
 			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
 		else
@@ -257,9 +256,9 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 		if (sectionSet->Value > 100 || sectionSet->Value < 0){
 			MessageBox::Show("Error:You have selected a value that is invalid when using percentages.\nIf want to select a percent of the collection make sure you choose a value between 100 and 0", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
-		else if ((trimList->size()*sectionSet->Value/100) % getValidPortions() != 0){
+		else if ((trimList->size()*sectionSet->Value/100) % getLowestComparison() != 0){
 			std::string messageValue = "Error:You have chosen a number that does not fit evenly with the number of comparisons in your collection\nPlease choose a multiple of ";
-			messageValue += (getValidPortions() * 100) / trimList->size();
+			messageValue += (getLowestComparison() * 100) / trimList->size();
 			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		}
 		else
@@ -286,20 +285,14 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 }
 
 
-void moveFiles(int begin, int end){
-	for (int i = begin; i < end; i++){
-		
-	}
-}
 //gets the valid divisions for the collection based on the lowest number of comparisons
-int getValidPortions(){
+int getLowestComparison(){
 	int lowestComparison = INT_MAX, sectionSize = 0;
 	for (int i = 0; i < trimList->size(); i++){
 		if ((*trimList)[i].comparisons < lowestComparison)
 			lowestComparison = (*trimList)[i].comparisons;
 	}
-	sectionSize = trimList->size()/pow(2,lowestComparison);
-	return sectionSize;
+	return lowestComparison;
 }
 
 private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {

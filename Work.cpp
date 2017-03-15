@@ -69,7 +69,7 @@ static void continuousRatingSort(vector<image>* list)
 		flag = false;
 		for (int i = 1; i < (*list).size(); i++)
 		{
-			if ((double)(*list)[i].score / (*list)[i].comparisons >(double)(*list)[i - 1].score / (*list)[i-1].comparisons)
+			if ( getRating((*list)[i]) > getRating((*list)[i-1]))
 			{
 				image a = (*list)[i];
 				image b = (*list)[i - 1];
@@ -201,7 +201,7 @@ static vector<image> ratingMerge(vector<image> left, vector<image> right)
 	vector<image>holder;
 	int i = 0, k = 0;
 	do{
-		if (((double)left[i].score / left[i].comparisons) > ((double)right[k].score/right[k].comparisons)){
+		if ((getRating(left[i])) > (getRating(right[k]))){
 			holder.push_back(left[i]);
 			i++;
 		}
@@ -232,4 +232,12 @@ static void ratingSort(vector<image>* list)
 	ratingSort(&right);
 	(*list) = ratingMerge(left, right);
 	return;
+}
+
+//uses wilson score to determine rating, should be more accurate than just score/comparisons
+double getRating(image holder)
+{
+	if (holder.score == 0)
+		return 0;
+	return(((holder.score + 1.9208) / (holder.score + holder.comparisons) - 1.96 * sqrt(((holder.score * holder.comparisons) / (holder.score + holder.comparisons)) + 0.9604) / (holder.score + holder.comparisons)) / (1 + 3.8416 / (holder.score + holder.comparisons)));
 }

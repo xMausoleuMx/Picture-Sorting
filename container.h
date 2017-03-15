@@ -996,10 +996,8 @@ void changeComparison(int increment){
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 	rightNumComparisons->Text = "Number of comparisons: " + picList[get<1>(index[crntCpr])].comparisons;
 	leftNumComparisons->Text = "Number of comparisons: " + picList[get<0>(index[crntCpr])].comparisons;
-	double rating = (double)picList[get<1>(index[crntCpr])].score /(double)picList[get<1>(index[crntCpr])].comparisons;
-	rightRating->Text = "Rating: "  + rating;
-	rating = (double)picList[get<0>(index[crntCpr])].score / (double)picList[get<0>(index[crntCpr])].comparisons;
-	leftRating->Text = "Rating: " + rating;
+	rightRating->Text = "Rating: " + getRating(picList[get<1>(index[crntCpr])]);
+	leftRating->Text = "Rating: " + getRating(picList[get<0>(index[crntCpr])]);
 	leftPath->Text = leftString();
 	rightPath->Text = rightString();
 	if (updateContinuously()) //only update ranking if that setting is active
@@ -1106,7 +1104,7 @@ private: System::Void editOptions_Click(System::Object^  sender, System::EventAr
 	optionWindow->ShowDialog();
 }
 private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
-	scoreSort(&picList);
+	ratingSort(&picList);
 	PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
 	trimWindow->ShowDialog();
 }
