@@ -34,10 +34,10 @@ namespace PictureSorting {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::PictureBox^  pictureBox1;
+
 	protected:
-	private: System::Windows::Forms::Button^  button1;
-	private: System::Windows::Forms::Button^  button2;
+
+
 	private: System::Windows::Forms::CheckBox^  topCheckBox;
 	private: System::Windows::Forms::CheckBox^  bottomCheckBox;
 	private: System::Windows::Forms::NumericUpDown^  sectionSet;
@@ -49,6 +49,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::CheckBox^  amountCheckBox;
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::FolderBrowserDialog^  moveFilesTo;
+	private: System::Windows::Forms::Button^  button1;
 	private: System::ComponentModel::IContainer^  components;
 
 	private:
@@ -65,9 +66,6 @@ namespace PictureSorting {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->topCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->bottomCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->sectionSet = (gcnew System::Windows::Forms::NumericUpDown());
@@ -76,43 +74,14 @@ namespace PictureSorting {
 			this->amountCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->moveFilesTo = (gcnew System::Windows::Forms::FolderBrowserDialog());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sectionSet))->BeginInit();
 			this->SuspendLayout();
-			// 
-			// pictureBox1
-			// 
-			this->pictureBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->pictureBox1->Location = System::Drawing::Point(12, 12);
-			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(502, 285);
-			this->pictureBox1->TabIndex = 0;
-			this->pictureBox1->TabStop = false;
-			this->pictureBox1->Click += gcnew System::EventHandler(this, &trimCollection::pictureBox1_Click);
-			// 
-			// button1
-			// 
-			this->button1->Location = System::Drawing::Point(12, 387);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(90, 37);
-			this->button1->TabIndex = 1;
-			this->button1->Text = L"Yes";
-			this->button1->UseVisualStyleBackColor = true;
-			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(424, 387);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(90, 37);
-			this->button2->TabIndex = 2;
-			this->button2->Text = L"No";
-			this->button2->UseVisualStyleBackColor = true;
 			// 
 			// topCheckBox
 			// 
 			this->topCheckBox->AutoSize = true;
-			this->topCheckBox->Location = System::Drawing::Point(13, 325);
+			this->topCheckBox->Location = System::Drawing::Point(12, 12);
 			this->topCheckBox->Name = L"topCheckBox";
 			this->topCheckBox->Size = System::Drawing::Size(45, 17);
 			this->topCheckBox->TabIndex = 3;
@@ -126,7 +95,7 @@ namespace PictureSorting {
 			this->bottomCheckBox->AutoSize = true;
 			this->bottomCheckBox->Checked = true;
 			this->bottomCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->bottomCheckBox->Location = System::Drawing::Point(12, 348);
+			this->bottomCheckBox->Location = System::Drawing::Point(81, 12);
 			this->bottomCheckBox->Name = L"bottomCheckBox";
 			this->bottomCheckBox->Size = System::Drawing::Size(59, 17);
 			this->bottomCheckBox->TabIndex = 4;
@@ -137,7 +106,7 @@ namespace PictureSorting {
 			// 
 			// sectionSet
 			// 
-			this->sectionSet->Location = System::Drawing::Point(244, 336);
+			this->sectionSet->Location = System::Drawing::Point(46, 46);
 			this->sectionSet->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100000, 0, 0, 0 });
 			this->sectionSet->Name = L"sectionSet";
 			this->sectionSet->Size = System::Drawing::Size(46, 20);
@@ -147,11 +116,11 @@ namespace PictureSorting {
 			// 
 			// start
 			// 
-			this->start->Location = System::Drawing::Point(218, 379);
+			this->start->Location = System::Drawing::Point(12, 105);
 			this->start->Name = L"start";
-			this->start->Size = System::Drawing::Size(103, 44);
+			this->start->Size = System::Drawing::Size(131, 42);
 			this->start->TabIndex = 7;
-			this->start->Text = L"Start";
+			this->start->Text = L"Trim using predefined settings above";
 			this->start->UseVisualStyleBackColor = true;
 			this->start->Click += gcnew System::EventHandler(this, &trimCollection::startButton_Click);
 			// 
@@ -160,7 +129,7 @@ namespace PictureSorting {
 			this->percentCheckBox->AutoSize = true;
 			this->percentCheckBox->Checked = true;
 			this->percentCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->percentCheckBox->Location = System::Drawing::Point(424, 325);
+			this->percentCheckBox->Location = System::Drawing::Point(12, 82);
 			this->percentCheckBox->Name = L"percentCheckBox";
 			this->percentCheckBox->Size = System::Drawing::Size(63, 17);
 			this->percentCheckBox->TabIndex = 8;
@@ -172,7 +141,7 @@ namespace PictureSorting {
 			// amountCheckBox
 			// 
 			this->amountCheckBox->AutoSize = true;
-			this->amountCheckBox->Location = System::Drawing::Point(424, 348);
+			this->amountCheckBox->Location = System::Drawing::Point(81, 82);
 			this->amountCheckBox->Name = L"amountCheckBox";
 			this->amountCheckBox->Size = System::Drawing::Size(62, 17);
 			this->amountCheckBox->TabIndex = 9;
@@ -181,24 +150,30 @@ namespace PictureSorting {
 			this->amountCheckBox->UseVisualStyleBackColor = true;
 			this->amountCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::amountCheckBox_CheckedChanged);
 			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(13, 166);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(130, 42);
+			this->button1->TabIndex = 10;
+			this->button1->Text = L"Show me pictures to find the parameters";
+			this->button1->UseVisualStyleBackColor = true;
+			// 
 			// trimCollection
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(526, 436);
+			this->ClientSize = System::Drawing::Size(154, 246);
+			this->Controls->Add(this->button1);
 			this->Controls->Add(this->amountCheckBox);
 			this->Controls->Add(this->percentCheckBox);
 			this->Controls->Add(this->start);
 			this->Controls->Add(this->sectionSet);
 			this->Controls->Add(this->bottomCheckBox);
 			this->Controls->Add(this->topCheckBox);
-			this->Controls->Add(this->button2);
-			this->Controls->Add(this->button1);
-			this->Controls->Add(this->pictureBox1);
 			this->Name = L"trimCollection";
 			this->Text = L"Trim";
 			this->Load += gcnew System::EventHandler(this, &trimCollection::trimCollection_Load);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->sectionSet))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -241,28 +216,25 @@ private: System::Void amountCheckBox_CheckedChanged(System::Object^  sender, Sys
 
 private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	bool flag = false;
-	if (amountCheckBox->Checked){
-		if (sectionSet->Value > trimList->size()){
-			MessageBox::Show("Error:You cannot select a number larger than the amount of images in you collection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	if (getLowestComparison() < 4){
+		std::string messageValue = "Warning: There are images in your collection that have less than 4 comparisons, the minimum reccomended amount.\nWould you still like to continue with the trim?";
+		if (MessageBox::Show(gcnew String(messageValue.c_str()), "Warning", MessageBoxButtons::YesNo, MessageBoxIcon::Asterisk) == System::Windows::Forms::DialogResult::Yes){
+			if (amountCheckBox->Checked){
+				if (sectionSet->Value > trimList->size()){
+					MessageBox::Show("Error:You cannot select a number larger than the amount of images in you collection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+				}
+				else
+					flag = true;
+			}
+			else if (percentCheckBox->Checked){
+				if (sectionSet->Value > 100 || sectionSet->Value < 0){
+					MessageBox::Show("Error:You have selected a value that is invalid when using percentages.\nIf want to select a percent of the collection make sure you choose a value between 100 and 0", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+				}
+				else
+					flag = true;
 		}
-		else if(getLowestComparison() < 4 ){
-			std::string messageValue = "Warning: There are images in your collection that have less than 4 comparisons, this could ";
-			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		}
-		else
-			flag = true;
 	}
-	else if (percentCheckBox->Checked){
-		if (sectionSet->Value > 100 || sectionSet->Value < 0){
-			MessageBox::Show("Error:You have selected a value that is invalid when using percentages.\nIf want to select a percent of the collection make sure you choose a value between 100 and 0", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		}
-		else if ((trimList->size()*sectionSet->Value/100) % getLowestComparison() != 0){
-			std::string messageValue = "Error:You have chosen a number that does not fit evenly with the number of comparisons in your collection\nPlease choose a multiple of ";
-			messageValue += (getLowestComparison() * 100) / trimList->size();
-			MessageBox::Show(gcnew String(messageValue.c_str()), "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		}
-		else
-			flag = true;
+	
 	}
 	if(flag){
 		MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);

@@ -33,6 +33,14 @@ void tempSort(vector<image>* list);
 vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
 vector<image> sortPics(vector<image> list);
 
+//uses wilson score to determine rating, should be more accurate than just score/comparisons
+static double getRating(image holder)
+{
+	if (holder.score == 0)
+		return 0;
+	return(((holder.score + 1.9208) / (holder.score + holder.comparisons) - 1.96 * sqrt(((holder.score * holder.comparisons) / (holder.score + holder.comparisons)) + 0.9604) / (holder.score + holder.comparisons)) / (1 + 3.8416 / (holder.score + holder.comparisons)));
+}
+
 //changes a System::String^ to a std::string
 static string Stringtostring(System::String^ x){
 	msclr::interop::marshal_context context;
@@ -234,10 +242,3 @@ static void ratingSort(vector<image>* list)
 	return;
 }
 
-//uses wilson score to determine rating, should be more accurate than just score/comparisons
-double getRating(image holder)
-{
-	if (holder.score == 0)
-		return 0;
-	return(((holder.score + 1.9208) / (holder.score + holder.comparisons) - 1.96 * sqrt(((holder.score * holder.comparisons) / (holder.score + holder.comparisons)) + 0.9604) / (holder.score + holder.comparisons)) / (1 + 3.8416 / (holder.score + holder.comparisons)));
-}
