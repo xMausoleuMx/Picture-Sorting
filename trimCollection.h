@@ -158,6 +158,7 @@ namespace PictureSorting {
 			this->button1->TabIndex = 10;
 			this->button1->Text = L"Show me pictures to find the parameters";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &trimCollection::button1_Click);
 			// 
 			// trimCollection
 			// 
@@ -252,7 +253,7 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 			}
 		}
 		else
-			MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+			MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 	}
 }
 
@@ -273,6 +274,9 @@ private: System::Void pictureBox1_Click(System::Object^  sender, System::EventAr
 
 private: System::Void trimCollection_Load(System::Object^  sender, System::EventArgs^  e) {
 	MessageBox::Show("This program will allow you to move a portion of the image collection to a seperate sub-folder\nFrom there you can do whatever you want with the files.\nNote that it will not remove them from the collection", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+}
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+
 }
 };
 }

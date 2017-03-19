@@ -484,7 +484,7 @@ namespace PictureSorting {
 			this->leftRating->Size = System::Drawing::Size(41, 13);
 			this->leftRating->TabIndex = 22;
 			this->leftRating->Text = L"Rating:";
-			this->toolTip1->SetToolTip(this->leftRating, L"Defined as Score divided by the number of comparisons");
+			this->toolTip1->SetToolTip(this->leftRating, L"Uses an algorithm that takes number of comparisons into account.");
 			// 
 			// rightNumComparisons
 			// 
@@ -506,7 +506,7 @@ namespace PictureSorting {
 			this->rightRating->Size = System::Drawing::Size(41, 13);
 			this->rightRating->TabIndex = 24;
 			this->rightRating->Text = L"Rating:";
-			this->toolTip1->SetToolTip(this->rightRating, L"Defined as Score divided by the number of comparisons");
+			this->toolTip1->SetToolTip(this->rightRating, L"Uses an algorithm that takes number of comparisons into account.");
 			// 
 			// trimCollection
 			// 
