@@ -1,3 +1,4 @@
+#include "toporbottom.h"
 #pragma once
 
 namespace PictureSorting {
@@ -9,9 +10,10 @@ namespace PictureSorting {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for searchForm
-	/// </summary>
+	/* <summary>
+	    Allows a user who doesnt know exactly where to trim his collection to search for the specific point that meets his
+	criteria. Uses a binary search of the image collection.
+	</summary>*/ 
 	public ref class searchForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -78,7 +80,8 @@ namespace PictureSorting {
 		}
 #pragma endregion
 	private: System::Void searchForm_Load(System::Object^  sender, System::EventArgs^  e) {
-
+		PictureSorting::toporbottom^  getToporBottom = gcnew PictureSorting::toporbottom();
+		getToporBottom->ShowDialog();
 	}
 	};
 }
