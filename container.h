@@ -35,9 +35,9 @@ namespace PictureSorting {
 		}
 
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+		/* <summary>
+		Sorts pictures in a head to head fashion with user input and then ranks them accordingly.
+		</summary>*/
 		~container()
 		{
 			if (components)

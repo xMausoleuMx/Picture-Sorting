@@ -11,9 +11,9 @@ namespace PictureSorting {
 	using namespace System::Drawing;
 
 	static vector<setting>* userSettings;
-	/// <summary>
-	/// Summary for optionsForm
-	/// </summary>
+	/* <summary>
+	Allows users to change thier options and saves them to a ini file in the install directory.
+	</summary>*/
 	public ref class optionsForm : public System::Windows::Forms::Form
 	{
 	public:
@@ -280,7 +280,7 @@ namespace PictureSorting {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(399, 185);
+			this->ClientSize = System::Drawing::Size(399, 133);
 			this->Controls->Add(this->tableLayoutPanel1);
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
