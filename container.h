@@ -1,4 +1,4 @@
-#include <vcclr.h>
+
 #include "trimCollection.h"
 #using <System.dll>
 
@@ -179,6 +179,8 @@ namespace PictureSorting {
 			this->leftImage->TabStop = false;
 			this->toolTip1->SetToolTip(this->leftImage, L"Click to open image in default image viewing software");
 			this->leftImage->Click += gcnew System::EventHandler(this, &container::leftImage_Click);
+			this->leftImage->MouseLeave += gcnew System::EventHandler(this, &container::leftImage_MouseLeave);
+			this->leftImage->MouseHover += gcnew System::EventHandler(this, &container::leftImage_MouseHover);
 			// 
 			// rightImage
 			// 
@@ -194,6 +196,8 @@ namespace PictureSorting {
 			this->rightImage->TabStop = false;
 			this->toolTip1->SetToolTip(this->rightImage, L"Click to open image in default image viewing software");
 			this->rightImage->Click += gcnew System::EventHandler(this, &container::rightImage_Click);
+			this->rightImage->MouseLeave += gcnew System::EventHandler(this, &container::rightImage_MouseLeave);
+			this->rightImage->MouseHover += gcnew System::EventHandler(this, &container::rightImage_MouseHover);
 			// 
 			// selectLeft
 			// 
@@ -996,8 +1000,8 @@ void changeComparison(int increment){
 	leftCurrentScore->Text = "Score: " + (picList[get<0>(index[crntCpr])].score);
 	rightNumComparisons->Text = "Number of comparisons: " + picList[get<1>(index[crntCpr])].comparisons;
 	leftNumComparisons->Text = "Number of comparisons: " + picList[get<0>(index[crntCpr])].comparisons;
-	rightRating->Text = "Rating: " + getRating(picList[get<1>(index[crntCpr])]);
-	leftRating->Text = "Rating: " + getRating(picList[get<0>(index[crntCpr])]);
+	rightRating->Text = "Rating: " + Math::Round(getRating(picList[get<1>(index[crntCpr])]),2);
+	leftRating->Text = "Rating: " + Math::Round(getRating(picList[get<0>(index[crntCpr])]),2);
 	leftPath->Text = leftString();
 	rightPath->Text = rightString();
 	if (updateContinuously()) //only update ranking if that setting is active
@@ -1104,9 +1108,13 @@ private: System::Void editOptions_Click(System::Object^  sender, System::EventAr
 	optionWindow->ShowDialog();
 }
 private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
-	ratingSort(&picList);
-	PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
-	trimWindow->ShowDialog();
+	if (picList.size() > 0){
+		ratingSort(&picList);
+		PictureSorting::trimCollection^  trimWindow = gcnew PictureSorting::trimCollection(&picList);
+		trimWindow->ShowDialog();
+		genComparisons();
+		updateRankings();
+	}
 }
 private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
@@ -1124,6 +1132,25 @@ private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, S
 		genComparisons();
 	}
 }
+
+//Changes the mouse cursor when hovering over the pictureboxes to indacate they are clickable 
+private: System::Void leftImage_MouseHover(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size()>0)
+		Cursor = Cursors::Hand;
+}
+private: System::Void rightImage_MouseHover(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size()>0)
+		Cursor = Cursors::Hand;
+}
+private: System::Void rightImage_MouseLeave(System::Object^  sender, System::EventArgs^  e) {
+	
+	Cursor = Cursors::Default;
+}
+private: System::Void leftImage_MouseLeave(System::Object^  sender, System::EventArgs^  e) {
+	Cursor = Cursors::Default;
+}
+
+
 };
 
 }

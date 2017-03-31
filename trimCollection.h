@@ -1,4 +1,4 @@
-#include "optionsForm.h"
+#include "toporbottom.h"
 #pragma once
 
 namespace PictureSorting {
@@ -150,6 +150,10 @@ namespace PictureSorting {
 			this->amountCheckBox->UseVisualStyleBackColor = true;
 			this->amountCheckBox->CheckedChanged += gcnew System::EventHandler(this, &trimCollection::amountCheckBox_CheckedChanged);
 			// 
+			// moveFilesTo
+			// 
+			this->moveFilesTo->Description = L"Select the folder you would like the images to be moved to.";
+			// 
 			// button1
 			// 
 			this->button1->Location = System::Drawing::Point(13, 166);
@@ -238,17 +242,16 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 	
 	}
 	if(flag){
-		MessageBox::Show("Select the place you would like the portion of your collection to be moved to.", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
 		if (result == System::Windows::Forms::DialogResult::OK){
 			if (bottomCheckBox->Checked){
 				for (int i = 0; i < ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i++){
-					MoveFileA((*trimList)[i].path.c_str(), Stringtostring(moveFilesTo->SelectedPath).c_str());
+					moveImage((*trimList)[i].path, moveFilesTo->SelectedPath);
 				}
 			}
 			else{
 				for (System::Decimal i = ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i <trimList->size(); i++){
-					MoveFileA((*trimList)[(int)i].path.c_str(), Stringtostring(moveFilesTo->SelectedPath).c_str());
+					moveImage((*trimList)[(int)i].path, moveFilesTo->SelectedPath);
 				}
 			}
 		}
@@ -268,15 +271,15 @@ int getLowestComparison(){
 	return lowestComparison;
 }
 
-private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
-	//Process::Start("insert path here") open the image in its default software
-}
-
 private: System::Void trimCollection_Load(System::Object^  sender, System::EventArgs^  e) {
-	MessageBox::Show("This program will allow you to move a portion of the image collection to a seperate sub-folder\nFrom there you can do whatever you want with the files.\nNote that it will not remove them from the collection", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	MessageBox::Show("This program will allow you to move a portion of the image collection to a seperate sub-folder\nFrom there you can do whatever you want with the files.\nNote that this will remove them from the current collection", "Info", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 }
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+	PictureSorting::toporbottom^  getTrimDirection = gcnew PictureSorting::toporbottom(trimList);
+	this->Hide();
+	getTrimDirection->ShowDialog();
+	this->Close();
 }
 };
 }

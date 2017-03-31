@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <vcclr.h>
 #include <vector>
 #include <fstream>
 #include <msclr\marshal_cppstd.h>
@@ -34,11 +35,10 @@ vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
 vector<image> sortPics(vector<image> list);
 
 //uses wilson score to determine rating, should be more accurate than just score/comparisons
-static double getRating(image holder)
-{
+static double getRating(image holder){
 	if (holder.score == 0)
 		return 0;
-	return(((holder.score + 1.9208) / (holder.score + holder.comparisons) - 1.96 * sqrt(((holder.score * holder.comparisons) / (holder.score + holder.comparisons)) + 0.9604) / (holder.score + holder.comparisons)) / (1 + 3.8416 / (holder.score + holder.comparisons)));
+	return 100*(.5+(((holder.score + 1.9208) / (holder.score + holder.comparisons) - 1.96 * sqrt(((holder.score * holder.comparisons) / (holder.score + holder.comparisons)) + 0.9604) / (holder.score + holder.comparisons)) / (1 + 3.8416 / (holder.score + holder.comparisons))));
 }
 
 //changes a System::String^ to a std::string
@@ -48,8 +48,7 @@ static string Stringtostring(System::String^ x){
 }
 
 //sorting used when continuous sorting and sort by score is checked 
-static void continuousScoreSort(vector<image>* list)
-{
+static void continuousScoreSort(vector<image>* list){
 	bool flag;
 	do
 	{
@@ -69,8 +68,7 @@ static void continuousScoreSort(vector<image>* list)
 }
 
 //sorting used when continuous sorting and sort by rating is checked 
-static void continuousRatingSort(vector<image>* list)
-{
+static void continuousRatingSort(vector<image>* list){
 	bool flag;
 	do
 	{
@@ -90,8 +88,7 @@ static void continuousRatingSort(vector<image>* list)
 }
 
 //checks if image is one of the supported formats
-static bool checkIfImage(string path)
-{
+static bool checkIfImage(string path){
 	bool flag = true;
 	string extensions[] = { ".gif", ".jpg", ".jpeg", ".bmp", ".wmf", ".png" };
 	for (int i = 0; i < 6; i++)
@@ -109,8 +106,7 @@ static bool checkIfImage(string path)
 }
 
 //recursively searches the given directory for valid image files
-static vector<image> getFiles(System::String^ directory)
-{
+static vector<image> getFiles(System::String^ directory){
 	vector<image> list, temp;
 	string inputFolderPath = Stringtostring(directory);
 	System::String^ path = gcnew System::String(directory);
@@ -142,8 +138,7 @@ static bool validateFile(const std::string& name) {
 }
 
 //gets common directory from a list of images, used to exclude it from the top and bottom lists to make them shorter
-static string getDirectory(vector<image> list)
-{
+static string getDirectory(vector<image> list){
 	image holder = list[0];
 	int marker = INT_MAX;
 	string directory;
@@ -164,8 +159,7 @@ static string getDirectory(vector<image> list)
 }
 
 //mergesort method to sort images by score
-static vector<image> scoreMerge(vector<image> left, vector<image> right)
-{
+static vector<image> scoreMerge(vector<image> left, vector<image> right){
 	vector<image>holder;
 	int i = 0, k = 0;
 	do{
@@ -189,8 +183,7 @@ static vector<image> scoreMerge(vector<image> left, vector<image> right)
 	return holder;
 }
 
-static void scoreSort(vector<image>* list)
-{
+static void scoreSort(vector<image>* list){
 	if (list->size() <= 1)
 		return;
 	vector<image> left, right;
@@ -204,8 +197,7 @@ static void scoreSort(vector<image>* list)
 
 
 //mergesort method to sort images by rating
-static vector<image> ratingMerge(vector<image> left, vector<image> right)
-{
+static vector<image> ratingMerge(vector<image> left, vector<image> right){
 	vector<image>holder;
 	int i = 0, k = 0;
 	do{
@@ -229,8 +221,7 @@ static vector<image> ratingMerge(vector<image> left, vector<image> right)
 	return holder;
 }
 
-static void ratingSort(vector<image>* list)
-{
+static void ratingSort(vector<image>* list){
 	if (list->size() <= 1)
 		return;
 	vector<image> left, right;
@@ -242,3 +233,20 @@ static void ratingSort(vector<image>* list)
 	return;
 }
 
+static bool moveImage(string originalPath, System::String^ finalPath){
+	string originalBlackslash,newPath;
+	int nameLocation = 0;
+	for (int i = 0; i < originalPath.size(); i++){
+		if (originalPath[i] == '\\')
+			nameLocation = i+1;
+		originalBlackslash += originalPath[i];
+	}
+	for (int i = 0; i < finalPath->Length; i++)
+		newPath += finalPath[i];
+
+	newPath += '\\';
+	for (int i = nameLocation; i < originalBlackslash.size(); i++){ //adds the filename into the directory chosen
+		newPath += originalBlackslash[i];
+	}
+	return MoveFileA(originalBlackslash.c_str(), newPath.c_str());
+}
