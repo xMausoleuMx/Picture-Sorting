@@ -1,3 +1,4 @@
+#include "searchForm.h"
 #pragma once
 
 namespace PictureSorting {
@@ -9,18 +10,18 @@ namespace PictureSorting {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
+
 	/// <summary>
-	/// Summary for toporbottom
+	///  Gets wether the user wants to trim from the top or bottom of the list
 	/// </summary>
 	public ref class toporbottom : public System::Windows::Forms::Form
 	{
+		vector<image>* passList;
 	public:
-		toporbottom(void)
+		toporbottom(vector<image>* temp)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			passList = temp;
 		}
 
 	protected:
@@ -37,8 +38,8 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Button^  button1;
 	protected:
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::CheckBox^  checkBox1;
-	private: System::Windows::Forms::CheckBox^  checkBox2;
+	private: System::Windows::Forms::CheckBox^  topCheckBox;
+	private: System::Windows::Forms::CheckBox^  bottomCheckBox;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label3;
 
@@ -57,8 +58,8 @@ namespace PictureSorting {
 		{
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
-			this->checkBox2 = (gcnew System::Windows::Forms::CheckBox());
+			this->topCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->bottomCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
@@ -71,6 +72,7 @@ namespace PictureSorting {
 			this->button1->TabIndex = 0;
 			this->button1->Text = L"Ok";
 			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &toporbottom::button1_Click);
 			// 
 			// label1
 			// 
@@ -81,27 +83,27 @@ namespace PictureSorting {
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"Would you like to choose images from the top";
 			// 
-			// checkBox1
+			// topCheckBox
 			// 
-			this->checkBox1->AutoSize = true;
-			this->checkBox1->Location = System::Drawing::Point(241, 13);
-			this->checkBox1->Name = L"checkBox1";
-			this->checkBox1->Size = System::Drawing::Size(15, 14);
-			this->checkBox1->TabIndex = 2;
-			this->checkBox1->UseVisualStyleBackColor = true;
-			this->checkBox1->CheckedChanged += gcnew System::EventHandler(this, &toporbottom::checkBox1_CheckedChanged);
+			this->topCheckBox->AutoSize = true;
+			this->topCheckBox->Location = System::Drawing::Point(241, 13);
+			this->topCheckBox->Name = L"topCheckBox";
+			this->topCheckBox->Size = System::Drawing::Size(15, 14);
+			this->topCheckBox->TabIndex = 2;
+			this->topCheckBox->UseVisualStyleBackColor = true;
+			this->topCheckBox->CheckedChanged += gcnew System::EventHandler(this, &toporbottom::topCheckBox_CheckedChanged);
 			// 
-			// checkBox2
+			// bottomCheckBox
 			// 
-			this->checkBox2->AutoSize = true;
-			this->checkBox2->Checked = true;
-			this->checkBox2->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBox2->Location = System::Drawing::Point(16, 44);
-			this->checkBox2->Name = L"checkBox2";
-			this->checkBox2->Size = System::Drawing::Size(15, 14);
-			this->checkBox2->TabIndex = 3;
-			this->checkBox2->UseVisualStyleBackColor = true;
-			this->checkBox2->CheckedChanged += gcnew System::EventHandler(this, &toporbottom::checkBox2_CheckedChanged);
+			this->bottomCheckBox->AutoSize = true;
+			this->bottomCheckBox->Checked = true;
+			this->bottomCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->bottomCheckBox->Location = System::Drawing::Point(16, 44);
+			this->bottomCheckBox->Name = L"bottomCheckBox";
+			this->bottomCheckBox->Size = System::Drawing::Size(15, 14);
+			this->bottomCheckBox->TabIndex = 3;
+			this->bottomCheckBox->UseVisualStyleBackColor = true;
+			this->bottomCheckBox->CheckedChanged += gcnew System::EventHandler(this, &toporbottom::bottomCheckBox_CheckedChanged);
 			// 
 			// label2
 			// 
@@ -128,10 +130,12 @@ namespace PictureSorting {
 			this->ClientSize = System::Drawing::Size(301, 79);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
-			this->Controls->Add(this->checkBox2);
-			this->Controls->Add(this->checkBox1);
+			this->Controls->Add(this->bottomCheckBox);
+			this->Controls->Add(this->topCheckBox);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->button1);
+			this->MaximizeBox = false;
+			this->MinimizeBox = false;
 			this->Name = L"toporbottom";
 			this->Text = L"toporbottom";
 			this->ResumeLayout(false);
@@ -139,13 +143,28 @@ namespace PictureSorting {
 
 		}
 #pragma endregion
-private: System::Void checkBox1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 
+//makes the two checkboxes an XOR switch so that one is always checked.
+private: System::Void topCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (topCheckBox->Checked)
+		bottomCheckBox->Checked = false;
+	else
+		bottomCheckBox->Checked = true;
+}
+private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (bottomCheckBox->Checked)
+		topCheckBox->Checked = false;
+	else
+		topCheckBox->Checked = true;
 }
 
-
-private: System::Void checkBox2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-
+//when the ok button is clicked open the searchform and hide this window, disposing of it after completion
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+	PictureSorting::searchForm^  userSearch = gcnew PictureSorting::searchForm(passList, topCheckBox->Checked);
+	this->Hide();
+	userSearch->ShowDialog();
+	this->Close();
 }
+
 };
 }
