@@ -242,22 +242,39 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 	
 	}
 	if(flag){
+		bool moveFailed =false;
+		int upperbound, lowerbound;
 		System::Windows::Forms::DialogResult result = moveFilesTo->ShowDialog();
 		if (result == System::Windows::Forms::DialogResult::OK){
-			if (bottomCheckBox->Checked){
-				for (int i = 0; i < ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i++){
-					moveImage((*trimList)[i].path, moveFilesTo->SelectedPath);
-				}
+			if (!bottomCheckBox->Checked){
+				lowerbound = 0;
+				if (percentCheckBox->Checked)
+					upperbound = (int)(((sectionSet->Value) / 100)*(*trimList).size());
+				else
+					upperbound = (int)sectionSet->Value;
 			}
 			else{
-				for (System::Decimal i = ((percentCheckBox->Checked) ? (sectionSet->Value / 100)*trimList->size() : sectionSet->Value); i <trimList->size(); i++){
-					moveImage((*trimList)[(int)i].path, moveFilesTo->SelectedPath);
-				}
+				upperbound = (*trimList).size();
+				if (percentCheckBox->Checked)
+					lowerbound = (*trimList).size() - (int)(((sectionSet->Value) / 100)*(*trimList).size());
+				else
+					lowerbound = (*trimList).size() - (int)(sectionSet->Value);
 			}
+			for (int i = lowerbound; i < upperbound; i++){
+				if (!moveImage((*trimList)[i].path, moveFilesTo->SelectedPath))
+					moveFailed = true;
+			}
+			(*trimList).erase((*trimList).begin() + lowerbound, (*trimList).begin() + upperbound);
+			if (moveFailed)
+				MessageBox::Show("Error:Not all files moved\nSome Files failed to move", "Error", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+			else
+				MessageBox::Show("Files Moved", "Info", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+			this->Close();
 		}
 		else
 			MessageBox::Show("Error:Invalid selection.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 	}
+
 }
 
 

@@ -96,6 +96,10 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  editOptions;
 	private: System::Windows::Forms::Button^  trimCollection;
 	private: System::Windows::Forms::ToolStripMenuItem^  addItemsToolStripMenuItem;
+	private: System::Windows::Forms::Label^  lowestComparisonLabel;
+
+	private: System::Windows::Forms::Label^  totalImagesLabel;
+
 
 
 
@@ -147,6 +151,8 @@ namespace PictureSorting {
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->lowestComparisonLabel = (gcnew System::Windows::Forms::Label());
+			this->totalImagesLabel = (gcnew System::Windows::Forms::Label());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripProgressBar1 = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			this->leftPath = (gcnew System::Windows::Forms::ToolStripStatusLabel());
@@ -285,7 +291,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -305,14 +311,14 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -424,6 +430,8 @@ namespace PictureSorting {
 			// groupBox1
 			// 
 			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
+			this->groupBox1->Controls->Add(this->lowestComparisonLabel);
+			this->groupBox1->Controls->Add(this->totalImagesLabel);
 			this->groupBox1->Controls->Add(this->bottomImages);
 			this->groupBox1->Controls->Add(this->topImages);
 			this->groupBox1->Location = System::Drawing::Point(474, 27);
@@ -431,6 +439,24 @@ namespace PictureSorting {
 			this->groupBox1->Size = System::Drawing::Size(324, 362);
 			this->groupBox1->TabIndex = 19;
 			this->groupBox1->TabStop = false;
+			// 
+			// lowestComparisonLabel
+			// 
+			this->lowestComparisonLabel->AutoSize = true;
+			this->lowestComparisonLabel->Location = System::Drawing::Point(6, 186);
+			this->lowestComparisonLabel->Name = L"lowestComparisonLabel";
+			this->lowestComparisonLabel->Size = System::Drawing::Size(107, 13);
+			this->lowestComparisonLabel->TabIndex = 14;
+			this->lowestComparisonLabel->Text = L"Lowest Comparisons:";
+			// 
+			// totalImagesLabel
+			// 
+			this->totalImagesLabel->AutoSize = true;
+			this->totalImagesLabel->Location = System::Drawing::Point(6, 163);
+			this->totalImagesLabel->Name = L"totalImagesLabel";
+			this->totalImagesLabel->Size = System::Drawing::Size(71, 13);
+			this->totalImagesLabel->TabIndex = 13;
+			this->totalImagesLabel->Text = L"Total Images:";
 			// 
 			// statusStrip1
 			// 
@@ -557,6 +583,7 @@ namespace PictureSorting {
 			this->menuStrip1->ResumeLayout(false);
 			this->menuStrip1->PerformLayout();
 			this->groupBox1->ResumeLayout(false);
+			this->groupBox1->PerformLayout();
 			this->statusStrip1->ResumeLayout(false);
 			this->statusStrip1->PerformLayout();
 			this->ResumeLayout(false);
@@ -825,6 +852,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 	{
 		index.clear();
 		openFile(openExistingSave->FileName);
+		totalImagesLabel->Text = "Total Images: " + picList.size();
 	}
 	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
@@ -1084,6 +1112,7 @@ private: System::Void container_KeyDown(System::Object^  sender, System::Windows
 	}
 }
 
+//opens the wiki on github
 private: System::Void fAQToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	Process::Start("https://github.com/xMausoleuMx/Picture-Sorting/wiki");
 }
@@ -1107,6 +1136,8 @@ private: System::Void editOptions_Click(System::Object^  sender, System::EventAr
 	optionsForm ^ optionWindow = gcnew optionsForm(&settings);
 	optionWindow->ShowDialog();
 }
+
+//open the trim collection window when the corresponding is button pressed
 private: System::Void trimCollection_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		ratingSort(&picList);
@@ -1114,8 +1145,11 @@ private: System::Void trimCollection_Click(System::Object^  sender, System::Even
 		trimWindow->ShowDialog();
 		genComparisons();
 		updateRankings();
+		saveDifference = true;
 	}
 }
+
+//add items to the collection from a user selected directory
 private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
 	System::String^ folderName;
@@ -1127,7 +1161,18 @@ private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, S
 		tempList = getFiles(folderName);
 		if (tempList.size() == 0)
 			MessageBox::Show("ERROR: No files could be loaded from the chosen directory.\nMake sure there are files of an acceptable file type.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		picList.insert(picList.end(),tempList.begin(),tempList.end());
+		for (int i = 0; i < tempList.size(); i++){//checks if the file is already in the collection.
+			bool flag = false;
+			for (int k = 0; k < picList.size(); k++){
+				if (!tempList[i].path.compare(picList[k].path)){
+					flag = true;
+					break;
+				}
+			}
+			if (!flag){
+				picList.insert(picList.end(), tempList[i]);
+			}
+		}
 		updateRankings();
 		genComparisons();
 	}
