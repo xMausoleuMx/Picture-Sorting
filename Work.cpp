@@ -34,7 +34,7 @@ void tempSort(vector<image>* list);
 vector<image> mergeImages(vector<image> listOne, vector<image> listTwo);
 vector<image> sortPics(vector<image> list);
 
-//uses wilson score to determine rating, should be more accurate than just score/comparisons
+//uses lower bound of wilson score to determine rating, should be more accurate than just score/comparisons
 static double getRating(image holder){
 	if (holder.score == 0)
 		return 0;
@@ -233,6 +233,7 @@ static void ratingSort(vector<image>* list){
 	return;
 }
 
+//moves a given image to a new directory.
 static bool moveImage(string originalPath, System::String^ finalPath){
 	string originalBlackslash,newPath;
 	int nameLocation = 0;

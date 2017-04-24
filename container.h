@@ -1,4 +1,3 @@
-
 #include "trimCollection.h"
 #using <System.dll>
 
@@ -684,18 +683,14 @@ void updateRankings()
 	this->bottomImages->Items->Clear();
 	for (int i = 0; i < sortedList.size(); i++)//adding items to the top list
 	{
-		std::ostringstream convert;
-		convert << sortedList[i].score;
-		std::string holder = convert.str() + " ";
+		std::string holder = std::to_string(sortedList[i].score) + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
 		topImages->Items->Add(gcnew String(holder.c_str()));
 	}
 	for (int i = sortedList.size() - 1; i >= 0; i--)//adding items to the bottom list
 	{
-		std::ostringstream convert;
-		convert << sortedList[i].score;
-		std::string holder = convert.str() + " ";
+		std::string holder = std::to_string(sortedList[i].score) + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
 		bottomImages->Items->Add(gcnew String(holder.c_str()));
@@ -763,6 +758,7 @@ private: System::Void saveAndQuit_Click(System::Object^  sender, System::EventAr
 		quit();
 }
 
+//Clicked on File > Save
 private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	if(picList.size() > 0)
 		saveUserFile();
@@ -852,7 +848,7 @@ private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  
 	{
 		index.clear();
 		openFile(openExistingSave->FileName);
-		totalImagesLabel->Text = "Total Images: " + picList.size();
+		totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
 	}
 	else
 		MessageBox::Show("ERROR: Failed to load file","Error Message", MessageBoxButtons::OKCancel,MessageBoxIcon::Asterisk);
@@ -1006,7 +1002,7 @@ void changeComparison(int increment){
 	try{
 		leftImage->Load(leftString());
 	}
-	catch (...){ //mostly to catch files that can not be loaded by picturebox (usually corrupt) 
+	catch (...){ //to catch files that can not be loaded by picturebox (usually corrupt) 
 		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		picList.erase(picList.begin()+ get<0>(index[crntCpr]));
 		index.clear();
@@ -1016,7 +1012,7 @@ void changeComparison(int increment){
 	try{
 		rightImage->Load(rightString());
 	}
-	catch (...){//mostly to catch files that can not be loaded by picturebox (usually corrupt) 
+	catch (...){//to catch files that can not be loaded by picturebox (usually corrupt) 
 		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.\n", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 		picList.erase(picList.begin() + get<1>(index[crntCpr]));
 		index.clear();
