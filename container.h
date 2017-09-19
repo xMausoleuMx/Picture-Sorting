@@ -172,9 +172,6 @@ namespace PictureSorting {
 			// 
 			// leftImage
 			// 
-			this->leftImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
 			this->leftImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->leftImage->Location = System::Drawing::Point(8, 27);
 			this->leftImage->Name = L"leftImage";
@@ -184,8 +181,8 @@ namespace PictureSorting {
 			this->leftImage->TabStop = false;
 			this->toolTip1->SetToolTip(this->leftImage, L"Click to open image in default image viewing software");
 			this->leftImage->Click += gcnew System::EventHandler(this, &container::leftImage_Click);
+			this->leftImage->MouseEnter += gcnew System::EventHandler(this, &container::leftImage_MouseEnter);
 			this->leftImage->MouseLeave += gcnew System::EventHandler(this, &container::leftImage_MouseLeave);
-			this->leftImage->MouseHover += gcnew System::EventHandler(this, &container::leftImage_MouseHover);
 			// 
 			// rightImage
 			// 
@@ -201,8 +198,8 @@ namespace PictureSorting {
 			this->rightImage->TabStop = false;
 			this->toolTip1->SetToolTip(this->rightImage, L"Click to open image in default image viewing software");
 			this->rightImage->Click += gcnew System::EventHandler(this, &container::rightImage_Click);
+			this->rightImage->MouseEnter += gcnew System::EventHandler(this, &container::rightImage_MouseEnter);
 			this->rightImage->MouseLeave += gcnew System::EventHandler(this, &container::rightImage_MouseLeave);
-			this->rightImage->MouseHover += gcnew System::EventHandler(this, &container::rightImage_MouseHover);
 			// 
 			// selectLeft
 			// 
@@ -250,7 +247,6 @@ namespace PictureSorting {
 			// 
 			// refresh
 			// 
-			this->refresh->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->refresh->Location = System::Drawing::Point(594, 395);
 			this->refresh->Name = L"refresh";
 			this->refresh->Size = System::Drawing::Size(80, 32);
@@ -290,7 +286,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -310,14 +306,14 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
@@ -371,7 +367,6 @@ namespace PictureSorting {
 			// 
 			// topImages
 			// 
-			this->topImages->Anchor = System::Windows::Forms::AnchorStyles::Top;
 			this->topImages->FormattingEnabled = true;
 			this->topImages->Location = System::Drawing::Point(0, 0);
 			this->topImages->Name = L"topImages";
@@ -382,7 +377,6 @@ namespace PictureSorting {
 			// 
 			// bottomImages
 			// 
-			this->bottomImages->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 			this->bottomImages->FormattingEnabled = true;
 			this->bottomImages->Location = System::Drawing::Point(0, 202);
 			this->bottomImages->Name = L"bottomImages";
@@ -576,6 +570,7 @@ namespace PictureSorting {
 			this->Name = L"container";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Picture Sorting";
+			this->Load += gcnew System::EventHandler(this, &container::container_Load);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &container::container_KeyDown);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->EndInit();
@@ -602,8 +597,7 @@ void loadSettings(){
 		{
 			setting k;
 			holder = Stringtostring(reader->ReadLine());
-			for (int i = 0; i < holder.size(); i++)
-			{
+			for (int i = 0; i < holder.size(); i++){
 				if (flag)
 					flagTemp += holder[i];
 				if (holder[i] == '='){
@@ -668,8 +662,8 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 }
 
 //updates the top and bottom lists with sorted scores.
-void updateRankings()
-{
+void updateRankings(){
+	int minComparisons = INT_MAX;
 	vector<image> sortedList = picList;
 	if (updateContinuously() && sortByScore())
 		continuousScoreSort(&sortedList);
@@ -681,20 +675,21 @@ void updateRankings()
 		scoreSort(&sortedList);
 	this->topImages->Items->Clear();
 	this->bottomImages->Items->Clear();
-	for (int i = 0; i < sortedList.size(); i++)//adding items to the top list
-	{
+	for (int i = 0; i < sortedList.size(); i++){//adding items to the top list
 		std::string holder = std::to_string(sortedList[i].score) + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
 		topImages->Items->Add(gcnew String(holder.c_str()));
+		if (sortedList[i].comparisons < minComparisons)
+			minComparisons = sortedList[i].comparisons;
 	}
-	for (int i = sortedList.size() - 1; i >= 0; i--)//adding items to the bottom list
-	{
+	for (int i = sortedList.size() - 1; i >= 0; i--){//adding items to the bottom list
 		std::string holder = std::to_string(sortedList[i].score) + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
 		bottomImages->Items->Add(gcnew String(holder.c_str()));
 	}
+	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
 }
 
 //open up a new directory of images
@@ -702,18 +697,18 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 	openedFlag = false;
 	System::Windows::Forms::DialogResult result = openNewDirectory->ShowDialog();
 	System::String^ folderName;
-	if (result == System::Windows::Forms::DialogResult::OK)
-	{
+	if (result == System::Windows::Forms::DialogResult::OK){
 		index.clear();
 		folderName = openNewDirectory->SelectedPath;
 		folderName = (*folderName).Concat(folderName,"\\");
 		picList = getFiles(folderName);
 		if (picList.size() ==0)
 			MessageBox::Show("ERROR: No files could be loaded from the chosen directory.\nMake sure there are files of an acceptable file type.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		updateRankings();
 		genComparisons();
 		changeComparison(0);
 		currentDirectory = Stringtostring(folderName);
+		updateRankings();
+		lowestComparisonLabel->Text = "Lowest Comparisons: 0";
 	}
 	else
 		MessageBox::Show("ERROR: Inavlid Choice.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -767,8 +762,7 @@ private: System::Void saveToolStripMenuItem_Click(System::Object^  sender, Syste
 }
 
 //counts the number of lines in a savefile so that the progress bar knows how to represent the steps.
-private: int countFileLines(String^ filePath)
-{
+private: int countFileLines(String^ filePath){
 	StreamReader^ r = gcnew StreamReader(filePath);
 	 int i = 0;
 	 while (r->ReadLine())
@@ -779,6 +773,7 @@ private: int countFileLines(String^ filePath)
 
 //opens a collection when given the path of a csv containing all of the saved data
 void openFile(System::String^ filename){
+	int minComparisons = INT_MAX;
 	toolStripProgressBar1->Visible = true;
 	toolStripProgressBar1->Minimum = 1;
 	toolStripProgressBar1->Maximum = countFileLines(filename); //counts the number of lines in a file so that the progress bar knows how much is left
@@ -790,12 +785,10 @@ void openFile(System::String^ filename){
 	std::string holder, score = "", compare = "";
 	bool invalidFlag = false, errorFlag = false;
 	int flag = 0;
-	while (reader->Peek() >= 0)
-	{
+	while (reader->Peek() >= 0){
 		holder = Stringtostring(reader->ReadLine());
 		image temp;
-		for (int i = 0; i < holder.size(); i++)
-		{
+		for (int i = 0; i < holder.size(); i++){
 			if (flag == 1 && holder[i] != ',')
 				score += holder[i];
 			if (flag == 2)
@@ -808,6 +801,8 @@ void openFile(System::String^ filename){
 		flag = 0;
 		temp.score = atoi(score.c_str());//convert score to an int
 		temp.comparisons = atoi(compare.c_str());
+		if (temp.comparisons < minComparisons)
+			minComparisons = temp.comparisons;
 		score = "";
 		compare = "";
 		if (validateFile(temp.path))
@@ -826,6 +821,7 @@ void openFile(System::String^ filename){
 		MessageBox::Show("ERROR: Some of the images could not be loaded. They were either moved or are no longer valid", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 	(*reader).Close();
 	if (!errorFlag){
+		lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
 		picList = tempList;
 		if(sortByScore())
 			scoreSort(&picList);
@@ -842,10 +838,8 @@ void openFile(System::String^ filename){
 
 
 //open previously saved directory comparison
-private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-	
-	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK)//ask user to select the save file
-	{
+private: System::Void existingDirectoryToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {	
+	if (openExistingSave->ShowDialog() == System::Windows::Forms::DialogResult::OK){//ask user to select the save file
 		index.clear();
 		openFile(openExistingSave->FileName);
 		totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
@@ -1175,14 +1169,7 @@ private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, S
 }
 
 //Changes the mouse cursor when hovering over the pictureboxes to indacate they are clickable 
-private: System::Void leftImage_MouseHover(System::Object^  sender, System::EventArgs^  e) {
-	if (picList.size()>0)
-		Cursor = Cursors::Hand;
-}
-private: System::Void rightImage_MouseHover(System::Object^  sender, System::EventArgs^  e) {
-	if (picList.size()>0)
-		Cursor = Cursors::Hand;
-}
+
 private: System::Void rightImage_MouseLeave(System::Object^  sender, System::EventArgs^  e) {
 	
 	Cursor = Cursors::Default;
@@ -1190,8 +1177,17 @@ private: System::Void rightImage_MouseLeave(System::Object^  sender, System::Eve
 private: System::Void leftImage_MouseLeave(System::Object^  sender, System::EventArgs^  e) {
 	Cursor = Cursors::Default;
 }
+private: System::Void leftImage_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size()>0)
+		Cursor = Cursors::Hand;
+}		 
+private: System::Void rightImage_MouseEnter(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size()>0)
+		Cursor = Cursors::Hand;
+}
 
-
+private: System::Void container_Load(System::Object^  sender, System::EventArgs^  e) {
+}
 };
 
 }

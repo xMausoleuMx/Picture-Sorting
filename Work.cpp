@@ -110,7 +110,7 @@ static vector<image> getFiles(System::String^ directory){
 	vector<image> list, temp;
 	string inputFolderPath = Stringtostring(directory);
 	System::String^ path = gcnew System::String(directory);
-	array<System::String^>^fileEntries = Directory::GetFiles(path);
+	cli::array<System::String^>^fileEntries = Directory::GetFiles(path);
 	IEnumerator^ files = fileEntries->GetEnumerator();
 	while (files->MoveNext())
 	{
@@ -120,7 +120,7 @@ static vector<image> getFiles(System::String^ directory){
 		if (checkIfImage(temp.path))
 			list.push_back(temp);
 	}	
-	array<System::String^>^folderEntries = Directory::GetDirectories(path); 
+	cli::array<System::String^>^ folderEntries = Directory::GetDirectories(path); 
 	IEnumerator^ dirs = folderEntries->GetEnumerator();
 	while (dirs->MoveNext())
 	{
