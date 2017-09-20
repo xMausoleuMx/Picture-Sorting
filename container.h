@@ -98,6 +98,8 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  lowestComparisonLabel;
 
 	private: System::Windows::Forms::Label^  totalImagesLabel;
+	private: System::Windows::Forms::Label^  averageComparisonsLabel;
+	private: System::Windows::Forms::Label^  totalComparisonsLabel;
 
 
 
@@ -163,6 +165,8 @@ namespace PictureSorting {
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->trimCollection = (gcnew System::Windows::Forms::Button());
+			this->totalComparisonsLabel = (gcnew System::Windows::Forms::Label());
+			this->averageComparisonsLabel = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -172,6 +176,9 @@ namespace PictureSorting {
 			// 
 			// leftImage
 			// 
+			this->leftImage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->leftImage->BackColor = System::Drawing::SystemColors::ControlDark;
 			this->leftImage->Location = System::Drawing::Point(8, 27);
 			this->leftImage->Name = L"leftImage";
@@ -247,6 +254,9 @@ namespace PictureSorting {
 			// 
 			// refresh
 			// 
+			this->refresh->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->refresh->Location = System::Drawing::Point(594, 395);
 			this->refresh->Name = L"refresh";
 			this->refresh->Size = System::Drawing::Size(80, 32);
@@ -423,6 +433,8 @@ namespace PictureSorting {
 			// groupBox1
 			// 
 			this->groupBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom));
+			this->groupBox1->Controls->Add(this->averageComparisonsLabel);
+			this->groupBox1->Controls->Add(this->totalComparisonsLabel);
 			this->groupBox1->Controls->Add(this->lowestComparisonLabel);
 			this->groupBox1->Controls->Add(this->totalImagesLabel);
 			this->groupBox1->Controls->Add(this->bottomImages);
@@ -533,6 +545,9 @@ namespace PictureSorting {
 			// 
 			// trimCollection
 			// 
+			this->trimCollection->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+				| System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->trimCollection->Location = System::Drawing::Point(594, 444);
 			this->trimCollection->Name = L"trimCollection";
 			this->trimCollection->Size = System::Drawing::Size(80, 41);
@@ -542,6 +557,24 @@ namespace PictureSorting {
 				L"");
 			this->trimCollection->UseVisualStyleBackColor = true;
 			this->trimCollection->Click += gcnew System::EventHandler(this, &container::trimCollection_Click);
+			// 
+			// totalComparisonsLabel
+			// 
+			this->totalComparisonsLabel->AutoSize = true;
+			this->totalComparisonsLabel->Location = System::Drawing::Point(164, 163);
+			this->totalComparisonsLabel->Name = L"totalComparisonsLabel";
+			this->totalComparisonsLabel->Size = System::Drawing::Size(97, 13);
+			this->totalComparisonsLabel->TabIndex = 15;
+			this->totalComparisonsLabel->Text = L"Total Comparisons:";
+			// 
+			// averageComparisonsLabel
+			// 
+			this->averageComparisonsLabel->AutoSize = true;
+			this->averageComparisonsLabel->Location = System::Drawing::Point(164, 186);
+			this->averageComparisonsLabel->Name = L"averageComparisonsLabel";
+			this->averageComparisonsLabel->Size = System::Drawing::Size(116, 13);
+			this->averageComparisonsLabel->TabIndex = 16;
+			this->averageComparisonsLabel->Text = L"Average Comparisons: ";
 			// 
 			// container
 			// 
@@ -663,7 +696,8 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 
 //updates the top and bottom lists with sorted scores.
 void updateRankings(){
-	int minComparisons = INT_MAX;
+	int minComparisons = INT_MAX, totalComparisons = 0;
+	float averageCompairisons = 0;
 	vector<image> sortedList = picList;
 	if (updateContinuously() && sortByScore())
 		continuousScoreSort(&sortedList);
@@ -680,8 +714,10 @@ void updateRankings(){
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
 			holder += sortedList[i].path[y];
 		topImages->Items->Add(gcnew String(holder.c_str()));
+		totalComparisons += sortedList[i].comparisons;
 		if (sortedList[i].comparisons < minComparisons)
 			minComparisons = sortedList[i].comparisons;
+
 	}
 	for (int i = sortedList.size() - 1; i >= 0; i--){//adding items to the bottom list
 		std::string holder = std::to_string(sortedList[i].score) + " ";
@@ -690,6 +726,9 @@ void updateRankings(){
 		bottomImages->Items->Add(gcnew String(holder.c_str()));
 	}
 	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
+	totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
+	averageComparisonsLabel->Text = "Average Comparisons: " + totalComparisons/sortedList.size();
+
 }
 
 //open up a new directory of images
@@ -708,6 +747,7 @@ private: System::Void newDirectoryToolStripMenuItem_Click(System::Object^  sende
 		changeComparison(0);
 		currentDirectory = Stringtostring(folderName);
 		updateRankings();
+		totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
 		lowestComparisonLabel->Text = "Lowest Comparisons: 0";
 	}
 	else
