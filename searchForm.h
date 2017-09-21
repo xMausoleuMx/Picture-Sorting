@@ -174,6 +174,7 @@ namespace PictureSorting {
 		else
 			upperbound = searchIndex-1;
 		searchIndex = lowerbound + ((upperbound - lowerbound) / 2);
+		checkIndex();
 		updateImage();
 	}
 

@@ -777,6 +777,7 @@ void saveUserFile(){
 					writer->Close();
 					saveDifference = false;
 					MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+					openedFlag = true;
 				}
 			}
 		}
