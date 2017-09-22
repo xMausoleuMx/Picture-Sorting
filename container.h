@@ -728,7 +728,7 @@ void updateRankings(){
 	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
 	totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
 	averageComparisonsLabel->Text = "Average Comparisons: " + totalComparisons/sortedList.size();
-
+	totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
 }
 
 //open up a new directory of images
@@ -1204,6 +1204,7 @@ private: System::Void addItemsToolStripMenuItem_Click(System::Object^  sender, S
 				picList.insert(picList.end(), tempList[i]);
 			}
 		}
+		saveDifference = true;
 		updateRankings();
 		genComparisons();
 	}

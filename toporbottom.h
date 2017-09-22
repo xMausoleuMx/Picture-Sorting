@@ -160,7 +160,7 @@ private: System::Void bottomCheckBox_CheckedChanged(System::Object^  sender, Sys
 
 //when the ok button is clicked open the searchform and hide this window, disposing of it after completion
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-	PictureSorting::searchForm^  userSearch = gcnew PictureSorting::searchForm(passList, topCheckBox->Checked);
+	PictureSorting::searchForm^  userSearch = gcnew PictureSorting::searchForm(passList, !topCheckBox->Checked);
 	this->Hide();
 	userSearch->ShowDialog();
 	this->Close();

@@ -174,8 +174,8 @@ namespace PictureSorting {
 		else
 			upperbound = searchIndex-1;
 		searchIndex = lowerbound + ((upperbound - lowerbound) / 2);
-		checkIndex();
 		updateImage();
+		checkIndex();
 	}
 
 	//User clicks the no button
@@ -185,8 +185,8 @@ namespace PictureSorting {
 		else
 			lowerbound = searchIndex+1;
 		searchIndex = lowerbound + ((upperbound - lowerbound) / 2);
-		checkIndex();
 		updateImage();
+		checkIndex();
 	}
 
 	//check and see if the search has completed, and if so move the files.
