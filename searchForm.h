@@ -194,7 +194,7 @@ namespace PictureSorting {
 		bool flag = false;
 		if (lowerbound == upperbound || upperbound == searchIndex || lowerbound == searchIndex){
 			if (getFinalDestination->ShowDialog() == System::Windows::Forms::DialogResult::OK){
-				for (int i = (selectFromTop ? searchIndex : 0); i < (selectFromTop ? searchList->size() : searchIndex); i++)
+				for (int i = (selectFromTop ? searchIndex : 0); i <= (selectFromTop ? searchList->size() : searchIndex); i++)
 					if (!moveImage((*searchList)[i].path, getFinalDestination->SelectedPath))
 						flag = true;
 			}

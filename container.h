@@ -152,6 +152,8 @@ namespace PictureSorting {
 			this->saveFile = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->openExistingSave = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->averageComparisonsLabel = (gcnew System::Windows::Forms::Label());
+			this->totalComparisonsLabel = (gcnew System::Windows::Forms::Label());
 			this->lowestComparisonLabel = (gcnew System::Windows::Forms::Label());
 			this->totalImagesLabel = (gcnew System::Windows::Forms::Label());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
@@ -165,8 +167,6 @@ namespace PictureSorting {
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->trimCollection = (gcnew System::Windows::Forms::Button());
-			this->totalComparisonsLabel = (gcnew System::Windows::Forms::Label());
-			this->averageComparisonsLabel = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -445,6 +445,26 @@ namespace PictureSorting {
 			this->groupBox1->TabIndex = 19;
 			this->groupBox1->TabStop = false;
 			// 
+			// averageComparisonsLabel
+			// 
+			this->averageComparisonsLabel->AutoSize = true;
+			this->averageComparisonsLabel->Location = System::Drawing::Point(164, 186);
+			this->averageComparisonsLabel->Name = L"averageComparisonsLabel";
+			this->averageComparisonsLabel->Size = System::Drawing::Size(116, 13);
+			this->averageComparisonsLabel->TabIndex = 16;
+			this->averageComparisonsLabel->Text = L"Average Comparisons: ";
+			this->toolTip1->SetToolTip(this->averageComparisonsLabel, L"How many times on average each picture has been compared.");
+			// 
+			// totalComparisonsLabel
+			// 
+			this->totalComparisonsLabel->AutoSize = true;
+			this->totalComparisonsLabel->Location = System::Drawing::Point(164, 163);
+			this->totalComparisonsLabel->Name = L"totalComparisonsLabel";
+			this->totalComparisonsLabel->Size = System::Drawing::Size(97, 13);
+			this->totalComparisonsLabel->TabIndex = 15;
+			this->totalComparisonsLabel->Text = L"Total Comparisons:";
+			this->toolTip1->SetToolTip(this->totalComparisonsLabel, L"Total number of comparisons done for this collection");
+			// 
 			// lowestComparisonLabel
 			// 
 			this->lowestComparisonLabel->AutoSize = true;
@@ -453,6 +473,8 @@ namespace PictureSorting {
 			this->lowestComparisonLabel->Size = System::Drawing::Size(107, 13);
 			this->lowestComparisonLabel->TabIndex = 14;
 			this->lowestComparisonLabel->Text = L"Lowest Comparisons:";
+			this->toolTip1->SetToolTip(this->lowestComparisonLabel, L"Displays the number of times the image with the lowest number of comparisons has "
+				L"been compared");
 			// 
 			// totalImagesLabel
 			// 
@@ -462,6 +484,7 @@ namespace PictureSorting {
 			this->totalImagesLabel->Size = System::Drawing::Size(71, 13);
 			this->totalImagesLabel->TabIndex = 13;
 			this->totalImagesLabel->Text = L"Total Images:";
+			this->toolTip1->SetToolTip(this->totalImagesLabel, L"Number of images in the collection");
 			// 
 			// statusStrip1
 			// 
@@ -557,24 +580,6 @@ namespace PictureSorting {
 				L"");
 			this->trimCollection->UseVisualStyleBackColor = true;
 			this->trimCollection->Click += gcnew System::EventHandler(this, &container::trimCollection_Click);
-			// 
-			// totalComparisonsLabel
-			// 
-			this->totalComparisonsLabel->AutoSize = true;
-			this->totalComparisonsLabel->Location = System::Drawing::Point(164, 163);
-			this->totalComparisonsLabel->Name = L"totalComparisonsLabel";
-			this->totalComparisonsLabel->Size = System::Drawing::Size(97, 13);
-			this->totalComparisonsLabel->TabIndex = 15;
-			this->totalComparisonsLabel->Text = L"Total Comparisons:";
-			// 
-			// averageComparisonsLabel
-			// 
-			this->averageComparisonsLabel->AutoSize = true;
-			this->averageComparisonsLabel->Location = System::Drawing::Point(164, 186);
-			this->averageComparisonsLabel->Name = L"averageComparisonsLabel";
-			this->averageComparisonsLabel->Size = System::Drawing::Size(116, 13);
-			this->averageComparisonsLabel->TabIndex = 16;
-			this->averageComparisonsLabel->Text = L"Average Comparisons: ";
 			// 
 			// container
 			// 
