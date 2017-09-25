@@ -65,7 +65,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::ToolStripMenuItem^  websiteToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  fAQToolStripMenuItem;
 
-	private: System::Windows::Forms::ListBox^  bottomImages;
+
 	private: System::Windows::Forms::ToolStripMenuItem^  newDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  existingDirectoryToolStripMenuItem;
 	private: System::Windows::Forms::Button^  button4;
@@ -145,7 +145,6 @@ namespace PictureSorting {
 			this->websiteToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->fAQToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->topImages = (gcnew System::Windows::Forms::ListBox());
-			this->bottomImages = (gcnew System::Windows::Forms::ListBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->saveAndQuit = (gcnew System::Windows::Forms::Button());
 			this->openNewDirectory = (gcnew System::Windows::Forms::FolderBrowserDialog());
@@ -380,20 +379,10 @@ namespace PictureSorting {
 			this->topImages->FormattingEnabled = true;
 			this->topImages->Location = System::Drawing::Point(0, 0);
 			this->topImages->Name = L"topImages";
-			this->topImages->Size = System::Drawing::Size(324, 160);
+			this->topImages->Size = System::Drawing::Size(324, 316);
 			this->topImages->TabIndex = 11;
 			this->toolTip1->SetToolTip(this->topImages, L"double click on an item to open it externally");
 			this->topImages->DoubleClick += gcnew System::EventHandler(this, &container::topImages_DoubleClick);
-			// 
-			// bottomImages
-			// 
-			this->bottomImages->FormattingEnabled = true;
-			this->bottomImages->Location = System::Drawing::Point(0, 202);
-			this->bottomImages->Name = L"bottomImages";
-			this->bottomImages->Size = System::Drawing::Size(324, 160);
-			this->bottomImages->TabIndex = 12;
-			this->toolTip1->SetToolTip(this->bottomImages, L"double click on an item to open it externally");
-			this->bottomImages->DoubleClick += gcnew System::EventHandler(this, &container::bottomImages_DoubleClick);
 			// 
 			// button4
 			// 
@@ -437,7 +426,6 @@ namespace PictureSorting {
 			this->groupBox1->Controls->Add(this->totalComparisonsLabel);
 			this->groupBox1->Controls->Add(this->lowestComparisonLabel);
 			this->groupBox1->Controls->Add(this->totalImagesLabel);
-			this->groupBox1->Controls->Add(this->bottomImages);
 			this->groupBox1->Controls->Add(this->topImages);
 			this->groupBox1->Location = System::Drawing::Point(474, 27);
 			this->groupBox1->Name = L"groupBox1";
@@ -448,7 +436,7 @@ namespace PictureSorting {
 			// averageComparisonsLabel
 			// 
 			this->averageComparisonsLabel->AutoSize = true;
-			this->averageComparisonsLabel->Location = System::Drawing::Point(164, 186);
+			this->averageComparisonsLabel->Location = System::Drawing::Point(163, 344);
 			this->averageComparisonsLabel->Name = L"averageComparisonsLabel";
 			this->averageComparisonsLabel->Size = System::Drawing::Size(116, 13);
 			this->averageComparisonsLabel->TabIndex = 16;
@@ -458,7 +446,7 @@ namespace PictureSorting {
 			// totalComparisonsLabel
 			// 
 			this->totalComparisonsLabel->AutoSize = true;
-			this->totalComparisonsLabel->Location = System::Drawing::Point(164, 163);
+			this->totalComparisonsLabel->Location = System::Drawing::Point(163, 321);
 			this->totalComparisonsLabel->Name = L"totalComparisonsLabel";
 			this->totalComparisonsLabel->Size = System::Drawing::Size(97, 13);
 			this->totalComparisonsLabel->TabIndex = 15;
@@ -468,7 +456,7 @@ namespace PictureSorting {
 			// lowestComparisonLabel
 			// 
 			this->lowestComparisonLabel->AutoSize = true;
-			this->lowestComparisonLabel->Location = System::Drawing::Point(6, 186);
+			this->lowestComparisonLabel->Location = System::Drawing::Point(5, 344);
 			this->lowestComparisonLabel->Name = L"lowestComparisonLabel";
 			this->lowestComparisonLabel->Size = System::Drawing::Size(107, 13);
 			this->lowestComparisonLabel->TabIndex = 14;
@@ -479,7 +467,7 @@ namespace PictureSorting {
 			// totalImagesLabel
 			// 
 			this->totalImagesLabel->AutoSize = true;
-			this->totalImagesLabel->Location = System::Drawing::Point(6, 163);
+			this->totalImagesLabel->Location = System::Drawing::Point(5, 321);
 			this->totalImagesLabel->Name = L"totalImagesLabel";
 			this->totalImagesLabel->Size = System::Drawing::Size(71, 13);
 			this->totalImagesLabel->TabIndex = 13;
@@ -713,7 +701,6 @@ void updateRankings(){
 	else if (!updateContinuously() && sortByScore())
 		scoreSort(&sortedList);
 	this->topImages->Items->Clear();
-	this->bottomImages->Items->Clear();
 	for (int i = 0; i < sortedList.size(); i++){//adding items to the top list
 		std::string holder = std::to_string(sortedList[i].score) + " ";
 		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
@@ -723,12 +710,6 @@ void updateRankings(){
 		if (sortedList[i].comparisons < minComparisons)
 			minComparisons = sortedList[i].comparisons;
 
-	}
-	for (int i = sortedList.size() - 1; i >= 0; i--){//adding items to the bottom list
-		std::string holder = std::to_string(sortedList[i].score) + " ";
-		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
-			holder += sortedList[i].path[y];
-		bottomImages->Items->Add(gcnew String(holder.c_str()));
 	}
 	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
 	totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
@@ -1100,13 +1081,6 @@ private: System::Void rightImage_Click(System::Object^  sender, System::EventArg
 private: System::Void topImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size() > 0){
 		string holder = getFullPath(topImages->SelectedItem->ToString());
-		Process::Start(gcnew String(holder.c_str()));
-	}
-}
-//When an item in the bottom listbox is double clicked, it is opened externally
-private: System::Void bottomImages_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
-	if (picList.size() > 0){
-		string holder = getFullPath(bottomImages->SelectedItem->ToString());
 		Process::Start(gcnew String(holder.c_str()));
 	}
 }
