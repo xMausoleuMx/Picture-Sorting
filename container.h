@@ -100,6 +100,7 @@ namespace PictureSorting {
 	private: System::Windows::Forms::Label^  totalImagesLabel;
 	private: System::Windows::Forms::Label^  averageComparisonsLabel;
 	private: System::Windows::Forms::Label^  totalComparisonsLabel;
+	private: System::Windows::Forms::ToolStripMenuItem^  enablePerfectSortToolStripMenuItem;
 
 
 
@@ -166,6 +167,7 @@ namespace PictureSorting {
 			this->rightRating = (gcnew System::Windows::Forms::Label());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->trimCollection = (gcnew System::Windows::Forms::Button());
+			this->enablePerfectSortToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->leftImage))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->rightImage))->BeginInit();
 			this->menuStrip1->SuspendLayout();
@@ -295,7 +297,7 @@ namespace PictureSorting {
 					this->existingDirectoryToolStripMenuItem
 			});
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			// 
 			// newDirectoryToolStripMenuItem
@@ -315,22 +317,22 @@ namespace PictureSorting {
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			this->saveToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::saveToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::exitToolStripMenuItem_Click);
 			// 
 			// editToolStripMenuItem
 			// 
-			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 				this->addItemsToolStripMenuItem,
-					this->editOptions
+					this->editOptions, this->enablePerfectSortToolStripMenuItem
 			});
 			this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
@@ -568,6 +570,13 @@ namespace PictureSorting {
 				L"");
 			this->trimCollection->UseVisualStyleBackColor = true;
 			this->trimCollection->Click += gcnew System::EventHandler(this, &container::trimCollection_Click);
+			// 
+			// enablePerfectSortToolStripMenuItem
+			// 
+			this->enablePerfectSortToolStripMenuItem->Name = L"enablePerfectSortToolStripMenuItem";
+			this->enablePerfectSortToolStripMenuItem->Size = System::Drawing::Size(199, 22);
+			this->enablePerfectSortToolStripMenuItem->Text = L"Enable Perfect Sort";
+			this->enablePerfectSortToolStripMenuItem->Click += gcnew System::EventHandler(this, &container::enablePerfectSortToolStripMenuItem_Click);
 			// 
 			// container
 			// 
@@ -1208,6 +1217,16 @@ private: System::Void rightImage_MouseEnter(System::Object^  sender, System::Eve
 }
 
 private: System::Void container_Load(System::Object^  sender, System::EventArgs^  e) {
+}
+
+private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	std::string holder = "By selecting this you are committing to sorting by a strict merge sort method.\nSorting this way will mean the collection will be out of order until the entire thing has been sorted and you will not be able to stop in the middle when the collection is \"close enough\"\nGiven the size of the collection it will take ";
+	holder += std::to_string((int)(picList.size()*log(picList.size())));
+	holder += " comparisons until the collection is sorted.\nPress OK to continue";
+	if (System::Windows::Forms::DialogResult::OK == MessageBox::Show(gcnew String(holder.c_str()), "Warning", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk)) {
+		
+	}
+
 }
 };
 
