@@ -44,7 +44,7 @@ namespace PictureSorting {
 				delete components;
 			}
 		}
-	private:bool openedFlag = false, saveDifference = false;
+	private:bool openedFlag = false, saveDifference = false, strictSort = false;
 	private: System::String^ fileName;
 	private: int crntCpr = 0;
 	private: System::Windows::Forms::PictureBox^  leftImage;
@@ -721,7 +721,10 @@ void updateRankings(){
 
 	}
 	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
-	totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
+	if (strictSort)
+		totalComparisonsLabel->Text = "Aproximate Number of Comparisons to go: " + ((int)(picList.size()*log(picList.size())) - totalComparisons);
+	else
+		totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
 	averageComparisonsLabel->Text = "Average Comparisons: " + totalComparisons/sortedList.size();
 	totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
 }
@@ -1224,10 +1227,16 @@ private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  
 	holder += std::to_string((int)(picList.size()*log(picList.size())));
 	holder += " comparisons until the collection is sorted.\nPress OK to continue";
 	if (System::Windows::Forms::DialogResult::OK == MessageBox::Show(gcnew String(holder.c_str()), "Warning", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk)) {
-		
+		strictSort = true;
+
 	}
 
 }
+
+void generateStrictSort() {
+
+}
+
 };
 
 }
