@@ -1233,8 +1233,33 @@ private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  
 
 }
 
-void generateStrictSort() {
+vector<image> mergeStrictSort(vector<image> left, vector<image> right) {
+	vector<image>holder;
+	int i = 0, k = 0;
+	do {
+		//comparisons here
+	} while (i < left.size() && k < right.size());
+	while (i < left.size()) {
+		holder.push_back(left[i]);
+		i++;
+	}
+	while (k < right.size()) {
+		holder.push_back(right[k]);
+		k++;
+	}
+	return holder;
+}
 
+void generateStrictSort(vector<image>* list) {
+	if (list->size() <= 1)
+		return;
+	vector<image> left, right;
+	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
+	right.assign(list->begin() + (list->size() / 2), list->end());
+	generateStrictSort(&left);
+	generateStrictSort(&right);
+	(*list) = mergeStrictSort(left, right);
+	return;
 }
 
 };
