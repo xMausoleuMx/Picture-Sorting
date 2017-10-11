@@ -1222,6 +1222,7 @@ private: System::Void rightImage_MouseEnter(System::Object^  sender, System::Eve
 private: System::Void container_Load(System::Object^  sender, System::EventArgs^  e) {
 }
 
+//clicked from the toolstrip to enable a perfect sort of the current image collection.
 private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	std::string holder = "By selecting this you are committing to sorting by a strict merge sort method.\nSorting this way will mean the collection will be out of order until the entire thing has been sorted and you will not be able to stop in the middle when the collection is \"close enough\"\nGiven the size of the collection it will take ";
 	holder += std::to_string((int)(picList.size()*log(picList.size())));
@@ -1233,11 +1234,38 @@ private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  
 
 }
 
+//displays the two images being compared in a strict sort, returns true if left image is better and false otherwise
+bool compare(image left, image right) {
+	try {
+		leftImage->Load(gcnew String(left.path.c_str()));
+	}
+	catch(...){
+		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		return false;
+	}
+	try {
+		rightImage->Load(gcnew String(right.path.c_str()));
+	}
+	catch (...) {
+		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		return true;
+	}
+
+
+}
+
 vector<image> mergeStrictSort(vector<image> left, vector<image> right) {
 	vector<image>holder;
 	int i = 0, k = 0;
 	do {
-		//comparisons here
+		if (compare(left[i], right[k])) {
+			holder.push_back(left[i]);
+			i++;
+		}
+		else {
+			holder.push_back(right[k]);
+			k++;
+		}
 	} while (i < left.size() && k < right.size());
 	while (i < left.size()) {
 		holder.push_back(left[i]);
