@@ -2,6 +2,7 @@
 #using <System.dll>
 
 static vector<image> picList;
+static vector<vector<image>> strictSortList;
 static vector<std::pair<int,int>> index;
 static std::string currentDirectory;
 static vector<setting> settings;
@@ -47,6 +48,7 @@ namespace PictureSorting {
 	private:bool openedFlag = false, saveDifference = false, strictSort = false;
 	private: System::String^ fileName;
 	private: int crntCpr = 0;
+	private: int strictSortindex = 0, strictSortLeftIndex = 0, strictSortRightIndex = 0;
 	private: System::Windows::Forms::PictureBox^  leftImage;
 	private: System::Windows::Forms::PictureBox^  rightImage;
 	private: System::Windows::Forms::Button^  selectLeft;
@@ -913,8 +915,15 @@ private: void selectItem(int choice){
 //when user selects the left image, increment the score and change the comparison
 private: System::Void selectLeft_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
-		selectItem(2);
-		changeComparison(1);
+		if (strictSort) {
+			
+
+			strictSortLeftIndex++;
+		}
+		else {
+			selectItem(2);
+			changeComparison(1);
+		}
 	}
 	else
 		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -923,8 +932,13 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 //when user selects the right image, increment the score and change the comparison
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
-		selectItem(1);
-		changeComparison(1);
+		if (strictSort) {
+
+		}
+		else {
+			selectItem(1);
+			changeComparison(1);
+		}
 	}
 	else
 		MessageBox::Show("ERROR: You cannot use this button when no pictures are loaded.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
@@ -1224,36 +1238,41 @@ private: System::Void container_Load(System::Object^  sender, System::EventArgs^
 
 //clicked from the toolstrip to enable a perfect sort of the current image collection.
 private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (picList.size() < 1){
+		MessageBox::Show("You need to load a collection of images before you can turn on strict sort.", "Warning", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+		return;
+	}
 	std::string holder = "By selecting this you are committing to sorting by a strict merge sort method.\nSorting this way will mean the collection will be out of order until the entire thing has been sorted and you will not be able to stop in the middle when the collection is \"close enough\"\nGiven the size of the collection it will take ";
 	holder += std::to_string((int)(picList.size()*log(picList.size())));
 	holder += " comparisons until the collection is sorted.\nPress OK to continue";
 	if (System::Windows::Forms::DialogResult::OK == MessageBox::Show(gcnew String(holder.c_str()), "Warning", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk)) {
 		strictSort = true;
-
+		generateStrictSort(&picList);
+		
 	}
 
 }
 
-//displays the two images being compared in a strict sort, returns true if left image is better and false otherwise
-bool compare(image left, image right) {
+
+void loadStrictSortComparison() {
 	try {
-		leftImage->Load(gcnew String(left.path.c_str()));
-	}
-	catch(...){
-		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		return false;
-	}
-	try {
-		rightImage->Load(gcnew String(right.path.c_str()));
+		leftImage->Load(gcnew String(strictSortList[strictSortindex][strictSortLeftIndex].path.c_str()));
 	}
 	catch (...) {
-		MessageBox::Show("ERROR: File could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
-		return true;
+		MessageBox::Show("ERROR: Left file could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 	}
-
-
+	try {
+		if(strictSortindex+1 <strictSortList.size())
+			rightImage->Load(gcnew String(strictSortList[strictSortindex+1][strictSortRightIndex].path.c_str()));
+		else
+			rightImage->Load(gcnew String(strictSortList[0][strictSortRightIndex].path.c_str()));
+	}
+	catch (...) {
+		MessageBox::Show("ERROR: Right file could not be loaded by box, it may\nbe corrupt or an unsuported format.", "Error Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
 }
 
+/*
 vector<image> mergeStrictSort(vector<image> left, vector<image> right) {
 	vector<image>holder;
 	int i = 0, k = 0;
@@ -1277,16 +1296,18 @@ vector<image> mergeStrictSort(vector<image> left, vector<image> right) {
 	}
 	return holder;
 }
-
+*/
 void generateStrictSort(vector<image>* list) {
-	if (list->size() <= 1)
+	if (list->size() <= 1) {
+		strictSortList.push_back(*list);
 		return;
+	}
 	vector<image> left, right;
 	left.assign(list->begin(), list->begin() + ((list->size()) / 2));
 	right.assign(list->begin() + (list->size() / 2), list->end());
 	generateStrictSort(&left);
 	generateStrictSort(&right);
-	(*list) = mergeStrictSort(left, right);
+	//(*list) = mergeStrictSort(left, right);
 	return;
 }
 
