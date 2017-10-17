@@ -940,9 +940,16 @@ private: System::Void selectLeft_Click(System::Object^  sender, System::EventArg
 private: System::Void selectRight_Click(System::Object^  sender, System::EventArgs^  e) {
 	if (picList.size()>0){
 		if (strictSort) {
-
 			strictSortRightIndex++;
-			loadStrictSortComparison();
+			if (strictSortRightIndex < strictSortList[strictSortindex].size())
+				loadStrictSortComparison();
+			else {
+				for (int i = strictSortLeftIndex; i < strictSortList[strictSortindex].size(); i++) {
+					picList.push_back(strictSortList[strictSortindex][i]);
+				}
+				strictSortCompress();
+			}
+
 		}
 		else {
 			selectItem(1);
@@ -1329,6 +1336,7 @@ void strictSortCompress() {
 		strictSortindex++;
 	else
 		strictSortindex = 0;
+	loadStrictSortComparison();
 }
 
 };
