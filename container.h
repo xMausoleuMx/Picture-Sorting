@@ -700,34 +700,36 @@ private: System::Void refresh_Click(System::Object^  sender, System::EventArgs^ 
 
 //updates the top and bottom lists with sorted scores.
 void updateRankings(){
-	int minComparisons = INT_MAX, totalComparisons = 0;
-	float averageCompairisons = 0;
-	vector<image> sortedList = picList;
-	if (updateContinuously() && sortByScore())
-		continuousScoreSort(&sortedList);
-	else if (updateContinuously() && sortByRating())
-		continuousRatingSort(&sortedList);
-	else if (!updateContinuously() && sortByRating())
-		ratingSort(&sortedList);
-	else if (!updateContinuously() && sortByScore())
-		scoreSort(&sortedList);
-	this->topImages->Items->Clear();
-	for (int i = 0; i < sortedList.size(); i++){//adding items to the top list
-		std::string holder = std::to_string(sortedList[i].score) + " ";
-		for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
-			holder += sortedList[i].path[y];
-		topImages->Items->Add(gcnew String(holder.c_str()));
-		totalComparisons += sortedList[i].comparisons;
-		if (sortedList[i].comparisons < minComparisons)
-			minComparisons = sortedList[i].comparisons;
-
+	if (strictSort) {
+		totalComparisonsLabel->Text = "Aproximate Number of Comparisons to go: " + ((int)(picList.size()*log(picList.size())) - picList.size()*(picList.size() - strictSortList.size()));//replace later!!
+		averageComparisonsLabel->Text = "Number of Blocks remaining: " + strictSortList.size();
 	}
-	lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
-	if (strictSort)
-		totalComparisonsLabel->Text = "Aproximate Number of Comparisons to go: " + ((int)(picList.size()*log(picList.size())) - totalComparisons);
-	else
-		totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons/2;
-	averageComparisonsLabel->Text = "Average Comparisons: " + totalComparisons/sortedList.size();
+	else{
+		int minComparisons = INT_MAX, totalComparisons = 0;
+		float averageCompairisons = 0;
+		vector<image> sortedList = picList;
+		if (updateContinuously() && sortByScore())
+			continuousScoreSort(&sortedList);
+		else if (updateContinuously() && sortByRating())
+			continuousRatingSort(&sortedList);
+		else if (!updateContinuously() && sortByRating())
+			ratingSort(&sortedList);
+		else if (!updateContinuously() && sortByScore())
+			scoreSort(&sortedList);
+		this->topImages->Items->Clear();
+		for (int i = 0; i < sortedList.size(); i++){//adding items to the top list
+			std::string holder = std::to_string(sortedList[i].score) + " ";
+			for (int y = currentDirectory.size(); y < sortedList[i].path.size(); y++)
+				holder += sortedList[i].path[y];
+			topImages->Items->Add(gcnew String(holder.c_str()));
+			totalComparisons += sortedList[i].comparisons;
+			if (sortedList[i].comparisons < minComparisons)
+				minComparisons = sortedList[i].comparisons;
+		}
+		lowestComparisonLabel->Text = "Lowest Comparisons: " + minComparisons;
+		totalComparisonsLabel->Text = "Total Comparisons: " + totalComparisons / 2;
+		averageComparisonsLabel->Text = "Average Comparisons: " + totalComparisons / sortedList.size();
+	}
 	totalImagesLabel->Text = "Total Images: " + (int)(picList.size());
 }
 
@@ -1264,7 +1266,7 @@ private: System::Void enablePerfectSortToolStripMenuItem_Click(System::Object^  
 	if (System::Windows::Forms::DialogResult::OK == MessageBox::Show(gcnew String(holder.c_str()), "Warning", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk)) {
 		strictSort = true;
 		generateStrictSort(&picList);
-		
+		loadStrictSortComparison();
 	}
 
 }
@@ -1336,7 +1338,11 @@ void strictSortCompress() {
 		strictSortindex++;
 	else
 		strictSortindex = 0;
-	loadStrictSortComparison();
+	if (strictSortList.size() == 1) {
+		MessageBox::Show("Sorting Complete", "temporary Message", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+	}
+	else
+		loadStrictSortComparison();
 }
 
 };
