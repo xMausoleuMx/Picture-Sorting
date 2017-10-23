@@ -1345,6 +1345,32 @@ void strictSortCompress() {
 		loadStrictSortComparison();
 }
 
+void strictSortSave() {
+	if (openedFlag) {//if the current directory was read from a file update that same file
+		StreamWriter^ writer = gcnew StreamWriter(fileName);
+		for (int i = 0; i < picList.size(); i++)
+			writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
+
+		writer->Close();
+		saveDifference = false;
+		MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+	}
+	else {//if the current directory is one that has never been saved then save it as a new file		
+		if (saveFile->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			if (saveFile->FileName != "") {
+				fileName = saveFile->FileName;
+				StreamWriter^ writer = gcnew StreamWriter(fileName);
+				for (int i = 0; i < picList.size(); i++)
+					writer->WriteLine("{0},{1},{2}", (gcnew String(picList[i].path.c_str())), picList[i].score, picList[i].comparisons);
+				writer->Close();
+				saveDifference = false;
+				MessageBox::Show("Save successful!", "Save", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
+				openedFlag = true;
+			}
+		}
+	}
+}
+
 };
 
 }
