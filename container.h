@@ -835,31 +835,37 @@ void openFile(System::String^ filename){
 	std::string holder, score = "", compare = "";
 	bool invalidFlag = false, errorFlag = false;
 	int flag = 0;
-	while (reader->Peek() >= 0){
-		holder = Stringtostring(reader->ReadLine());
-		image temp;
-		for (int i = 0; i < holder.size(); i++){
-			if (flag == 1 && holder[i] != ',')
-				score += holder[i];
-			if (flag == 2)
-				compare += holder[i];
-			if (holder[i] == ',')
-				flag++;
-			if (!flag && holder[i] != ',')
-				temp.path += holder[i];
+	holder = Stringtostring(reader->ReadLine());
+	if (holder.compare("strictSort")){
+		loadStrictSort();
+	}
+	else{
+		while (reader->Peek() >= 0) {
+			holder = Stringtostring(reader->ReadLine());
+			image temp;
+			for (int i = 0; i < holder.size(); i++) {
+				if (flag == 1 && holder[i] != ',')
+					score += holder[i];
+				if (flag == 2)
+					compare += holder[i];
+				if (holder[i] == ',')
+					flag++;
+				if (!flag && holder[i] != ',')
+					temp.path += holder[i];
+			}
+			flag = 0;
+			temp.score = atoi(score.c_str());//convert score to an int
+			temp.comparisons = atoi(compare.c_str());
+			if (temp.comparisons < minComparisons)
+				minComparisons = temp.comparisons;
+			score = "";
+			compare = "";
+			if (validateFile(temp.path))
+				tempList.push_back(temp);
+			else
+				invalidFlag = true;
+			toolStripProgressBar1->PerformStep();
 		}
-		flag = 0;
-		temp.score = atoi(score.c_str());//convert score to an int
-		temp.comparisons = atoi(compare.c_str());
-		if (temp.comparisons < minComparisons)
-			minComparisons = temp.comparisons;
-		score = "";
-		compare = "";
-		if (validateFile(temp.path))
-			tempList.push_back(temp);
-		else
-			invalidFlag = true;
-		toolStripProgressBar1->PerformStep();
 	}
 	//if no items are loaded throw an error
 	if (tempList.size() == 0){
@@ -1354,6 +1360,7 @@ void strictSortCompress() {
 
 void strictSortSave(){
 	StreamWriter^ writer = gcnew StreamWriter(fileName);
+	writer->WriteLine("strictSort");
 	for (int i = 0; i < strictSortList.size(); i++) {
 		for (int y = 0; y < strictSortList[i].size(); y++) {
 			writer->Write("{0},", gcnew String(strictSortList[i][y].path.c_str()));
@@ -1365,6 +1372,27 @@ void strictSortSave(){
 	saveDifference = false;
 }
 
+void loadStrictSort() {
+	StreamReader^ reader = gcnew StreamReader(fileName);
+	string holder;
+	while (reader->Peek() >= 0) {
+		holder = Stringtostring(reader->ReadLine());
+		vector<image> temp;
+		string path;
+		for (int i = 0; i < holder.size(); i++) {
+			if (holder[i] == ',') {
+				image blank;
+				blank.path = path;
+				temp.push_back(blank);
+				path = "";
+			}
+			else
+				path += holder[i];
+		}
+		strictSortList.push_back(temp);
+	}
+	reader->Close();
+}
 };
 
 }
